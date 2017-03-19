@@ -24,10 +24,5 @@ public class PlayerControls : MonoBehaviour {
         RB.AddForce((Input.GetKey(KeyCode.A) ? -1 : 0) * speed * transform.right);
         RB.AddForce((Input.GetKey(KeyCode.S) ? -1 : 0) * speed * transform.up);
         RB.AddForce((Input.GetKey(KeyCode.D) ? 1 : 0) * speed * transform.right);
-
-        // Look
-        transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector3.forward);
-        transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z);
-        RB.angularVelocity = 0;
     }
 }
