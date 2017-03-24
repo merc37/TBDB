@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerControls : MonoBehaviour {
 
-    public float speed;
+    public float walkSpeed;
     Rigidbody2D RB;
 
 	// Use this for initialization
@@ -20,9 +20,7 @@ public class PlayerControls : MonoBehaviour {
     // Use for physics updates
     void FixedUpdate() {
         // Movement
-        RB.AddForce((Input.GetKey(KeyCode.W) ? 1 : 0) * speed * transform.up);
-        RB.AddForce((Input.GetKey(KeyCode.A) ? -1 : 0) * speed * transform.right);
-        RB.AddForce((Input.GetKey(KeyCode.S) ? -1 : 0) * speed * transform.up);
-        RB.AddForce((Input.GetKey(KeyCode.D) ? 1 : 0) * speed * transform.right);
+		RB.AddForce(Input.GetAxis("VerticalMovement") * walkSpeed * transform.up);
+		RB.AddForce(Input.GetAxis("HorizontalMovement") * walkSpeed * transform.right);
     }
 }
