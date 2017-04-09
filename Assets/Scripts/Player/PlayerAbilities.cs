@@ -8,7 +8,7 @@ public class PlayerAbilities : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+
 	}
 	
 	// Update is called once per frame
@@ -18,4 +18,8 @@ public class PlayerAbilities : MonoBehaviour {
 			Time.timeScale = Time.timeScale == 1f ? (slowMotionPercentage/100) : 1f;
 		}
 	}
+
+    void FixedUpdate() {
+        
+    }
 }
