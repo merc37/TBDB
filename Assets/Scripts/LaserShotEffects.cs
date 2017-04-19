@@ -4,19 +4,13 @@ using UnityEngine;
 
 public class LaserShotEffects : MonoBehaviour {
 
-    TrailRenderer trailRenderer;
-    SpriteRenderer spriteRenderer;
+    private TrailRenderer trailRenderer;
+    private SpriteRenderer spriteRenderer;
 
-	// Use this for initialization
 	void Start () {
         spriteRenderer = GetComponent<SpriteRenderer>();
         trailRenderer = GetComponent<TrailRenderer>();
         trailRenderer.sortingLayerID = spriteRenderer.sortingLayerID;
         trailRenderer.sortingOrder = spriteRenderer.sortingOrder;
     }
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
