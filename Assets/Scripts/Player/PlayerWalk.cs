@@ -7,17 +7,8 @@ namespace Player {
 
 		[SerializeField]
 	    private float walkSpeed;
-	    private Rigidbody2D rigidBody;
-
-		// Use this for initialization
-		void Start () {
-			rigidBody = GetComponent<Rigidbody2D>();
-		}
-		
-		// Update is called once per frame
-		void Update () {
-			
-		}
+        [SerializeField]
+        private Rigidbody2D rigidBody;
 
 	    // Use for physics updates
 	    void FixedUpdate() {
