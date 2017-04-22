@@ -7,7 +7,7 @@ public class GameObjectEventManager : MonoBehaviour {
 	
 	private Dictionary <string, UnityEvent> eventDictionary;
 
-	void Start ()
+	void Awake ()
 	{
 		if (eventDictionary == null)
 		{

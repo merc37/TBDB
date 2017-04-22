@@ -4,10 +4,26 @@
   <image source="Tilesets/fe.png" width="320" height="2464"/>
  </tileset>
  <objectgroup name="collision">
-  <object id="4" name="leftBorder" x="0" y="0" width="32" height="1024"/>
-  <object id="5" name="topBorder" x="0" y="0" width="1024" height="32"/>
-  <object id="12" name="bottomBorder" x="0" y="992" width="1024" height="32"/>
-  <object id="13" name="rightBorder" x="992" y="0" width="32" height="1024"/>
+  <object id="4" name="leftBorder" x="0" y="0" width="32" height="1024">
+   <properties>
+    <property name="unity:tag" value="Block"/>
+   </properties>
+  </object>
+  <object id="5" name="topBorder" x="0" y="0" width="1024" height="32">
+   <properties>
+    <property name="unity:tag" value="Block"/>
+   </properties>
+  </object>
+  <object id="12" name="bottomBorder" x="0" y="992" width="1024" height="32">
+   <properties>
+    <property name="unity:tag" value="Block"/>
+   </properties>
+  </object>
+  <object id="13" name="rightBorder" x="992" y="0" width="32" height="1024">
+   <properties>
+    <property name="unity:tag" value="Block"/>
+   </properties>
+  </object>
  </objectgroup>
  <layer name="background" width="32" height="32">
   <properties>

@@ -23,8 +23,8 @@ public class CameraScript : MonoBehaviour {
 		halfWorldHeight = Camera.main.orthographicSize;
 		halfWorldWidth = (Camera.main.aspect * (halfWorldHeight*2))/2;
 		mapTransform = map.GetComponent<Transform>();
-		mapWidth = map.NumTilesWide+1.3025f;
-		mapHeight = map.NumTilesHigh+1.3025f;
+		mapWidth = map.NumTilesWide;
+		mapHeight = map.NumTilesHigh;
 	}
 
 	// LateUpdate is called once per frame, but after all other updates

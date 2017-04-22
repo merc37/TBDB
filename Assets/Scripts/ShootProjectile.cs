@@ -23,12 +23,13 @@ public class ShootProjectile : MonoBehaviour {
 
 	void Start () {
         lastFired = null;
-		eventManager.StartListening ("OnShoot", new UnityAction(OnShoot));
+		eventManager.StartListening("OnShoot", new UnityAction(OnShoot));
     }
 
 	private void OnShoot() {
 		Rigidbody2D newProjectile = (Rigidbody2D) Instantiate(projectileToBeFired, spriteTransform.rotation * ( new Vector3(0.25f, 0.25f, -1) ) + (new Vector3(transform.position.x, transform.position.y, 0)), spriteTransform.rotation);
 		newProjectile.velocity = (spriteTransform.rotation * Vector3.up) * projectileSpeed;
+		newProjectile.GetComponent<ProjectileOwner>().Owner = this.gameObject;
 		lastFired = newProjectile;
 	}
 }
