@@ -7,12 +7,12 @@ namespace UI {
 	public class AmmoCount : MonoBehaviour {
 
 		[SerializeField]
-		private Ammo ammo;
+		private Gun gun;
 		[SerializeField]
 		private Text ammoCountText;
 
 		void Update() {
-			ammoCountText.text = ammo.CurrentAmount + "/" + ammo.MaxAmount;
+			ammoCountText.text = gun.CurrentAmmo + "/" + gun.MaxAmmo;
 		}
 	}
 }

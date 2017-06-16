@@ -4,24 +4,24 @@ using UnityEngine;
 
 namespace Player {
 	public class PlayerCurveProjectiles : MonoBehaviour {
-
-		[SerializeField]
-		private ShootProjectile shootProjectile;
-		[SerializeField]
+        
+        [SerializeField]
 		private float maxBulletAngle;
 		[SerializeField]
 		private float curveDeadzone;
 
-		private Rigidbody2D lastFired;
+        private Gun gun;
+        private Rigidbody2D lastFired;
 
 		void Start() {
+            gun = GetComponentInChildren<Gun>();
 			curveDeadzone *= Mathf.Deg2Rad;
 		}
 
 		void FixedUpdate() {
 			//Curve Projectiles
-			if (Time.timeScale != 1f) {
-				lastFired = shootProjectile.LastFired;
+			if (Time.timeScale != 1f && gun != null) {
+				lastFired = gun.LastFired;
 				if(lastFired != null) {
 					Vector2 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 					Vector2 lineToMouse = new Vector2(mousePosition.x - lastFired.position.x, mousePosition.y - lastFired.position.y);
@@ -33,8 +33,10 @@ namespace Player {
 						float sin = Mathf.Sin(SgtAngle);
 						float vx = lastFired.velocity.x;
 						float vy = lastFired.velocity.y;
-						lastFired.velocity = new Vector2(vx * cos - vy * sin, vx * sin + vy * cos);
-					}
+                        lastFired.velocity = new Vector2(vx * cos - vy * sin, vx * sin + vy * cos);
+                        float angle = Mathf.Atan2(lastFired.velocity.x, lastFired.velocity.y) * Mathf.Rad2Deg;
+                        lastFired.transform.rotation = Quaternion.AngleAxis(-angle, Vector3.forward);
+                    }
 				}
 			}
 		}

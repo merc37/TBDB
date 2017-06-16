@@ -7,11 +7,14 @@ namespace Player {
 
 		[SerializeField]
 	    private float walkSpeed;
-        [SerializeField]
         private Rigidbody2D rigidBody;
 
-	    // Use for physics updates
-	    void FixedUpdate() {
+        void Start() {
+            rigidBody = GetComponent<Rigidbody2D>();
+        }
+
+        // Use for physics updates
+        void FixedUpdate() {
 			rigidBody.AddForce(Input.GetAxis("VerticalMovement") * walkSpeed * transform.up);
 			rigidBody.AddForce(Input.GetAxis("HorizontalMovement") * walkSpeed * transform.right);
 	    }

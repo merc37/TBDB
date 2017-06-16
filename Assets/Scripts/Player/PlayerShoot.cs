@@ -5,17 +5,20 @@ using UnityEngine.Events;
 
 namespace Player {
 	public class PlayerShoot : MonoBehaviour {
-
-		[SerializeField]
+        
 		private GameObjectEventManager eventManager;
 
-		// Update is called once per frame
-		void Update () {
-			if(Input.GetButtonDown("Fire")) {
-				if(eventManager != null) {
-					eventManager.TriggerEvent("CheckAmmoAndShoot");
-				}
-			}
+        void Start() {
+            eventManager = GetComponent<GameObjectEventManager>();
+        }
+
+        // Update is called once per frame
+        void Update () {
+            if(Input.GetButtonDown("Fire")) {
+                if(eventManager != null) {
+                    eventManager.TriggerEvent("OnShoot");
+                }
+            }
 		}
 	}
 }
