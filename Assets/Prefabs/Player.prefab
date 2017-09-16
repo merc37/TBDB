@@ -241,10 +241,7 @@ MonoBehaviour:
   projectileToBeFired: {fileID: 50432728655307208, guid: c5be99d08edb14ed49880a33942559b6,
     type: 2}
   speed: 10
-  barrelOffset: {x: 1, y: 2}
-  automatic: 0
-  automaticFireTime: 0.1
-  singleFireTime: 0.1
+  barrelOffset: {x: 0.05, y: 0.2}
   maxAmmo: 8
 --- !u!114 &114829362883290204
 MonoBehaviour:
@@ -297,6 +294,8 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
 --- !u!212 &212573074116870816
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -337,3 +336,5 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0

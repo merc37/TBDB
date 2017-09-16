@@ -19,6 +19,18 @@ namespace Player {
                     eventManager.TriggerEvent("OnShoot");
                 }
             }
-		}
+
+            if (Input.GetButton("Fire")) {
+                if (eventManager != null) {
+                    eventManager.TriggerEvent("OnAutoShoot");
+                }
+            }
+
+            if (Input.GetButtonDown("Reload")) {
+                if (eventManager != null) {
+                    eventManager.TriggerEvent("OnReload");
+                }
+            }
+        }
 	}
 }
