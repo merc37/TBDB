@@ -25,7 +25,8 @@ GameObject:
   - component: {fileID: 108106732274438670}
   - component: {fileID: 61153217355436152}
   - component: {fileID: 114130100735395762}
-  - component: {fileID: 114188326225603072}
+  - component: {fileID: 114705901514442714}
+  - component: {fileID: 114915273549677134}
   m_Layer: 0
   m_Name: LaserShot
   m_TagString: Untagged
@@ -40,7 +41,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1652816601661984}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -6.4863205, y: -0.93680334, z: -1}
+  m_LocalPosition: {x: -0.85, y: 2.55, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -64,7 +65,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!61 &61153217355436152
 BoxCollider2D:
@@ -75,7 +76,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.0000002384186, y: -0.01668221}
@@ -83,7 +84,7 @@ BoxCollider2D:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
     oldSize: {x: 0.1875, y: 0.34375}
-    newSize: {x: 1, y: 1}
+    newSize: {x: 0.1875, y: 0.34375}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0
@@ -120,9 +121,9 @@ TrailRenderer:
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_LightmapParameters: {fileID: 15204, guid: 0000000000000000f000000000000000, type: 0}
+  m_SortingLayerID: -1735583235
+  m_SortingLayer: 2
   m_SortingOrder: 0
   m_Time: 0.05
   m_Parameters:
@@ -148,7 +149,7 @@ TrailRenderer:
       m_RotationOrder: 0
     colorGradient:
       serializedVersion: 2
-      key0: {r: 1, g: 1, b: 1, a: 1}
+      key0: {r: 0, g: 0.91724133, b: 1, a: 1}
       key1: {r: 1, g: 1, b: 1, a: 0}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
@@ -179,6 +180,7 @@ TrailRenderer:
     numCapVertices: 0
     alignment: 0
     textureMode: 0
+    generateLightingData: 0
   m_MinVertexDistance: 0.1
   m_Autodestruct: 0
 --- !u!108 &108106732274438670
@@ -190,16 +192,16 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 2
-  m_Color: {r: 0.2794118, g: 0.9403651, b: 1, a: 1}
-  m_Intensity: 3.48
-  m_Range: 3
-  m_SpotAngle: 30
+  m_Color: {r: 0.2205882, g: 0.9354969, b: 1, a: 1}
+  m_Intensity: 6
+  m_Range: 1.3
+  m_SpotAngle: 30.6
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 0
-    m_Resolution: 3
+    m_Type: 2
+    m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.55
+    m_Strength: 0.549
     m_Bias: 0.07
     m_NormalBias: 0.34
     m_NearPlane: 0.36
@@ -228,7 +230,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6095b73f23c92e44dad4d64ab5ce98c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114188326225603072
+--- !u!114 &114705901514442714
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -236,9 +238,22 @@ MonoBehaviour:
   m_GameObject: {fileID: 1652816601661984}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3f054dff895164f82b861e6de2968209, type: 3}
+  m_Script: {fileID: 11500000, guid: e8d8b161e6ff4c54c9f78f14eef2af47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  CollisionTag: Block
+--- !u!114 &114915273549677134
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1652816601661984}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93977a0ae49d5c94b91d23aba4e582a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TTL: 1
 --- !u!212 &212915266191529628
 SpriteRenderer:
   m_ObjectHideFlags: 1
@@ -252,7 +267,7 @@ SpriteRenderer:
   m_LightProbeUsage: 0
   m_ReflectionProbeUsage: 0
   m_Materials:
-  - {fileID: 2100000, guid: c6cd686ea284d1b49a7d5abe32a79c94, type: 2}
+  - {fileID: 2100000, guid: ea424af2c2eea2949a250d1aeb5eebce, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -276,6 +291,8 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.1875, y: 0.34375}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
+  m_WasSpriteAssigned: 1
+  m_MaskInteraction: 0
