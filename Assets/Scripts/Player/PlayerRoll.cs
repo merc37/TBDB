@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Player
-{
-    public class PlayerRoll : MonoBehaviour
-    {
+namespace Player {
+
+    public class PlayerRoll : MonoBehaviour {
 
         [SerializeField]
         private float rollTime;

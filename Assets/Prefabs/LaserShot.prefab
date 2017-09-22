@@ -27,6 +27,7 @@ GameObject:
   - component: {fileID: 114130100735395762}
   - component: {fileID: 114705901514442714}
   - component: {fileID: 114915273549677134}
+  - component: {fileID: 114561468293656096}
   m_Layer: 0
   m_Name: LaserShot
   m_TagString: Untagged
@@ -228,6 +229,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6095b73f23c92e44dad4d64ab5ce98c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114561468293656096
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1652816601661984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d42faa5c2491414ba3c851d81f60a53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!114 &114705901514442714

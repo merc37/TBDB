@@ -18,11 +18,14 @@ public class Gun : MonoBehaviour {
     [SerializeField]
     private int maxAmmo;
     [SerializeField]
+    private int damage;
+    [SerializeField]
     private float reloadTime;
     [SerializeField]
     private AudioClip shotSound;
 
     private GameObjectEventManager eventManager;
+    private AudioSource audioSource;
     private float fireTime;
     private float lastFireTime;
     private float deltaFireTime;
@@ -57,6 +60,7 @@ public class Gun : MonoBehaviour {
 
     void Start() {
         eventManager = GetComponentInParent<GameObjectEventManager>();
+        audioSource = GetComponent<AudioSource>();
         lastFired = null;
         CurrentAmmo = MaxAmmo;
         fireTime = 1 / fireRate;
@@ -109,9 +113,11 @@ public class Gun : MonoBehaviour {
     }
 
     private void FireProjectile() {
-        GetComponent<AudioSource>().PlayOneShot(shotSound);
+        audioSource.PlayOneShot(shotSound);
         Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.position + new Vector3(barrelOffset.x, barrelOffset.y, -1), transform.rotation);
         newProjectile.AddForce(newProjectile.transform.up * speed, ForceMode2D.Impulse);
+        newProjectile.GetComponent<Projectile>().Damage = damage;
+        newProjectile.GetComponent<Projectile>().OwnerType = transform.root.tag;
         lastFired = newProjectile;
         CurrentAmmo--;
     }
