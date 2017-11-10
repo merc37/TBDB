@@ -1,21 +1,19 @@
-﻿using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Linq;
 
-public class Projectile : MonoBehaviour {
+public class DamageSource : MonoBehaviour {
 
-    private string ownerType;
-    public string OwnerType
+    private string source;
+    public string Source
     {
         get {
-            return ownerType;
+            return source;
         }
         set {
             if(UnityEditorInternal.InternalEditorUtility.tags.Contains<string>(value)) {
-                ownerType = value;
+                source = value;
             } else {
-                ownerType = "Untagged";
+                source = "Untagged";
             }
         }
     }

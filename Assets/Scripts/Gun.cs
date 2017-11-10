@@ -69,9 +69,9 @@ public class Gun : MonoBehaviour {
         lastReloadTime = 0;
         eventManager.StartListening("OnReload", new UnityAction(OnReload));
         if (automatic) {
-            eventManager.StartListening("OnShoot", new UnityAction(OnAutoShoot));
+            eventManager.StartListening("OnAutoShoot", new UnityAction(OnAutoShoot));
         } else {
-            eventManager.StartListening("OnAutoShoot", new UnityAction(OnSingleShoot));
+            eventManager.StartListening("OnShoot", new UnityAction(OnSingleShoot));
         }
     }
 
@@ -115,9 +115,11 @@ public class Gun : MonoBehaviour {
     private void FireProjectile() {
         audioSource.PlayOneShot(shotSound);
         Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.position + new Vector3(barrelOffset.x, barrelOffset.y, -1), transform.rotation);
-        newProjectile.AddForce(newProjectile.transform.up * speed, ForceMode2D.Impulse);
-        newProjectile.GetComponent<Projectile>().Damage = damage;
-        newProjectile.GetComponent<Projectile>().OwnerType = transform.root.tag;
+        Vector2 velocity = newProjectile.transform.up * speed;
+        velocity += transform.root.GetComponent<Rigidbody2D>().velocity;
+        newProjectile.velocity = velocity;
+        newProjectile.GetComponent<DamageSource>().Damage = damage;
+        newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
         lastFired = newProjectile;
         CurrentAmmo--;
     }

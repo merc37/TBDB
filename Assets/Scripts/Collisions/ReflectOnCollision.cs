@@ -1,64 +1,49 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System.Linq;
 
-public class ReflectOnCollision : MonoBehaviour {
+namespace Collisions {
+    public class ReflectOnCollision : MonoBehaviour {
 
-    [TagSelector]
-    public string CollisionTag = "";
+        public LayerMask mask;
 
-    private Rigidbody2D rb;
-    private void Start() {
-        rb = GetComponent<Rigidbody2D>();
-    }
+        [SerializeField]
+        [TagSelector]
+        private string[] collisionTags = new string[1];
 
-    private Vector3 oldVelocity;
-    private void FixedUpdate() {
-        oldVelocity = rb.velocity;
-    }
+        private Rigidbody2D rb;
+        private void Start() {
+            rb = GetComponent<Rigidbody2D>();
+        }
 
-    //void OnCollisionStay2D(Collision2D coll) {
-    //    if (coll.gameObject.tag == CollisionTag) {
+        private Vector3 oldVelocity;
+        private void FixedUpdate() {
+            oldVelocity = rb.velocity;
+        }
 
-    //        //Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, coll.contacts[0].normal);
-    //        //rb.velocity = reflectedVelocity;
-    //        //rb.velocity *= -1;
+        void OnCollisionEnter2D(Collision2D coll) {
+            if(collisionTags.Contains(coll.gameObject.tag)) {
+                RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, oldVelocity, 1, mask);
+                print(coll.contacts[0].normal);
+                Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, coll.contacts[0].normal);
+                rb.velocity = reflectedVelocity;
 
-    //        //Quaternion rotation = Quaternion.FromToRotation(oldVelocity, reflectedVelocity);
-    //        //transform.rotation *= rotation;
-    //    }
-    //}
+                Quaternion rotation = Quaternion.FromToRotation(oldVelocity, reflectedVelocity);
+                transform.rotation *= rotation;
+            }
+        }
 
-    private void OnCollisionEnter2D(Collision2D coll) {
-        if (coll.gameObject.tag == CollisionTag) {
-            Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, coll.contacts[0].normal);
-            rb.velocity = reflectedVelocity;
+        void OnTriggerEnter2D(Collider2D coll) {
+            if(collisionTags.Contains(coll.gameObject.tag)) {
+                RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, oldVelocity, 1, mask);
+                Vector2 normal = raycastHit.normal;
+                normal.x = Mathf.Round(normal.x);
+                normal.y = Mathf.Round(normal.y);
+                Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, normal);
+                rb.velocity = reflectedVelocity;
 
-            Quaternion rotation = Quaternion.FromToRotation(oldVelocity, reflectedVelocity);
-            transform.rotation *= rotation;
+                Quaternion rotation = Quaternion.FromToRotation(oldVelocity, reflectedVelocity);
+                transform.rotation *= rotation;
+            }
         }
     }
-
-    void OnTriggerEnter2D(Collider2D coll) {
-        if (coll.gameObject.tag == CollisionTag) {
-            //Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, coll.gameObject);
-            //rb.velocity = reflectedVelocity;
-
-            //Quaternion rotation = Quaternion.FromToRotation(oldVelocity, reflectedVelocity);
-            //transform.rotation *= rotation;
-        }
-    }
-
-    //void OnTriggerStay2D(Collider2D coll) {
-    //    //if (coll.gameObject.tag == CollisionTag) {
-    //    //    Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, coll.contacts[0].normal);
-    //    //    rb.velocity = reflectedVelocity;
-
-    //    //    Quaternion rotation = Quaternion.FromToRotation(oldVelocity, reflectedVelocity);
-    //    //    transform.rotation *= rotation;
-
-    //        //Collider2D[] contacts = new Collider2D[] { };
-    //        //coll.GetContacts(contacts);
-    //        //Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, contacts[0].`);
-    //}
 }

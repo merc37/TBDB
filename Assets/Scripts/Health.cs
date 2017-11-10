@@ -23,6 +23,18 @@ public class Health : MonoBehaviour {
 		}
 	}
 
+    public void Decrease(int amount) {
+        CurrentAmount -= amount;
+    }
+
+    public void Increase(int amount) {
+        CurrentAmount += amount;
+    }
+
+    public void SetMax() {
+        CurrentAmount = MaxAmount;
+    }
+
 	// Use this for initialization
 	void Start () {
 		CurrentAmount = MaxAmount;

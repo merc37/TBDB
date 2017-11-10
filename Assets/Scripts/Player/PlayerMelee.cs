@@ -9,6 +9,8 @@ namespace Player {
         [SerializeField]
         private Collider2D meleeBox;
         [SerializeField]
+        private int attackDamage;
+        [SerializeField]
         private float attackTime;
         [SerializeField]
         private float meleeCooldownTime;
@@ -23,6 +25,8 @@ namespace Player {
 
         void Start() {
             eventManager = GetComponent<GameObjectEventManager>();
+            meleeBox.GetComponent<DamageSource>().Source = transform.tag;
+            meleeBox.GetComponent<DamageSource>().Damage = attackDamage;
             meleeBox.enabled = false;
         }
 
@@ -33,6 +37,7 @@ namespace Player {
                     attacking = false;
                     cooldown = true;
                     lastEndAttackTime = Time.time;
+                    meleeBox.enabled = false;
                 }
             }
 
@@ -46,6 +51,7 @@ namespace Player {
             if (Input.GetButtonDown("Melee") && !attacking && !cooldown) {
                 attacking = true;
                 lastStartAttackTime = Time.time;
+                meleeBox.enabled = true;
             }
         }
 

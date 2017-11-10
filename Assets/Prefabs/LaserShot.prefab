@@ -28,6 +28,7 @@ GameObject:
   - component: {fileID: 114705901514442714}
   - component: {fileID: 114915273549677134}
   - component: {fileID: 114561468293656096}
+  - component: {fileID: 114330775069445674}
   m_Layer: 0
   m_Name: LaserShot
   m_TagString: Untagged
@@ -66,7 +67,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 1
   m_SleepingMode: 1
-  m_CollisionDetection: 1
+  m_CollisionDetection: 0
   m_Constraints: 4
 --- !u!61 &61153217355436152
 BoxCollider2D:
@@ -77,7 +78,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.0000002384186, y: -0.01668221}
@@ -231,6 +232,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6095b73f23c92e44dad4d64ab5ce98c4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114330775069445674
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1652816601661984}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f054dff895164f82b861e6de2968209, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  collisionTags:
+  - Player
 --- !u!114 &114561468293656096
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -253,7 +267,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8d8b161e6ff4c54c9f78f14eef2af47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CollisionTag: Block
+  mask:
+    serializedVersion: 2
+    m_Bits: 256
+  collisionTags:
+  - Block
 --- !u!114 &114915273549677134
 MonoBehaviour:
   m_ObjectHideFlags: 1
