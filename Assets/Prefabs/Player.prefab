@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4176641398370196}
   - component: {fileID: 212573074116870816}
   - component: {fileID: 114793078549537808}
-  - component: {fileID: 82189723158834758}
+  - component: {fileID: 82576733320552880}
   m_Layer: 0
   m_Name: LaserPistol
   m_TagString: Gun
@@ -107,7 +107,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1377552578162868}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalPosition: {x: -0.0033326666, y: 0.029993575, z: -0.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4549458534338352}
@@ -133,7 +133,7 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1857765669931340}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0.6920619, w: 0.7218382}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -187,43 +187,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5904958, y: 0.7744758}
   m_EdgeRadius: 0
---- !u!61 &61948198130490300
-BoxCollider2D:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1111692275426668}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: -0.007773444, y: -0.27984384}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.611328, y: 0.44031233}
-  m_EdgeRadius: 0
---- !u!82 &82189723158834758
+--- !u!82 &82576733320552880
 AudioSource:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1054271426266846}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 0
-  m_Volume: 0
+  m_PlayOnAwake: 1
+  m_Volume: 0.15
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -292,17 +267,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 0
---- !u!114 &114004775796627708
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1111692275426668}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d42faa5c2491414ba3c851d81f60a53, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114106832851214910
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -349,7 +313,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxBulletAngle: 0.08
-  curveDeadzone: 0.000053165768
+  curveDeadzone: 2.6228513e-17
 --- !u!114 &114464773906712362
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -388,13 +352,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   projectileToBeFired: {fileID: 50432728655307208, guid: c5be99d08edb14ed49880a33942559b6,
     type: 2}
-  speed: 10
+  speed: 40
   barrelOffset: {x: 0.05, y: 0.2}
   automatic: 1
-  fireRate: 10
-  maxAmmo: 200
-  damage: 10
-  reloadTime: 1
+  fireRate: 60
+  maxAmmo: 99999
+  reloadTime: 0
   shotSound: {fileID: 8300000, guid: d5eddd7ebff95ef458424137145506a5, type: 3}
 --- !u!114 &114829362883290204
 MonoBehaviour:

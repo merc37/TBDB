@@ -26,11 +26,11 @@ namespace Player {
                 }
             }
 
-            if (Input.GetButtonDown("Reload")) {
-                if (eventManager != null) {
-                    eventManager.TriggerEvent("OnReload");
-                }
-            }
+            //if (Input.GetButtonDown("Reload")) {
+            //    if (eventManager != null) {
+            //        eventManager.TriggerEvent("OnReload");
+            //    }
+            //}
         }
 	}
 }

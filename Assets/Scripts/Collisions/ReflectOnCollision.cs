@@ -45,5 +45,6 @@ namespace Collisions {
                 transform.rotation *= rotation;
             }
         }
+        //triggered = false;
     }
 }
