@@ -7,8 +7,8 @@ namespace Player {
 
 		private Vector2 distToMousePosition;
 
-		void FixedUpdate() {
-			distToMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        void FixedUpdate() {
+			distToMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) - GetComponent<Collider2D>().bounds.center;
 			float angle = Mathf.Atan2(distToMousePosition.x, distToMousePosition.y) * Mathf.Rad2Deg;
 			transform.rotation = Quaternion.AngleAxis(-angle, Vector3.forward);
 		}
