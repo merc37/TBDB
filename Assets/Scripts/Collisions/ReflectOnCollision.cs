@@ -4,11 +4,12 @@ using System.Linq;
 namespace Collisions {
     public class ReflectOnCollision : MonoBehaviour {
 
-        public LayerMask mask;
-
         [SerializeField]
         [TagSelector]
         private string[] collisionTags = new string[1];
+
+		[SerializeField]
+		private LayerMask mask;
 
         private Rigidbody2D rb;
         private void Start() {
@@ -22,9 +23,7 @@ namespace Collisions {
 
         void OnCollisionEnter2D(Collision2D coll) {
             if(collisionTags.Contains(coll.gameObject.tag)) {
-                RaycastHit2D raycastHit = Physics2D.Raycast(transform.position, oldVelocity, 1, mask);
-                print(coll.contacts[0].normal);
-                Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, coll.contacts[0].normal);
+				Vector3 reflectedVelocity = Vector3.Reflect(oldVelocity, coll.contacts[0].normal);
                 rb.velocity = reflectedVelocity;
 
                 Quaternion rotation = Quaternion.FromToRotation(oldVelocity, reflectedVelocity);
