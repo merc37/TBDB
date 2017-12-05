@@ -25,10 +25,10 @@ GameObject:
   - component: {fileID: 108106732274438670}
   - component: {fileID: 61153217355436152}
   - component: {fileID: 114130100735395762}
-  - component: {fileID: 114705901514442714}
   - component: {fileID: 114915273549677134}
   - component: {fileID: 114561468293656096}
   - component: {fileID: 114330775069445674}
+  - component: {fileID: 114862794367024564}
   m_Layer: 0
   m_Name: LaserShot
   m_TagString: Untagged
@@ -244,7 +244,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   collisionTags:
-  - Player
+  - Block
 --- !u!114 &114561468293656096
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -256,7 +256,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d42faa5c2491414ba3c851d81f60a53, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114705901514442714
+--- !u!114 &114862794367024564
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -264,14 +264,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1652816601661984}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d8b161e6ff4c54c9f78f14eef2af47, type: 3}
+  m_Script: {fileID: 11500000, guid: d9c938bfae91aeb4fae00c5a32beb7aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mask:
+  sendTriggerMessage: 0
+  layerMask:
     serializedVersion: 2
-    m_Bits: 256
-  collisionTags:
-  - Block
+    m_Bits: 4294967295
+  skinWidth: 0.1
 --- !u!114 &114915273549677134
 MonoBehaviour:
   m_ObjectHideFlags: 1

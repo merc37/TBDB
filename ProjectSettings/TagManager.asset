@@ -8,6 +8,7 @@ TagManager:
   - Gun
   - Projectile
   - Melee
+  - Enemy
   layers:
   - Default
   - TransparentFX
