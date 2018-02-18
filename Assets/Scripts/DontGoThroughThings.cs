@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class DontGoThroughThings : MonoBehaviour {
     // Careful when setting this to true - it might cause double

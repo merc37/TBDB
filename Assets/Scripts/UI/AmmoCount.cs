@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using EventManagers;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace UI {
@@ -11,8 +11,12 @@ namespace UI {
 		[SerializeField]
 		private Text ammoCountText;
 
-		void Update() {
-			ammoCountText.text = gun.CurrentAmmo + "/" + gun.MaxAmmo;
-		}
-	}
+        void Awake() {
+            GlobalEventManager.StartListening("UpdatePlayerAmmoCount", new UnityAction<ParamsObject>(UpdatePlayerAmmoCount));
+        }
+
+        private void UpdatePlayerAmmoCount(ParamsObject paramsObj) {
+            ammoCountText.text = paramsObj.Int + "/" + paramsObj.Float;
+        }
+    }
 }

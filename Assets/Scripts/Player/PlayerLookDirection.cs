@@ -1,12 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Player {
 	public class PlayerLookDirection : MonoBehaviour {
 
 		private Vector2 distToMousePosition;
-        private Collider2D collider;
+        private new Collider2D collider;
 
         void Start() {
 			collider = GetComponent<Collider2D>();

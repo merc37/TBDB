@@ -1,7 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using EventManagers;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace Player {
 	public class PlayerShoot : MonoBehaviour {
@@ -11,12 +9,11 @@ namespace Player {
         void Start() {
             eventManager = GetComponent<GameObjectEventManager>();
         }
-
-        // Update is called once per frame
+        
         void Update () {
             if(Input.GetButtonDown("Fire")) {
                 if(eventManager != null) {
-                    eventManager.TriggerEvent("OnShoot");
+                    eventManager.TriggerEvent("OnAttack");
                 }
             }
 
@@ -26,11 +23,11 @@ namespace Player {
                 }
             }
 
-            //if (Input.GetButtonDown("Reload")) {
-            //    if (eventManager != null) {
-            //        eventManager.TriggerEvent("OnReload");
-            //    }
-            //}
+            if(Input.GetButtonDown("Reload")) {
+                if(eventManager != null) {
+                    eventManager.TriggerEvent("OnReload");
+                }
+            }
         }
 	}
 }

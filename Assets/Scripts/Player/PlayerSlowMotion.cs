@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using EventManagers;
 using UnityEngine;
 
 namespace Player {
 	public class PlayerSlowMotion : MonoBehaviour {
 
-		[SerializeField]
+        private GameObjectEventManager eventManager;
+        [SerializeField]
 		private float slowMotionPercentage;
 		[SerializeField]
 		private float maxSlowMotionTime;
@@ -23,14 +23,16 @@ namespace Player {
 				}
 
 				slowMotionTime = value;
-			}
+                eventManager.TriggerEvent("UpdatePlayerSlowMotionTimeMeter", new ParamsObject(CurrentSlowMotionTime / MaxSlowMotionTime));
+            }
 		}
 
 		public bool SlowMotionActivated {get; set;}
 
 		// Use this for initialization
 		void Start () {
-			CurrentSlowMotionTime = MaxSlowMotionTime;
+            eventManager = GetComponent<GameObjectEventManager>();
+            CurrentSlowMotionTime = MaxSlowMotionTime;
 		}
 		
 		// Update is called once per frame
@@ -42,8 +44,8 @@ namespace Player {
 			}
 
 			if(SlowMotionActivated) {
-				slowMotionTime -= Time.deltaTime;
-				if(slowMotionTime == 0) {
+                CurrentSlowMotionTime -= Time.deltaTime;
+                if(CurrentSlowMotionTime == 0) {
 					Time.timeScale = 1f;
 					SlowMotionActivated = !SlowMotionActivated;
 				}

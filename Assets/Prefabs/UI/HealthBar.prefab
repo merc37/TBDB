@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   health: {fileID: 0}
-  barFill: {fileID: 0}
+  barFill: {fileID: 114660351606980836}
 --- !u!114 &114660351606980836
 MonoBehaviour:
   m_ObjectHideFlags: 1

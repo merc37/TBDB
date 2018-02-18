@@ -1,6 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using EventManagers;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Player {
 	public class PlayerCurveProjectiles : MonoBehaviour {
@@ -13,13 +13,13 @@ namespace Player {
         private Gun gun;
         private Rigidbody2D lastFired;
 
-		void Start() {
+        void Start() {
             gun = GetComponentInChildren<Gun>();
-			curveDeadzone *= Mathf.Deg2Rad;
+            curveDeadzone *= Mathf.Deg2Rad;
 		}
 
 		void FixedUpdate() {
-			//Curve Projectiles
+            //Curve Projectiles
 			if (Time.timeScale != 1f && gun != null) {
 				lastFired = gun.LastFired;
 				if(lastFired != null) {
@@ -40,5 +40,9 @@ namespace Player {
 				}
 			}
 		}
-	}
+
+        private void SetGun(ParamsObject paramsObj) {
+            gun = (Gun)paramsObj.Dynamic;
+        }
+    }
 }

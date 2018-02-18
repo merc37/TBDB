@@ -112,7 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slowMotion: {fileID: 0}
-  barFill: {fileID: 0}
+  barFill: {fileID: 114644608428973852}
 --- !u!222 &222417782806590478
 CanvasRenderer:
   m_ObjectHideFlags: 1

@@ -1,18 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using EventManagers;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 namespace UI {
 	public class HealthBar : MonoBehaviour {
-
-		[SerializeField]
-		private Health health;
+        
 		[SerializeField]
 		private Image barFill;
 
-		void Update() {
-			barFill.fillAmount = (float)health.CurrentAmount / (float)health.MaxAmount;
-		}
+        void Awake() {
+            GlobalEventManager.StartListening("UpdatePlayerHealth", new UnityAction<ParamsObject>(UpdatePlayerHealth));
+        }
+
+        private void UpdatePlayerHealth(ParamsObject paramsObj) {
+            barFill.fillAmount = (float)paramsObj.Int / paramsObj.Float;
+        }
 	}
 }

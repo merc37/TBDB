@@ -1,10 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using EventManagers;
 using UnityEngine;
 
 public class Health : MonoBehaviour {
 
-	[SerializeField]
+    private GameObjectEventManager eventManager;
+    [SerializeField]
 	private int maxHealth;
 	public int MaxAmount {get{return maxHealth;} set{maxHealth = value;}}
 
@@ -19,7 +19,11 @@ public class Health : MonoBehaviour {
 				health = maxHealth;
 			}
 
-			health = value;
+            ParamsObject paramsObject = new ParamsObject(value);
+            paramsObject.Float = (float)MaxAmount;
+            eventManager.TriggerEvent("UpdateHealth", paramsObject);
+
+            health = value;
 		}
 	}
 
@@ -37,6 +41,7 @@ public class Health : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		CurrentAmount = MaxAmount;
+        eventManager = GetComponent<GameObjectEventManager>();
+        CurrentAmount = MaxAmount;
 	}
 }
