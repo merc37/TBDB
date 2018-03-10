@@ -56,7 +56,7 @@ public class LightSourceImporter : Tiled2Unity.ICustomTiledImporter {
             Color lightColor = props.ContainsKey("color") ? (Color)typeof(Color).GetProperty(props["color"]).GetValue(null, null) : Color.white;
             LightType lightType = props.ContainsKey("type") ? (LightType)System.Enum.Parse(typeof(LightType), props["type"]) : LightType.Point;
 
-            LightShadows lightShadows = (props.ContainsKey("shadows") && props["shadows"] == "true") ? LightShadows.Soft : LightShadows.None;
+            LightShadows lightShadows = ((props.ContainsKey("shadows") && props["shadows"] == "true") || zHeight == MapConstants.FLOOR_HEIGHT) ? LightShadows.Soft : LightShadows.None;
 
             Light light = lightObject.AddComponent<Light>();
             lightObject.transform.position = new Vector3(lightObject.transform.position.x, lightObject.transform.position.y, zHeight);

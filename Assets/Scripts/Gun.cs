@@ -114,8 +114,8 @@ public class Gun : MonoBehaviour {
 
     private void FireProjectile() {
         audioSource.PlayOneShot(shotSound);
-        //Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.position + new Vector3(barrelOffset.x, barrelOffset.y, -1), transform.rotation);
-        Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
+        Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.position + new Vector3(barrelOffset.x, barrelOffset.y, -1), transform.rotation);
+        //Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
         Vector2 velocity = newProjectile.transform.up * speed;
         velocity += transform.root.GetComponent<Rigidbody2D>().velocity;
         newProjectile.velocity = velocity;
