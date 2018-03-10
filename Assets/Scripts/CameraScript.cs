@@ -17,8 +17,7 @@ public class CameraScript : MonoBehaviour {
         GlobalEventManager.StartListening("ReturnPlayerTransform", new UnityAction<ParamsObject>(SetPlayerTransform));
         GlobalEventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetMapTransform));
     }
-
-    // Use this for initialization
+    
     void Start () {
         GlobalEventManager.TriggerEvent("RequestPlayerTransform");
         GlobalEventManager.TriggerEvent("RequestMapTransform");
@@ -31,8 +30,7 @@ public class CameraScript : MonoBehaviour {
         GlobalEventManager.StopListening("ReturnPlayerTransform", new UnityAction<ParamsObject>(SetPlayerTransform));
         GlobalEventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetMapTransform));
     }
-
-	// LateUpdate is called once per frame, but after all other updates
+    
 	void LateUpdate () {
         newCameraPosition.Set(playerTransform.position.x, playerTransform.position.y, -10);
         if(newCameraPosition.x - halfWorldWidth < mapTransform.position.x) {

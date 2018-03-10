@@ -4,7 +4,7 @@
 
     public static float CEILING_HEIGHT = -10;
     public static float MEDIUM_HEIGHT = -5;
-    public static float FLOOR_HEIGHT = -1;
+    public static float FLOOR_HEIGHT = -0.1f;
 
     public static float LOW_RANGE = 5;
     public static float MEDIUM_RANGE = 10;

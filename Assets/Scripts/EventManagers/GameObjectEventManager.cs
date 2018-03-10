@@ -15,6 +15,10 @@ namespace EventManagers {
         }
 
         public void StartListening(string eventName, UnityAction<ParamsObject> listener) {
+            if(eventDictionary == null) {
+                eventDictionary = new Dictionary<string, ParamsEvent>();
+            }
+
             ParamsEvent thisEvent = null;
 
             if(eventDictionary.TryGetValue(eventName, out thisEvent)) {

@@ -8,7 +8,7 @@ namespace Messengers {
 
         private GameObjectEventManager eventManager;
 
-        void Awake() {
+        void Start() {
             eventManager = GetComponent<GameObjectEventManager>();
             eventManager.StartListening("UpdatePlayerSlowMotionTimeMeter", new UnityAction<ParamsObject>(UpdatePlayerSlowMotionTimeMeter));
             eventManager.StartListening("UpdateHealth", new UnityAction<ParamsObject>(UpdatePlayerHealth));
