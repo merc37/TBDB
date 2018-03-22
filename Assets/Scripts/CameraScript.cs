@@ -27,8 +27,6 @@ public class CameraScript : MonoBehaviour {
         map = mapTransform.GetComponent<TiledMap>();
         mapWidth = map.NumTilesWide;
         mapHeight = map.NumTilesHigh;
-        GlobalEventManager.StopListening("ReturnPlayerTransform", new UnityAction<ParamsObject>(SetPlayerTransform));
-        GlobalEventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetMapTransform));
     }
     
 	void LateUpdate () {
@@ -50,9 +48,11 @@ public class CameraScript : MonoBehaviour {
 
     private void SetPlayerTransform(ParamsObject paramsObj) {
         playerTransform = paramsObj.Transform;
+        GlobalEventManager.StopListening("ReturnPlayerTransform", new UnityAction<ParamsObject>(SetPlayerTransform));
     }
 
     private void SetMapTransform(ParamsObject paramsObj) {
         mapTransform = paramsObj.Transform;
+        GlobalEventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetMapTransform));
     }
 }

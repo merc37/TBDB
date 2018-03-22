@@ -8,15 +8,15 @@ namespace Messengers {
 
         private GameObjectEventManager eventManager;
 
-        void Start() {
+        void Awake() {
             eventManager = GetComponent<GameObjectEventManager>();
             eventManager.StartListening("UpdatePlayerSlowMotionTimeMeter", new UnityAction<ParamsObject>(UpdatePlayerSlowMotionTimeMeter));
             eventManager.StartListening("UpdateHealth", new UnityAction<ParamsObject>(UpdatePlayerHealth));
             eventManager.StartListening("UpdateAmmoCount", new UnityAction<ParamsObject>(UpdatePlayerAmmoCount));
-            GlobalEventManager.StartListening("RequestPlayerTransform", new UnityAction<ParamsObject>(SendPlayerTransform));
+            GlobalEventManager.StartListening("RequestPlayerTransform", new UnityAction<ParamsObject>(SendUpPlayerTransform));
         }
 
-        private void SendPlayerTransform(ParamsObject paramsObj) {
+        private void SendUpPlayerTransform(ParamsObject paramsObj) {
             ParamsObject newParamsObj = new ParamsObject(transform);
             GlobalEventManager.TriggerEvent("ReturnPlayerTransform", newParamsObj);
         }

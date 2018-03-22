@@ -85,42 +85,42 @@
   <properties>
    <property name="unity:layer" value="Blocks"/>
   </properties>
-  <object id="2" x="0" y="0" width="3200" height="32">
+  <object id="2" name="topWall" x="0" y="0" width="3200" height="32">
    <properties>
     <property name="unity:tag" value="Block"/>
    </properties>
   </object>
-  <object id="4" x="3168" y="32" width="32" height="3168">
+  <object id="4" name="rightWall" x="3168" y="32" width="32" height="3168">
    <properties>
     <property name="unity:tag" value="Block"/>
    </properties>
   </object>
-  <object id="5" x="0" y="3168" width="3168" height="32">
+  <object id="5" name="bottomWall" x="0" y="3168" width="3168" height="32">
    <properties>
     <property name="unity:tag" value="Block"/>
    </properties>
   </object>
-  <object id="7" x="0" y="32" width="32" height="3136">
+  <object id="7" name="leftWall" x="0" y="32" width="32" height="3136">
    <properties>
     <property name="unity:tag" value="Block"/>
    </properties>
   </object>
-  <object id="8" x="768" y="768" width="96" height="96">
+  <object id="8" name="lanterns" x="768" y="768" width="96" height="96">
    <properties>
     <property name="unity:tag" value="Block"/>
    </properties>
   </object>
-  <object id="34" x="320" y="288" width="32" height="192">
+  <object id="34" name="leftCubicleWall" x="320" y="288" width="32" height="192">
    <properties>
     <property name="unity:tag" value="Block"/>
    </properties>
   </object>
-  <object id="35" x="544" y="288" width="32" height="192">
+  <object id="35" name="rightCubicleWall" x="544" y="288" width="32" height="192">
    <properties>
     <property name="unity:tag" value="Block"/>
    </properties>
   </object>
-  <object id="36" x="352" y="448" width="192" height="32">
+  <object id="36" name="bottomCubicleWall" x="352" y="448" width="192" height="32">
    <properties>
     <property name="unity:tag" value="Block"/>
    </properties>

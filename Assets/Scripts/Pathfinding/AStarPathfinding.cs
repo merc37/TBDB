@@ -10,7 +10,8 @@ namespace Pathfinding {
             grid = GetComponent<Grid>();
         }
 
-        void FindPath(Vector3 startPos, Vector3 targetPos) {
+        public List<Node> FindPath(Vector3 startPos, Vector3 targetPos) {
+            grid.resetGrid();
             Node startNode = grid.NodeFromWorldPoint(startPos);
             Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
@@ -31,8 +32,7 @@ namespace Pathfinding {
 
                 if(currentNode == targetNode) {
                     // Path found, return path
-                    RetracePath(startNode, targetNode);
-                    return;
+                    return RetracePath(startNode, targetNode);
                 }
 
                 foreach(Node neighbor in grid.GetNeighbors(currentNode)) {
@@ -49,18 +49,19 @@ namespace Pathfinding {
                     }
                 }
             }
+            return null;
         }
 
-        void RetracePath(Node startNode, Node endNode) {
+        List<Node> RetracePath(Node startNode, Node endNode) {
             List<Node> path = new List<Node>();
             Node currentNode = endNode;
-            while(currentNode != startNode) {
+            while(currentNode != startNode /*&& path.Count < 50*/) {
                 path.Add(currentNode);
                 currentNode = currentNode.parent;
             }
             path.Reverse();
 
-            grid.path = path;
+            return path;
         }
 
         int GetGridDistance(Node nodeA, Node nodeB) {

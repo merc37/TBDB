@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <!--Tiled2Unity generated xml data-->
 <!--Do not modify by hand-->
-<!--Last exported: 3/9/2018 7:53:37 PM-->
+<!--Last exported: 3/14/2018 3:58:50 PM-->
 <Tiled2Unity version="1.0.13.2">
   <AssignMaterial mesh="testMap2_mesh_0001" material="smith" />
   <AssignMaterial mesh="testMap2_mesh_0002" material="smith" />
@@ -91,24 +91,24 @@
     </GameObject>
     <GameObject name="collision" x="0" y="0" z="0" layer="Blocks">
       <ObjectLayer offsetX="0" offsetY="0" color="#ff808080" />
-      <GameObject name="RectangleObject" x="0" y="0" rotation="0" tag="Block">
-        <RectangleObjectComponent tmx-object-id="2" tmx-object-name="" tmx-object-type="" tmx-object-x="0" tmx-object-y="0" tmx-object-width="3200" tmx-object-height="32" tmx-object-rotation="0" />
+      <GameObject name="topWall" x="0" y="0" rotation="0" tag="Block">
+        <RectangleObjectComponent tmx-object-id="2" tmx-object-name="topWall" tmx-object-type="" tmx-object-x="0" tmx-object-y="0" tmx-object-width="3200" tmx-object-height="32" tmx-object-rotation="0" />
         <BoxCollider2D width="100" height="1" />
       </GameObject>
-      <GameObject name="RectangleObject" x="99" y="-1" rotation="0" tag="Block">
-        <RectangleObjectComponent tmx-object-id="4" tmx-object-name="" tmx-object-type="" tmx-object-x="3168" tmx-object-y="32" tmx-object-width="32" tmx-object-height="3168" tmx-object-rotation="0" />
+      <GameObject name="rightWall" x="99" y="-1" rotation="0" tag="Block">
+        <RectangleObjectComponent tmx-object-id="4" tmx-object-name="rightWall" tmx-object-type="" tmx-object-x="3168" tmx-object-y="32" tmx-object-width="32" tmx-object-height="3168" tmx-object-rotation="0" />
         <BoxCollider2D width="1" height="99" />
       </GameObject>
-      <GameObject name="RectangleObject" x="0" y="-1" rotation="0" tag="Block">
-        <RectangleObjectComponent tmx-object-id="7" tmx-object-name="" tmx-object-type="" tmx-object-x="0" tmx-object-y="32" tmx-object-width="32" tmx-object-height="3136" tmx-object-rotation="0" />
+      <GameObject name="leftWall" x="0" y="-1" rotation="0" tag="Block">
+        <RectangleObjectComponent tmx-object-id="7" tmx-object-name="leftWall" tmx-object-type="" tmx-object-x="0" tmx-object-y="32" tmx-object-width="32" tmx-object-height="3136" tmx-object-rotation="0" />
         <BoxCollider2D width="1" height="98" />
       </GameObject>
-      <GameObject name="RectangleObject" x="10" y="-9" rotation="0" tag="Block">
-        <RectangleObjectComponent tmx-object-id="34" tmx-object-name="" tmx-object-type="" tmx-object-x="320" tmx-object-y="288" tmx-object-width="32" tmx-object-height="192" tmx-object-rotation="0" />
+      <GameObject name="leftCubicleWall" x="10" y="-9" rotation="0" tag="Block">
+        <RectangleObjectComponent tmx-object-id="34" tmx-object-name="leftCubicleWall" tmx-object-type="" tmx-object-x="320" tmx-object-y="288" tmx-object-width="32" tmx-object-height="192" tmx-object-rotation="0" />
         <BoxCollider2D width="1" height="6" />
       </GameObject>
-      <GameObject name="RectangleObject" x="17" y="-9" rotation="0" tag="Block">
-        <RectangleObjectComponent tmx-object-id="35" tmx-object-name="" tmx-object-type="" tmx-object-x="544" tmx-object-y="288" tmx-object-width="32" tmx-object-height="192" tmx-object-rotation="0" />
+      <GameObject name="rightCubicleWall" x="17" y="-9" rotation="0" tag="Block">
+        <RectangleObjectComponent tmx-object-id="35" tmx-object-name="rightCubicleWall" tmx-object-type="" tmx-object-x="544" tmx-object-y="288" tmx-object-width="32" tmx-object-height="192" tmx-object-rotation="0" />
         <BoxCollider2D width="1" height="6" />
       </GameObject>
       <GameObject name="RectangleObject" x="11" y="-9" rotation="0" tag="Block">
@@ -119,16 +119,16 @@
         <RectangleObjectComponent tmx-object-id="38" tmx-object-name="" tmx-object-type="" tmx-object-x="480" tmx-object-y="288" tmx-object-width="64" tmx-object-height="32" tmx-object-rotation="0" />
         <BoxCollider2D width="2" height="1" />
       </GameObject>
-      <GameObject name="RectangleObject" x="11" y="-14" rotation="0" tag="Block">
-        <RectangleObjectComponent tmx-object-id="36" tmx-object-name="" tmx-object-type="" tmx-object-x="352" tmx-object-y="448" tmx-object-width="192" tmx-object-height="32" tmx-object-rotation="0" />
+      <GameObject name="bottomCubicleWall" x="11" y="-14" rotation="0" tag="Block">
+        <RectangleObjectComponent tmx-object-id="36" tmx-object-name="bottomCubicleWall" tmx-object-type="" tmx-object-x="352" tmx-object-y="448" tmx-object-width="192" tmx-object-height="32" tmx-object-rotation="0" />
         <BoxCollider2D width="6" height="1" />
       </GameObject>
-      <GameObject name="RectangleObject" x="24" y="-24" rotation="0" tag="Block">
-        <RectangleObjectComponent tmx-object-id="8" tmx-object-name="" tmx-object-type="" tmx-object-x="768" tmx-object-y="768" tmx-object-width="96" tmx-object-height="96" tmx-object-rotation="0" />
+      <GameObject name="lanterns" x="24" y="-24" rotation="0" tag="Block">
+        <RectangleObjectComponent tmx-object-id="8" tmx-object-name="lanterns" tmx-object-type="" tmx-object-x="768" tmx-object-y="768" tmx-object-width="96" tmx-object-height="96" tmx-object-rotation="0" />
         <BoxCollider2D width="3" height="3" />
       </GameObject>
-      <GameObject name="RectangleObject" x="0" y="-99" rotation="0" tag="Block">
-        <RectangleObjectComponent tmx-object-id="5" tmx-object-name="" tmx-object-type="" tmx-object-x="0" tmx-object-y="3168" tmx-object-width="3168" tmx-object-height="32" tmx-object-rotation="0" />
+      <GameObject name="bottomWall" x="0" y="-99" rotation="0" tag="Block">
+        <RectangleObjectComponent tmx-object-id="5" tmx-object-name="bottomWall" tmx-object-type="" tmx-object-x="0" tmx-object-y="3168" tmx-object-width="3168" tmx-object-height="32" tmx-object-rotation="0" />
         <BoxCollider2D width="99" height="1" />
       </GameObject>
     </GameObject>

@@ -1,0 +1,17 @@
+tree("Root")
+	fallback
+		tree("MoveToTarget")
+		tree("LineOfSight")
+
+tree("LineOfSight")
+	sequence
+		PlayerInSight
+		SetTargetToPlayer
+		RecalculatePathToTarget
+
+tree("MoveToTarget")
+	fallback
+		MoveTowardNextNode
+		SetNextNode
+		
+		

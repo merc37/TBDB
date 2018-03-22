@@ -22,8 +22,11 @@ GameObject:
   - component: {fileID: 212332837417276246}
   - component: {fileID: 50214324330173404}
   - component: {fileID: 58445474692873130}
+  - component: {fileID: 114979038806722878}
   - component: {fileID: 114696588162074562}
-  - component: {fileID: 114010342748515132}
+  - component: {fileID: 114118567361891828}
+  - component: {fileID: 114019140136898770}
+  - component: {fileID: 114034854447789178}
   m_Layer: 0
   m_Name: Seeker
   m_TagString: Untagged
@@ -38,7 +41,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1159107312907106}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 14.49, y: -18.03, z: -0.2}
+  m_LocalPosition: {x: 14.49, y: -33.06, z: -0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,7 +82,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: -0.14022541}
   serializedVersion: 2
   m_Radius: 0.3753996
---- !u!114 &114010342748515132
+--- !u!114 &114019140136898770
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -87,10 +90,46 @@ MonoBehaviour:
   m_GameObject: {fileID: 1159107312907106}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3c679cff47030a54aa32e4d142c26e18, type: 3}
+  m_Script: {fileID: 11500000, guid: c929c6840bf38ea43bd4ffdb8d2dfc62, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 0}
+--- !u!114 &114034854447789178
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1159107312907106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17e43e7170fb45b4b81dcd16d0ff55d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  scripts:
+  - {fileID: 4900000, guid: c1fa8b6e8e8490f48b4ece7a488cc2c8, type: 3}
+  autoReset: 1
+  tickOn: 0
+  sourceInfos:
+  - isFoldout: 1
+    breakPoints: 
+    breakPointStatuses: 
+    collapsedLines: 
+    btScript: 
+--- !u!114 &114118567361891828
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1159107312907106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd27f4e02e3d6cf43895830a27169c74, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sightAngle: 35
+  sightDistance: 10
+  mask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!114 &114696588162074562
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -103,6 +142,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   walkSpeed: 50
+  recalculatePathDistance: 5
+--- !u!114 &114979038806722878
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1159107312907106}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 255c62b68c42445d88e31879bd6d3273, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212332837417276246
 SpriteRenderer:
   m_ObjectHideFlags: 1
