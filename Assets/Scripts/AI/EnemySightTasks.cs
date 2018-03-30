@@ -37,9 +37,16 @@ public class EnemySightTasks : MonoBehaviour {
     }
 
     [Task]
-    bool SetTargetToPlayer() {
+    bool SetMovementTargetToPlayer() {
         eventManager.TriggerEvent("SetMovementTarget", new ParamsObject(playerTransform.position));
         return true;
+    }
+
+    [Task]
+    bool SetLookTargetToPlayer() {
+        Vector3 direction = transform.position - playerTransform.position;
+        transform.rotation = Quaternion.AngleAxis(Vector3.Angle(direction, transform.up), Vector3.forward);
+        return false;
     }
 
     private void SetPlayerTransform(ParamsObject paramsObj) {

@@ -15,8 +15,8 @@ public class EnemyMovementTasks : MonoBehaviour {
     private GameObjectEventManager eventManager;
 
     private BasicThetaStarPathfinding pathfinding;
-	private Rigidbody2D rigidbody;
-	private Collider2D collider;
+	private new Rigidbody2D rigidbody;
+	private new Collider2D collider;
 	private List<Node> path;
     private Vector3 targetVector;
 	
@@ -57,6 +57,7 @@ public class EnemyMovementTasks : MonoBehaviour {
             path.RemoveAt(0);
             return true;
         }
+
         return false;
     }
 

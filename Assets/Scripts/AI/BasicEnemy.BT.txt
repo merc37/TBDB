@@ -6,12 +6,11 @@ tree("Root")
 tree("LineOfSight")
 	sequence
 		PlayerInSight
-		SetTargetToPlayer
+		SetMovementTargetToPlayer
 		RecalculatePathToTarget
 
 tree("MoveToTarget")
 	fallback
 		MoveTowardNextNode
 		SetNextNode
-		
-		
+		SetLookTargetToPlayer
