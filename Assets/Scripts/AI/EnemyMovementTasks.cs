@@ -4,6 +4,7 @@ using Pathfinding;
 using Panda;
 using EventManagers;
 using UnityEngine.Events;
+using System.Collections;
 
 public class EnemyMovementTasks : MonoBehaviour {
 
@@ -55,34 +56,22 @@ public class EnemyMovementTasks : MonoBehaviour {
 
         if(path.Count >= 1) {
             path.RemoveAt(0);
-            Debug.Log("" + path.Count);
-            //GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
+            if(path.Count >= 1) {
+                Vector3 direction = transform.position - path[0].worldPosition;
+                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+                transform.rotation = q;
+            }
+            
+            return true;
         }
 
-        //if(path.Count > 0) {
-        //    if(Vector3.Distance(path[path.Count - 1].worldPosition, targetVector) > recalculatePathDistance) {
-        //        return false;
-        //    }
-        //    float angle = Vector3.Angle(targetVector - transform.position, transform.up);
-        //    if(angle > recalculatePathAngle) {
-        //        return false;
-        //    }
-        //}
-
-        if(path.Count == 0) {
-            return false;
-        }
-
-        return true;
+        return false;
     }
 
     [Task]
     //Succeeds if path gets set, Fails if there is no target to path to, if end of path reached
 	bool RecalculatePathToTarget() {
-        Vector3 direction = transform.position - targetVector;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-        transform.rotation = q;
         path = pathfinding.FindPath(transform.position, targetVector, collider);
         GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
         return true;
