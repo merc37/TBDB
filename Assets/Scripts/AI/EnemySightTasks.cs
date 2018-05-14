@@ -22,7 +22,6 @@ public class EnemySightTasks : MonoBehaviour {
 
     [Task]
     bool PlayerInSight() {
-        Vector3 lastKnownPlayerLocation = playerTransform.position;
         float angle = Vector3.Angle(playerTransform.position - transform.position, transform.up);
         if(angle <= sightAngle) {
             float distance = Vector3.Distance(transform.position, playerTransform.position);
@@ -45,7 +44,9 @@ public class EnemySightTasks : MonoBehaviour {
     [Task]
     bool SetLookTargetToPlayer() {
         Vector3 direction = transform.position - playerTransform.position;
-        transform.rotation = Quaternion.AngleAxis(Vector3.Angle(direction, transform.up), Vector3.forward);
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+        transform.rotation = q;
         return false;
     }
 

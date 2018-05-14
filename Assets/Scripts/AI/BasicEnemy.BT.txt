@@ -1,11 +1,13 @@
 tree("Root")
 	fallback
+		sequence
+			PlayerInSight
+			tree("SetMovementTargetToPlayer")
+			tree("MoveToTarget")
 		tree("MoveToTarget")
-		tree("LineOfSight")
 
-tree("LineOfSight")
+tree("SetMovementTargetToPlayer")
 	sequence
-		PlayerInSight
 		SetMovementTargetToPlayer
 		RecalculatePathToTarget
 
@@ -13,4 +15,3 @@ tree("MoveToTarget")
 	fallback
 		MoveTowardNextNode
 		SetNextNode
-		SetLookTargetToPlayer

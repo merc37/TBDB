@@ -15,4 +15,8 @@ public struct IntVector2 {
 	public static implicit operator Vector3(IntVector2 v) {
 		return new Vector3(v.x, v.y, 0);
 	}
+
+    public override string ToString() {
+        return "(" + this.x + ", " + this.y + ")";
+    }
 }

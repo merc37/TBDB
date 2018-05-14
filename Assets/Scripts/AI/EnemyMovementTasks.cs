@@ -11,6 +11,8 @@ public class EnemyMovementTasks : MonoBehaviour {
 	private float walkSpeed;
     [SerializeField]
     private int recalculatePathDistance = 5;
+    [SerializeField]
+    private int recalculatePathAngle = 20;
 
     private GameObjectEventManager eventManager;
 
@@ -50,22 +52,39 @@ public class EnemyMovementTasks : MonoBehaviour {
     [Task]
     //Succeeds if next node set, Fails if no next node to set or target is too far from end of path
     bool SetNextNode() {
-        if(path.Count > 0 && Vector3.Distance(path[path.Count - 1].worldPosition, targetVector) > recalculatePathDistance) {
-            return false;
-        }
+
         if(path.Count >= 1) {
             path.RemoveAt(0);
-            return true;
+            Debug.Log("" + path.Count);
+            //GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
         }
 
-        return false;
+        //if(path.Count > 0) {
+        //    if(Vector3.Distance(path[path.Count - 1].worldPosition, targetVector) > recalculatePathDistance) {
+        //        return false;
+        //    }
+        //    float angle = Vector3.Angle(targetVector - transform.position, transform.up);
+        //    if(angle > recalculatePathAngle) {
+        //        return false;
+        //    }
+        //}
+
+        if(path.Count == 0) {
+            return false;
+        }
+
+        return true;
     }
 
     [Task]
     //Succeeds if path gets set, Fails if there is no target to path to, if end of path reached
 	bool RecalculatePathToTarget() {
+        Vector3 direction = transform.position - targetVector;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+        transform.rotation = q;
         path = pathfinding.FindPath(transform.position, targetVector, collider);
-        //GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
+        GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
         return true;
 	}
 
@@ -80,13 +99,15 @@ public class EnemyMovementTasks : MonoBehaviour {
         return true;
     }
 
+    Vector2 p1, p2;
+
     bool ReachedNode(Node node) {
         if (isAtNode(node)) return true;
-        return false;
 		if (rigidbody.velocity.magnitude > 0) {
-			if (Vector3.Dot(rigidbody.velocity, transform.position - node.worldPosition) < 0) {
-                return true;
-			}
+            p1 = node.worldPosition;
+            p2 = node.worldPosition + Vector3.Cross(rigidbody.velocity.normalized, -Vector3.forward).normalized;
+            float d = (transform.position.x - p1.x)*(p2.y - p1.y) - (transform.position.y - p1.y)*(p2.x - p1.x);
+            return d > 0;
 		}
         return false;
 	}
@@ -104,5 +125,11 @@ public class EnemyMovementTasks : MonoBehaviour {
 
     private void SetPathfinding(ParamsObject paramsObj) {
         pathfinding = paramsObj.Transform.GetComponent<BasicThetaStarPathfinding>();
+    }
+
+    void OnDrawGizmos() {
+        if(p1 != null && p2 != null) {
+            Gizmos.DrawLine(p1, p2);
+        }
     }
 }

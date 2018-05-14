@@ -44,11 +44,15 @@ namespace Pathfinding {
                 foreach(Node neighbor in grid.GetNeighbors(currentNode)) {
                     if(!neighbor.isWalkable || closedSet.Contains(neighbor)) continue;
 
+                    if(!openSet.Contains(neighbor)) {
+                        neighbor.gCost = Mathf.Infinity;
+                        neighbor.parent = null;
+                    }
+
                     // Basic Theta * "UpdateVertex()" method
                     if(currentNode.parent != null && LineOfSight(currentNode.parent, neighbor, collider)) {
-                        float newMoveCost = currentNode.parent.fCost + GetStraightDistance(currentNode.parent, neighbor);
-                        //int newMoveCost = currentNode.parent.fCost + GetGridDistance(currentNode.parent, neighbor);
-                        if(newMoveCost < neighbor.gCost || !openSet.Contains(neighbor)) {
+                        float newMoveCost = currentNode.parent.gCost + GetStraightDistance(currentNode.parent, neighbor);
+                        if(newMoveCost < neighbor.gCost) {
                             neighbor.gCost = newMoveCost;
                             neighbor.hCost = GetStraightDistance(neighbor, targetNode);
                             //neighbor.hCost = GetGridDistance(neighbor, targetNode);
@@ -57,8 +61,8 @@ namespace Pathfinding {
                             if(!openSet.Contains(neighbor)) openSet.Add(neighbor);
                         }
                     } else {
-                        float newMoveCost = currentNode.fCost + GetStraightDistance(currentNode, neighbor);
-                        if(newMoveCost < neighbor.gCost || !openSet.Contains(neighbor)) {
+                        float newMoveCost = currentNode.gCost + GetStraightDistance(currentNode, neighbor);
+                        if(newMoveCost < neighbor.gCost) {
                             neighbor.gCost = newMoveCost;
                             neighbor.hCost = GetStraightDistance(neighbor, targetNode);
                             neighbor.parent = currentNode;
