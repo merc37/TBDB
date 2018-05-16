@@ -12,11 +12,15 @@ namespace Pathfinding {
 
         public List<Node> FindPath(Vector3 startPos, Vector3 targetPos, Collider2D collider) {
             grid.resetGrid();
+
             Node startNode = grid.NodeFromWorldPoint(startPos);
             Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
             List<Node> openSet = new List<Node>();
             HashSet<Node> closedSet = new HashSet<Node>();
+
+            startNode.gCost = 0;
+            startNode.parent = startNode;
             openSet.Add(startNode);
 
             while(openSet.Count > 0) {
@@ -30,12 +34,6 @@ namespace Pathfinding {
                 openSet.Remove(currentNode);
                 closedSet.Add(currentNode);
 
-                //if (currentNode.parent != null && currentNode.parent.parent != null && LineOfSight(currentNode.parent.parent, currentNode)) {
-                //	Node newParent = currentNode.parent.parent;
-                //	currentNode.parent.parent = null;
-                //	currentNode.parent = newParent;
-                //}
-
                 if(currentNode == targetNode) {
                     // Path found, return path
                     return RetracePath(startNode, targetNode);
@@ -44,18 +42,12 @@ namespace Pathfinding {
                 foreach(Node neighbor in grid.GetNeighbors(currentNode)) {
                     if(!neighbor.isWalkable || closedSet.Contains(neighbor)) continue;
 
-                    if(!openSet.Contains(neighbor)) {
-                        neighbor.gCost = Mathf.Infinity;
-                        neighbor.parent = null;
-                    }
-
                     // Basic Theta * "UpdateVertex()" method
                     if(currentNode.parent != null && LineOfSight(currentNode.parent, neighbor, collider)) {
                         float newMoveCost = currentNode.parent.gCost + GetStraightDistance(currentNode.parent, neighbor);
-                        if(newMoveCost < neighbor.gCost) {
+                        if(newMoveCost <= neighbor.gCost) {
                             neighbor.gCost = newMoveCost;
                             neighbor.hCost = GetStraightDistance(neighbor, targetNode);
-                            //neighbor.hCost = GetGridDistance(neighbor, targetNode);
                             neighbor.parent = currentNode.parent;
 
                             if(!openSet.Contains(neighbor)) openSet.Add(neighbor);

@@ -13,5 +13,6 @@ tree("SetMovementTargetToPlayer")
 
 tree("MoveToTarget")
 	fallback
-		MoveTowardNextNode
+		fallback
+			MoveTowardNextNode
 		SetNextNode

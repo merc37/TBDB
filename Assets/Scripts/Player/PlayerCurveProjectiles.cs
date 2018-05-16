@@ -40,9 +40,5 @@ namespace Player {
 				}
 			}
 		}
-
-        private void SetGun(ParamsObject paramsObj) {
-            gun = (Gun)paramsObj.Dynamic;
-        }
     }
 }

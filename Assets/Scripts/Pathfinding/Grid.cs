@@ -68,6 +68,8 @@ namespace Pathfinding {
                     grid[x, y] = new Node(worldPoint, x, y, walkable);
                 }
             }
+
+            resetGrid();
         }
 
         public Node NodeFromWorldPoint(Vector3 worldPoint) {
@@ -137,7 +139,7 @@ namespace Pathfinding {
                         if(!n.isWalkable) {
                             Gizmos.color = Color.red;
                             Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
-                        } else if(n.fCost != 0) {
+                        } else if(n.fCost != Mathf.Infinity) {
                             Gizmos.color = g.Evaluate(n.gCost / pathCost);
                             Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
                         } else {
@@ -150,7 +152,7 @@ namespace Pathfinding {
                         }
                     }
 
-                    if(n.fCost != 0) {
+                    if(n.fCost != Mathf.Infinity) {
                         Vector3 GUIposition = n.worldPosition + new Vector3(-nodeRadius, nodeRadius);
                         Handles.Label(GUIposition, "G:" + n.gCost.ToString("F1"));
                         Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + n.hCost.ToString("F1"));

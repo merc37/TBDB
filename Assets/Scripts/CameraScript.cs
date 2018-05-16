@@ -5,7 +5,7 @@ using EventManagers;
 
 public class CameraScript : MonoBehaviour {
     
-	private Transform playerTransform;
+	private Rigidbody2D playerRigidbody;
 	private TiledMap map;
 	private Vector3 newCameraPosition;
 	private float halfWorldWidth;
@@ -30,7 +30,7 @@ public class CameraScript : MonoBehaviour {
     }
     
 	void LateUpdate () {
-        newCameraPosition.Set(playerTransform.position.x, playerTransform.position.y, -10);
+        newCameraPosition.Set(playerRigidbody.position.x, playerRigidbody.position.y, -10);
         if(newCameraPosition.x - halfWorldWidth < mapTransform.position.x) {
             newCameraPosition.x = mapTransform.position.x + halfWorldWidth;
         }
@@ -47,7 +47,7 @@ public class CameraScript : MonoBehaviour {
     }
 
     private void SetPlayerTransform(ParamsObject paramsObj) {
-        playerTransform = paramsObj.Transform;
+        playerRigidbody = paramsObj.Transform.GetComponent<Rigidbody2D>();
         GlobalEventManager.StopListening("ReturnPlayerTransform", new UnityAction<ParamsObject>(SetPlayerTransform));
     }
 

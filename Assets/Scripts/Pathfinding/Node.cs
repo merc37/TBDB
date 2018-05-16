@@ -26,8 +26,8 @@ namespace Pathfinding {
 
         public void reset() {
             this.parent = null;
-            this.gCost = 0;
-            this.hCost = 0;
+            this.gCost = Mathf.Infinity;
+            this.hCost = Mathf.Infinity;
         }
     }
 }

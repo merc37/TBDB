@@ -9,7 +9,7 @@ using System.Collections;
 public class EnemyMovementTasks : MonoBehaviour {
 
 	[SerializeField]
-	private float walkSpeed;
+	private float walkSpeed = 10;
     [SerializeField]
     private int recalculatePathDistance = 5;
     [SerializeField]
@@ -56,23 +56,27 @@ public class EnemyMovementTasks : MonoBehaviour {
 
         if(path.Count >= 1) {
             path.RemoveAt(0);
-            if(path.Count >= 1) {
-                Vector3 direction = transform.position - path[0].worldPosition;
-                float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-                Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-                transform.rotation = q;
-            }
-            
-            return true;
+            //if(path.Count >= 1) {
+            //    Vector3 direction = transform.position - path[0].worldPosition;
+            //    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            //    Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+            //    transform.rotation = q;
+            //}
+
+            return false;
         }
 
-        return false;
+        return true;
     }
 
     [Task]
     //Succeeds if path gets set, Fails if there is no target to path to, if end of path reached
 	bool RecalculatePathToTarget() {
         path = pathfinding.FindPath(transform.position, targetVector, collider);
+        Vector3 direction = transform.position - targetVector;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+        transform.rotation = q;
         GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
         return true;
 	}
