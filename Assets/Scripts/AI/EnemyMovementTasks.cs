@@ -4,16 +4,15 @@ using Pathfinding;
 using Panda;
 using EventManagers;
 using UnityEngine.Events;
-using System.Collections;
 
 public class EnemyMovementTasks : MonoBehaviour {
 
-	[SerializeField]
-	private float walkSpeed = 10;
     [SerializeField]
-    private int recalculatePathDistance = 5;
+    private float maxWalkSpeed = 8;
+    private float speed;
+
     [SerializeField]
-    private int recalculatePathAngle = 20;
+    private float recalculatePathDistance = 2;
 
     private GameObjectEventManager eventManager;
 
@@ -21,84 +20,75 @@ public class EnemyMovementTasks : MonoBehaviour {
 	private new Rigidbody2D rigidbody;
 	private new Collider2D collider;
 	private List<Node> path;
-    private Vector3 targetVector;
+    private int currentPathIndex;
+    private Vector2 targetVector;
 	
 	void Awake() {
         eventManager = GetComponent<GameObjectEventManager>();
         eventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
         eventManager.StartListening("SetMovementTarget", new UnityAction<ParamsObject>(SetMovementTarget));
         rigidbody = GetComponent<Rigidbody2D>();
-		collider = GetComponent<Collider2D>();
+        collider = GetComponent<Collider2D>();
+        
+        speed = maxWalkSpeed * rigidbody.drag;
+		
         targetVector = Vector3.negativeInfinity;
-        path = new List<Node>();
+
+        currentPathIndex = -1;
 	}
 
     [Task]
-    //Succeeds on continuing to move toward next node in path, Fails if reached next node or if path not set
 	bool MoveTowardNextNode () {
-        //Fails if path not set
-        if(path.Count < 1) {
-            return false;
-        }
-        //Fails if next node reached
-        if(ReachedNode(path[0])) {
-            return false;
-        }
-        //Succeeds if continuing to move toward next node in path
-		Vector3 direction = (path[0].worldPosition - transform.position).normalized;
-		rigidbody.AddForce(direction * walkSpeed);
+        Vector2 nodeWorldPos = path[currentPathIndex].worldPosition;
+        Vector2 direction = (nodeWorldPos - rigidbody.position).normalized;
+        rigidbody.AddForce(direction * speed);
         return true;
 	}
 
     [Task]
-    //Succeeds if next node set, Fails if no next node to set or target is too far from end of path
+    bool ReachedFinalNode() {
+        return currentPathIndex >= path.Count - 1;
+    }
+
+    Vector2 tooFarEndNode, targetPos;
+    [Task]
+    bool TargetTooFarFromEndOfPath() {
+        Vector2 finalNodeWorldPos = path[path.Count - 1].worldPosition;
+        tooFarEndNode = finalNodeWorldPos;
+        targetPos = targetVector;
+        float distanceToTargetFromEndOfPath = Vector2.Distance(finalNodeWorldPos, targetVector);
+        return distanceToTargetFromEndOfPath > recalculatePathDistance;
+    }
+
+    [Task]
+    //Succeeds when next node set
     bool SetNextNode() {
-
-        if(path.Count >= 1) {
-            path.RemoveAt(0);
-            //if(path.Count >= 1) {
-            //    Vector3 direction = transform.position - path[0].worldPosition;
-            //    float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            //    Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-            //    transform.rotation = q;
-            //}
-
-            return false;
+        currentPathIndex++;
+        if(currentPathIndex < path.Count - 1) {
+            Vector3 direction = transform.position - path[currentPathIndex].worldPosition;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+            transform.rotation = q;
         }
 
         return true;
     }
 
     [Task]
-    //Succeeds if path gets set, Fails if there is no target to path to, if end of path reached
 	bool RecalculatePathToTarget() {
         path = pathfinding.FindPath(transform.position, targetVector, collider);
-        Vector3 direction = transform.position - targetVector;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-        transform.rotation = q;
+        currentPathIndex = 0;
         GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
         return true;
 	}
 
     [Task]
-    bool FinalNodeDistanceToTargetOkay() {
-        if(path == null || path.Count == 0) {
-            return false;
-        }
-        if(Vector2.Distance(path[path.Count - 1].worldPosition, targetVector) > recalculatePathDistance) {
-            return false;
-        }
-        return true;
-    }
-
-    Vector2 p1, p2;
-
-    bool ReachedNode(Node node) {
+    bool ReachedNode() {
+        Node node = path[currentPathIndex];
         if (isAtNode(node)) return true;
 		if (rigidbody.velocity.magnitude > 0) {
-            p1 = node.worldPosition;
-            p2 = node.worldPosition + Vector3.Cross(rigidbody.velocity.normalized, -Vector3.forward).normalized;
+            Vector2 p1 = node.worldPosition;
+            Vector2 p2 = node.worldPosition + Vector3.Cross(rigidbody.velocity.normalized, -Vector3.forward).normalized;
             float d = (transform.position.x - p1.x)*(p2.y - p1.y) - (transform.position.y - p1.y)*(p2.x - p1.x);
             return d > 0;
 		}
@@ -113,7 +103,7 @@ public class EnemyMovementTasks : MonoBehaviour {
     }
 
     private void SetMovementTarget(ParamsObject paramsObj) {
-        targetVector = paramsObj.Vector3;
+        targetVector = paramsObj.Vector2;
     }
 
     private void SetPathfinding(ParamsObject paramsObj) {
@@ -121,8 +111,7 @@ public class EnemyMovementTasks : MonoBehaviour {
     }
 
     void OnDrawGizmos() {
-        if(p1 != null && p2 != null) {
-            Gizmos.DrawLine(p1, p2);
-        }
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(tooFarEndNode, targetPos);
     }
 }

@@ -72,7 +72,7 @@ public class Gun : MonoBehaviour {
         if (automatic) {
             eventManager.StartListening("OnAutoShoot", new UnityAction<ParamsObject>(OnAutoShoot));
         } else {
-            eventManager.StartListening("OnAttack", new UnityAction<ParamsObject>(OnSingleShoot));
+            eventManager.StartListening("OnShoot", new UnityAction<ParamsObject>(OnSingleShoot));
         }
     }
 

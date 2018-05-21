@@ -13,7 +13,7 @@ namespace Player {
         void Update () {
             if(Input.GetButtonDown("Fire")) {
                 if(eventManager != null) {
-                    eventManager.TriggerEvent("OnAttack");
+                    eventManager.TriggerEvent("OnShoot");
                 }
             }
 
