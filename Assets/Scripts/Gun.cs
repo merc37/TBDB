@@ -53,7 +53,7 @@ public class Gun : MonoBehaviour {
 
             ParamsObject paramsObject = new ParamsObject(value);
             paramsObject.Float = (float)MaxAmmo;
-            eventManager.TriggerEvent("UpdateAmmoCount", paramsObject);
+            eventManager.TriggerEvent("AmmoCount", paramsObject);
 
             currAmmo = value;
         }

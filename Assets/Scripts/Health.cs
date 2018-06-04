@@ -21,7 +21,7 @@ public class Health : MonoBehaviour {
 
             ParamsObject paramsObject = new ParamsObject(value);
             paramsObject.Float = (float)MaxAmount;
-            eventManager.TriggerEvent("UpdateHealth", paramsObject);
+            eventManager.TriggerEvent("HealthPoints", paramsObject);
 
             health = value;
 		}

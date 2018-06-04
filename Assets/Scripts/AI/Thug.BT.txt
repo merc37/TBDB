@@ -1,27 +1,61 @@
 tree("Root")
-	sequence
-		tree("ChasePlayer")
+	parallel
+		repeat mute tree("Live")
+		repeat mute tree("DIE")
 
-tree("ChasePlayer")
+tree("Live")
+	fallback
+		while LowOnAmmo
+			tree("FindCoverAndReload")
+		tree("FireOnSight")
+		tree("MoveIntoAttackRangeOfPlayer")
+		SecurePinging
+
+tree("FireOnSight")
+	repeat
+		sequence
+			PlayerInSight
+			PlayerInAttackRange
+			not LowOnAmmo
+			Shoot
+
+tree("DIE")
 	sequence
-		PlayerInSight
-		SetMovementTargetToPlayer
-		RecalculatePathToTarget
+		HasZeroHealth
+		DestroySelf
+
+tree("FindCoverAndReload")
+	sequence
+		random
+			Reload
+			sequence
+				SetMovementTargetToCover
+				tree("MoveToMovementTarget")
+				Reload
+
+tree("MoveToMovementTarget")
+	sequence
+		RecalculatePathToMovementTarget
+		fallback
+			repeat
+				MoveAlongPath
+			Succeed
+
+tree("MoveIntoAttackRangeOfPlayer")
+	parallel
 		repeat
 			sequence
-				parallel
-					MoveTowardNextNode
-					mute
+				PlayerInSight
+				SetMovementTargetToPlayer
+				RecalculatePathToMovementTarget
+				mute 
+					repeat
 						sequence
-							SetAttackTargetToPlayer
-							CheckAttackRange
-							Shoot
-				not ReachedFinalNode
-				sequence
-					SetMovementTargetToPlayer
-					not TargetTooFarFromEndOfPath
-				mute
-					sequence
-						ReachedNode
-						SetNextNode
-	
+							MoveAlongPath
+							not PlayerTooFarFromEndOfPath
+		fallback
+			repeat
+				fallback
+					not PlayerInSight
+					not PlayerInAttackRange
+			Succeed

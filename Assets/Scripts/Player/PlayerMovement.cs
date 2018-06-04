@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
 
 namespace Player {
-	public class PlayerWalk : MonoBehaviour {
+	public class PlayerMovement : MonoBehaviour {
 
 		[SerializeField]
-	    private float maxWalkSpeed = 8;
+	    private float maxWalkSpeed = 10;
         private new Rigidbody2D rigidbody;
         private float speed;
 
@@ -16,13 +16,15 @@ namespace Player {
         void FixedUpdate() {
             float horizInput = Input.GetAxis("HorizontalMovement");
             float vertInput = Input.GetAxis("VerticalMovement");
+            Vector2 direction = Vector2.zero;
             if(horizInput != 0) {
-                rigidbody.AddForce(horizInput * speed * Vector2.right);
+                direction += horizInput * Vector2.right;
             }
             if(vertInput != 0) {
-                rigidbody.AddForce(vertInput * speed * Vector2.up);
+                direction += vertInput * Vector2.up;
             }
-            
+            rigidbody.AddForce(direction.normalized * speed);
+
         }
 	}
 }

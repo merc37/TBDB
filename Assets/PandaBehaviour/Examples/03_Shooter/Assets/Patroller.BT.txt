@@ -25,13 +25,10 @@ tree("Patroll")
 				Wait(0.3)
 				NextWaypoint
 
-
-
 tree("Attack")
 	//When the enemy is visible, attack it,
 	//Otherwise forget about it.
 	fallback
-
 		//Attack the enemy if visible.
 		repeat
 			sequence

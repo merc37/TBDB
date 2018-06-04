@@ -8,18 +8,18 @@ public class EnemyMessenger : MonoBehaviour {
 
     void Awake() {
         eventManager = GetComponent<GameObjectEventManager>();
-        GlobalEventManager.StartListening("ReturnPlayerTransform", new UnityAction<ParamsObject>(SendDownPlayerTransform));
+        GlobalEventManager.StartListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SendDownPlayerRigidbody));
         GlobalEventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SendDownMapTransform));
     }
 
     void Start() {
-        GlobalEventManager.TriggerEvent("RequestPlayerTransform");
+        GlobalEventManager.TriggerEvent("RequestPlayerRigidbody");
         GlobalEventManager.TriggerEvent("RequestMapTransform");
     }
 
-    private void SendDownPlayerTransform(ParamsObject paramsObj) {
-        eventManager.TriggerEvent("ReturnPlayerTransform", paramsObj);
-        GlobalEventManager.StopListening("ReturnPlayerTransform", new UnityAction<ParamsObject>(SendDownPlayerTransform));
+    private void SendDownPlayerRigidbody(ParamsObject paramsObj) {
+        eventManager.TriggerEvent("ReturnPlayerRigidbody", paramsObj);
+        GlobalEventManager.StopListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SendDownPlayerRigidbody));
     }
 
     private void SendDownMapTransform(ParamsObject paramsObj) {

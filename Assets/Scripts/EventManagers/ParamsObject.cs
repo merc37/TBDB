@@ -4,6 +4,7 @@ using UnityEngine.Events;
 namespace EventManagers {
     public class ParamsObject {
         public Transform Transform { get; set; }
+        public Rigidbody2D Rigidbody { get; set; }
         public Vector2 Vector2 { get; set; }
         public Vector3 Vector3 { get; set; }
         public int Int { get; set; }
@@ -13,6 +14,10 @@ namespace EventManagers {
 
         public ParamsObject(Transform transform) {
             Transform = transform;
+        }
+
+        public ParamsObject(Rigidbody2D rigidbody) {
+            Rigidbody = rigidbody;
         }
 
         public ParamsObject(Vector2 vector2) {
