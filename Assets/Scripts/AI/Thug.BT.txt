@@ -4,20 +4,48 @@ tree("Root")
 		repeat mute tree("DIE")
 
 tree("Live")
-	fallback
-		while LowOnAmmo
-			tree("FindCoverAndReload")
-		tree("FireOnSight")
-		tree("MoveIntoAttackRangeOfPlayer")
-		SecurePinging
+	parallel
+		repeat
+			mute
+				tree("FireOnSight")
+		repeat
+			mute
+				fallback
+					sequence
+						LowOnHealth
+						SetMovementTargetToCover
+						mute
+							repeat
+								MoveTowardsMovementTarget
+					sequence
+						LowOnAmmo
+						random
+							Reload
+							fallback
+								sequence
+									SetMovementTargetToCover
+									repeat
+										MoveTowardsMovementTarget
+								Reload
+					sequence
+						PlayerInSight
+						SetLookTargetToPlayer
+						SetMovementTargetToPlayerPosition
+						MoveTowardsMovementTarget
+					sequence
+						PlayerLastPositionKnown
+						SetMovementTargetToPlayerLastKnownPosition
+						fallback
+							MoveTowardsMovementTarget
+							UnSetPlayerLastKnownPosition
+						StopMovement
 
 tree("FireOnSight")
-	repeat
-		sequence
-			PlayerInSight
-			PlayerInAttackRange
-			not LowOnAmmo
-			Shoot
+	sequence
+		PlayerInSight
+		PlayerInAttackRange
+		not LowOnAmmo
+		Shoot
 
 tree("DIE")
 	sequence
@@ -30,32 +58,5 @@ tree("FindCoverAndReload")
 			Reload
 			sequence
 				SetMovementTargetToCover
-				tree("MoveToMovementTarget")
+				//tree("MoveToMovementTarget")
 				Reload
-
-tree("MoveToMovementTarget")
-	sequence
-		RecalculatePathToMovementTarget
-		fallback
-			repeat
-				MoveAlongPath
-			Succeed
-
-tree("MoveIntoAttackRangeOfPlayer")
-	parallel
-		repeat
-			sequence
-				PlayerInSight
-				SetMovementTargetToPlayer
-				RecalculatePathToMovementTarget
-				mute 
-					repeat
-						sequence
-							MoveAlongPath
-							not PlayerTooFarFromEndOfPath
-		fallback
-			repeat
-				fallback
-					not PlayerInSight
-					not PlayerInAttackRange
-			Succeed

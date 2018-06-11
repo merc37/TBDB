@@ -38,6 +38,10 @@ namespace EventManagers {
         }
 
         public void TriggerEvent(string eventName, ParamsObject paramsObj = null) {
+            if(eventDictionary == null) {
+                eventDictionary = new Dictionary<string, ParamsEvent>();
+            }
+
             ParamsEvent thisEvent = null;
             if(eventDictionary.TryGetValue(eventName, out thisEvent)) {
                 thisEvent.Invoke(paramsObj);

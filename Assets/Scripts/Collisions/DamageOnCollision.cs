@@ -1,20 +1,26 @@
 ﻿using UnityEngine;
 using System.Linq;
+using EventManagers;
 
 namespace Collisions {
     public class DamageOnCollision : MonoBehaviour {
+
+        private GameObjectEventManager eventManager;
 
         [SerializeField]
         [TagSelector]
         private string[] damageTags = new string[1];
 
+        void Awake() {
+            eventManager = GetComponentInParent<GameObjectEventManager>();
+        }
+
         void OnCollisionEnter2D(Collision2D coll) {
             DamageSource damageSource = coll.gameObject.GetComponent<DamageSource>();
             if(damageSource) {
                 if(damageTags.Contains(damageSource.Source)) {
-                    print(damageSource.Source);
-                    GetComponent<Health>().Decrease(damageSource.Damage);
-                    print(GetComponent<Health>().CurrentAmount);
+                    print("Enemy Hit");
+                    eventManager.TriggerEvent("DecreaseHealth", new ParamsObject(damageSource.Damage));
                 }
             }
         }
@@ -23,9 +29,7 @@ namespace Collisions {
             DamageSource damageSource = coll.gameObject.GetComponent<DamageSource>();
             if(damageSource) {
                 if(damageTags.Contains(damageSource.Source)) {
-                    print(damageSource.Source);
-                    GetComponent<Health>().Decrease(damageSource.Damage);
-                    print(GetComponent<Health>().CurrentAmount);
+                    eventManager.TriggerEvent("DecreaseHealth", new ParamsObject(damageSource.Damage));
                 }
             }
         }

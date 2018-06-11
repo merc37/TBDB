@@ -1,5 +1,6 @@
 ﻿using EventManagers;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class Health : MonoBehaviour {
 
@@ -8,8 +9,14 @@ public class Health : MonoBehaviour {
 	private int maxHealth;
 	public int MaxAmount {get{return maxHealth;} set{maxHealth = value;}}
 
-	private int health;
-	public int CurrentAmount {
+    void Awake() {
+        eventManager = GetComponent<GameObjectEventManager>();
+        CurrentAmount = MaxAmount;
+        eventManager.StartListening("DecreaseHealth", new UnityAction<ParamsObject>(DecreaseHealth));
+    }
+
+    private int health;
+	private int CurrentAmount {
 		get{return health;}
 		set{
 			if(value < 0) {
@@ -27,21 +34,15 @@ public class Health : MonoBehaviour {
 		}
 	}
 
-    public void Decrease(int amount) {
-        CurrentAmount -= amount;
+    private void DecreaseHealth(ParamsObject paramsObj) {
+        CurrentAmount -= paramsObj.Int;
     }
 
-    public void Increase(int amount) {
-        CurrentAmount += amount;
+    private void IncreaseHealth(ParamsObject paramsObj) {
+        CurrentAmount += paramsObj.Int;
     }
 
-    public void SetMax() {
+    private void SetMaxHealth() {
         CurrentAmount = MaxAmount;
     }
-
-	// Use this for initialization
-	void Start () {
-        eventManager = GetComponent<GameObjectEventManager>();
-        CurrentAmount = MaxAmount;
-	}
 }

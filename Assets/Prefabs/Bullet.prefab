@@ -141,6 +141,7 @@ MonoBehaviour:
   collisionTags:
   - Block
   - Enemy
+  - Player
 --- !u!114 &114995395503636082
 MonoBehaviour:
   m_ObjectHideFlags: 1

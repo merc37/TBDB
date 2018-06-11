@@ -7,6 +7,8 @@ using Pathfinding;
 
 public class BasicEnemyTasks : MonoBehaviour {
 
+    private static readonly Vector2 NullVector = new Vector2(float.MinValue, float.MinValue);
+
     [SerializeField]
     private float sightAngle = 35;
     [SerializeField]
@@ -17,6 +19,8 @@ public class BasicEnemyTasks : MonoBehaviour {
     private float attackRange = 7;
     [SerializeField]
     private int lowAmmoThreshold = 0;
+    [SerializeField]
+    private int lowHealthThreshold = 3;
     [SerializeField]
     private float maxWalkSpeed = 10;
     private float speed;
@@ -30,23 +34,28 @@ public class BasicEnemyTasks : MonoBehaviour {
     private BasicThetaStarPathfinding pathfinding;
     private List<Node> path;
     private Vector2 movementTarget;
-    private bool lowOnAmmo = false;
-    private bool hasZeroHealth = false;
+    private bool lowOnAmmo;
+    private bool lowOnHealth;
+    private bool hasZeroHealth;
 
     private Vector2 addForce = Vector2.zero;
+    private Vector2 playerLastKnownPosition = NullVector;
 
     void Awake() {
 
         eventManager = GetComponent<GameObjectEventManager>();
         eventManager.StartListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
         eventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
-        eventManager.StartListening("AmmoCount", new UnityAction<ParamsObject>(CheckLowAmmo));
-        eventManager.StartListening("HealthPoints", new UnityAction<ParamsObject>(CheckZeroHealth));
+        eventManager.StartListening("AmmoCount", new UnityAction<ParamsObject>(OnAmmoCountUpdate));
+        eventManager.StartListening("HealthPoints", new UnityAction<ParamsObject>(OnHealthPointUpdate));
 
         rigidbody = GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
 
+        path = new List<Node>();
         speed = maxWalkSpeed * rigidbody.drag;
+        lowOnAmmo = false;
+        hasZeroHealth = false;
     }
 
     void FixedUpdate() {
@@ -54,15 +63,78 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
-    bool SecurePinging() {
+    bool LowOnHealth() {
+        return lowOnHealth;
+    }
+
+    [Task]
+    bool SetLookTargetToPlayer() {
+        Vector2 direction = rigidbody.position - playerRigidbody.position;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+        transform.rotation = q;
+        return true;
+    }
+
+    [Task]
+    bool UnSetPlayerLastKnownPosition() {
+        playerLastKnownPosition = NullVector;
+        return true;
+    }
+
+    [Task]
+    bool SetMovementTargetToPlayerLastKnownPosition() {
+        movementTarget = playerLastKnownPosition;
+        return true;
+    }
+
+    [Task]
+    bool PlayerLastPositionKnown() {
+        return playerLastKnownPosition != NullVector;
+    }
+
+    [Task]
+    bool MoveTowardsMovementTarget() {
+
+        //If path is empty or the target is too far from the end of it, set it
+        if(path.Count == 0 || Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance) {
+            path = pathfinding.FindPath(transform.position, movementTarget, collider);
+        }
+
+        //If path still empty there is no route to the target and this should return TODO: make sure pathfinding does not return null
+        if(path.Count == 0) {
+            return false;
+        }
+
+        GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
+
+
+        if(ReachedNode(path[0])) {
+            path.RemoveAt(0);
+        }
+
+        //reached end of path
+        if(path.Count == 0) {
+            return false;
+        }
+
+        Vector2 nodeWorldPos = path[0].worldPosition;
+        Vector2 direction = (nodeWorldPos - rigidbody.position).normalized;
+        addForce = direction * speed;
+
+        return true;
+    }
+
+    [Task]
+    bool StopMovement() {
         addForce = Vector2.zero;
         return true;
     }
 
     [Task]
-    bool Test() {
-        Vector2 direction = (movementTarget - rigidbody.position).normalized;
-        rigidbody.AddForce(direction * speed);
+    bool Stop() {
+        addForce = Vector2.zero;
+        rigidbody.velocity = Vector2.zero;
         return true;
     }
 
@@ -89,59 +161,13 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool DestroySelf() {
-        Destroy(this);
+        Destroy(gameObject);
         return true;
     }
 
     [Task]
-    bool PlayerTooFarFromEndOfPath() {
-        Vector2 finalNodeWorldPos = path[path.Count - 1].worldPosition;
-        float distanceToTargetFromEndOfPath = Vector2.Distance(finalNodeWorldPos, playerRigidbody.position);
-        return distanceToTargetFromEndOfPath > recalculatePathDistance;
-    }
-
-    [Task]
-    bool MoveAlongPath() {
-        if(ReachedNode(path[0])) {
-            path.RemoveAt(0);
-        }
-
-        if(path.Count <= 0) {
-            return false;
-        }
-
-        Vector2 nodeWorldPos = path[0].worldPosition;
-        Vector2 direction = (nodeWorldPos - rigidbody.position).normalized;
-        //rigidbody.AddForce(direction * speed);
-        addForce = direction * speed;
-
-        return true;
-    }
-
-    [Task]
-    bool SetMovementTargetToPlayer() {
+    bool SetMovementTargetToPlayerPosition() {
         movementTarget = playerRigidbody.position;
-        return true;
-    }
-
-    [Task]
-    bool RecalculatePathToMovementTarget() {
-        path = pathfinding.FindPath(transform.position, movementTarget, collider);
-
-        if(path == null) {
-            return false;
-        }
-
-        if(path.Count <= 0) {
-            return false;
-        }
-
-        Vector2 direction = rigidbody.position - movementTarget;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-        transform.rotation = q;
-
-        GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
         return true;
     }
 
@@ -165,6 +191,8 @@ public class BasicEnemyTasks : MonoBehaviour {
             if(distance <= sightDistance) {
                 RaycastHit2D raycastHit = Physics2D.Linecast(rigidbody.position, playerRigidbody.position, sightBlockMask);
                 if(!raycastHit) {
+                    //Temporary Test
+                    //playerLastKnownPosition = playerRigidbody.position;
                     return true;
                 }
             }
@@ -190,23 +218,23 @@ public class BasicEnemyTasks : MonoBehaviour {
         else return false;
     }
 
-    private void CheckLowAmmo(ParamsObject paramsObj) {
+    private void OnAmmoCountUpdate(ParamsObject paramsObj) {
         lowOnAmmo = paramsObj.Int <= lowAmmoThreshold;
     }
 
-    private void CheckZeroHealth(ParamsObject paramsObj) {
-        hasZeroHealth = paramsObj.Float <= 0;
+    private void OnHealthPointUpdate(ParamsObject paramsObj) {
+        lowOnHealth = paramsObj.Int <= lowHealthThreshold;
+        hasZeroHealth = paramsObj.Int <= 0;
     }
 
     private void SetPlayerRigidbody(ParamsObject paramsObj) {
         playerRigidbody = paramsObj.Rigidbody;
-        Debug.Log(playerRigidbody);
-        //eventManager.StopListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
+        eventManager.StopListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
     }
 
     private void SetPathfinding(ParamsObject paramsObj) {
         pathfinding = paramsObj.Transform.GetComponent<BasicThetaStarPathfinding>();
-        //eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
+        eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
     }
 
     void OnDrawGizmos() {

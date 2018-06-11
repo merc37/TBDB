@@ -286,9 +286,11 @@ GameObject:
   - component: {fileID: 305274231}
   - component: {fileID: 305274230}
   - component: {fileID: 305274232}
+  - component: {fileID: 305274236}
+  - component: {fileID: 305274239}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -330,9 +332,10 @@ MonoBehaviour:
   sightBlockMask:
     serializedVersion: 2
     m_Bits: 256
-  attackRange: 7
+  attackRange: 10
   lowAmmoThreshold: 0
-  maxWalkSpeed: 12
+  lowHealthThreshold: 3
+  maxWalkSpeed: 10
   recalculatePathDistance: 2
 --- !u!114 &305274232
 MonoBehaviour:
@@ -425,6 +428,18 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+--- !u!114 &305274236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 305274229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c5714b61857f43e5b4fe4ac7bf67dc2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxHealth: 10
 --- !u!4 &305274237
 Transform:
   m_ObjectHideFlags: 0
@@ -451,6 +466,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 255c62b68c42445d88e31879bd6d3273, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &305274239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 305274229}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 060d0bb461d6aac4fbfbbaa23d883979, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageTags:
+  - Player
 --- !u!1001 &398087937
 Prefab:
   m_ObjectHideFlags: 0
@@ -730,6 +758,7 @@ GameObject:
   - component: {fileID: 611817623}
   - component: {fileID: 611817632}
   - component: {fileID: 611817633}
+  - component: {fileID: 611817634}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -892,6 +921,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e45d2442a823417da7ac4fd2648052f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &611817634
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 611817622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 060d0bb461d6aac4fbfbbaa23d883979, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damageTags:
+  - Enemy
 --- !u!1001 &638638321
 Prefab:
   m_ObjectHideFlags: 0
@@ -929,6 +971,11 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4856054456588844, guid: 213a2a7bf2165f44591eab1cd5ee028d, type: 2}
       propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114402938128714104, guid: 213a2a7bf2165f44591eab1cd5ee028d,
+        type: 2}
+      propertyPath: damage
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
@@ -984,6 +1031,11 @@ Prefab:
     - target: {fileID: 114402938128714104, guid: 213a2a7bf2165f44591eab1cd5ee028d,
         type: 2}
       propertyPath: fireRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114402938128714104, guid: 213a2a7bf2165f44591eab1cd5ee028d,
+        type: 2}
+      propertyPath: damage
       value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
