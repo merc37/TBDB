@@ -19,20 +19,19 @@ namespace Collisions {
             DamageSource damageSource = coll.gameObject.GetComponent<DamageSource>();
             if(damageSource) {
                 if(damageTags.Contains(damageSource.Source)) {
-                    print("Enemy Hit");
                     eventManager.TriggerEvent("DecreaseHealth", new ParamsObject(damageSource.Damage));
                 }
             }
         }
 
-        void OnTriggerEnter2D(Collider2D coll) {
-            DamageSource damageSource = coll.gameObject.GetComponent<DamageSource>();
-            if(damageSource) {
-                if(damageTags.Contains(damageSource.Source)) {
-                    eventManager.TriggerEvent("DecreaseHealth", new ParamsObject(damageSource.Damage));
-                }
-            }
-        }
+        //void OnTriggerEnter2D(Collider2D coll) {
+        //    DamageSource damageSource = coll.gameObject.GetComponent<DamageSource>();
+        //    if(damageSource) {
+        //        if(damageTags.Contains(damageSource.Source)) {
+        //            eventManager.TriggerEvent("DecreaseHealth", new ParamsObject(damageSource.Damage));
+        //        }
+        //    }
+        //}
     }
 }
 

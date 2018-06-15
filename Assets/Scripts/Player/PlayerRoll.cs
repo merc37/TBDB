@@ -6,26 +6,26 @@ namespace Player {
     public class PlayerRoll : MonoBehaviour {
 
         [SerializeField]
-        private float rollTime;
+        private float rollCooldownTime;
         [SerializeField]
         private float rollForce;
 
         private GameObjectEventManager eventManager;
-        private Rigidbody2D rigidBody;
+        private new Rigidbody2D rigidbody;
         private bool rolling;
-        private float rollTimer;
+        private float rollCooldownTimer;
 
         void Start()  {
             eventManager = GetComponent<GameObjectEventManager>();
-            rigidBody = GetComponent<Rigidbody2D>();
-            rollTimer = rollTime;
+            rigidbody = GetComponent<Rigidbody2D>();
+            rollCooldownTimer = rollCooldownTime;
         }
 
         void Update() {
             if (rolling) {
-                rollTimer -= Time.deltaTime;
-                if (rollTimer <= 0) {
-                    rollTimer = rollTime;
+                rollCooldownTimer -= Time.deltaTime;
+                if (rollCooldownTimer <= 0) {
+                    rollCooldownTimer = rollCooldownTime;
                     rolling = false;
                 }
             }
@@ -33,7 +33,7 @@ namespace Player {
 
         void FixedUpdate() {
             if (!rolling && Input.GetButtonDown("Roll")) {
-                rigidBody.AddForce(rigidBody.velocity.normalized * rollForce, ForceMode2D.Impulse);
+                rigidbody.AddForce(rigidbody.velocity.normalized * rollForce, ForceMode2D.Impulse);
                 rolling = true;
             }
         }

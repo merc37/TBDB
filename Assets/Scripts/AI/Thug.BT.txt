@@ -12,11 +12,18 @@ tree("Live")
 			mute
 				fallback
 					sequence
+						ShouldRoll
+						CanRoll
+						StopMovement
+						Roll
+					sequence
 						LowOnHealth
 						SetMovementTargetToCover
 						mute
 							repeat
-								MoveTowardsMovementTarget
+								sequence
+									SetLookTargetToMovementDirection
+									MoveTowardsMovementTarget
 					sequence
 						LowOnAmmo
 						random
@@ -35,16 +42,19 @@ tree("Live")
 					sequence
 						PlayerLastPositionKnown
 						SetMovementTargetToPlayerLastKnownPosition
+						SetLookTargetToMovementDirection
 						fallback
 							MoveTowardsMovementTarget
+							Stop
 							UnSetPlayerLastKnownPosition
-						StopMovement
+					StopMovement
 
 tree("FireOnSight")
 	sequence
 		PlayerInSight
 		PlayerInAttackRange
 		not LowOnAmmo
+		AimAtPlayer
 		Shoot
 
 tree("DIE")

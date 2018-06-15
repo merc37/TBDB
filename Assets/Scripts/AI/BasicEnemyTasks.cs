@@ -26,6 +26,10 @@ public class BasicEnemyTasks : MonoBehaviour {
     private float speed;
     [SerializeField]
     private float recalculatePathDistance = 2;
+    [SerializeField]
+    private float rollCooldownTime = 5;
+    [SerializeField]
+    private float rollForce = 10;
 
     private GameObjectEventManager eventManager;
     private Rigidbody2D playerRigidbody;
@@ -37,6 +41,11 @@ public class BasicEnemyTasks : MonoBehaviour {
     private bool lowOnAmmo;
     private bool lowOnHealth;
     private bool hasZeroHealth;
+    private bool shouldRoll;
+    private float rollCooldownTimer;
+    private Vector2 rollDirection;
+    private bool rolling;
+    private bool roll;
 
     private Vector2 addForce = Vector2.zero;
     private Vector2 playerLastKnownPosition = NullVector;
@@ -48,6 +57,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         eventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
         eventManager.StartListening("AmmoCount", new UnityAction<ParamsObject>(OnAmmoCountUpdate));
         eventManager.StartListening("HealthPoints", new UnityAction<ParamsObject>(OnHealthPointUpdate));
+        eventManager.StartListening("Roll", new UnityAction<ParamsObject>(OnRoll));
 
         rigidbody = GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
@@ -56,10 +66,48 @@ public class BasicEnemyTasks : MonoBehaviour {
         speed = maxWalkSpeed * rigidbody.drag;
         lowOnAmmo = false;
         hasZeroHealth = false;
+        rollCooldownTimer = rollCooldownTime;
     }
 
     void FixedUpdate() {
         rigidbody.AddForce(addForce);
+        if(roll) {
+            rigidbody.AddForce(rollDirection.normalized * rollForce, ForceMode2D.Impulse);
+            roll = false;
+        }
+    }
+
+    void Update() {
+        if(rolling) {
+            rollCooldownTimer -= Time.time;
+            if(rollCooldownTimer <= 0) {
+                rolling = false;
+                rollCooldownTimer = rollCooldownTime;
+            }
+        }
+    }
+
+    [Task]
+    bool Roll() {
+        rolling = true;
+        shouldRoll = false;
+        roll = true;
+        return true;
+    }
+
+    [Task]
+    bool ShouldRoll() {
+        return shouldRoll;
+    }
+
+    [Task]
+    bool CanRoll() {
+        return !rolling;
+    }
+
+    [Task]
+    bool AimAtPlayer() {
+        return true;
     }
 
     [Task]
@@ -71,8 +119,22 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool SetLookTargetToPlayer() {
         Vector2 direction = rigidbody.position - playerRigidbody.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-        transform.rotation = q;
+        rigidbody.rotation = angle + 90;
+        //Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+        //transform.rotation = q;
+        return true;
+    }
+
+    [Task]
+    bool SetLookTargetToMovementDirection() {
+        if(path.Count > 0) {
+            Vector2 nodeWorldPos = path[0].worldPosition;
+            Vector2 direction = rigidbody.position - nodeWorldPos;
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            rigidbody.rotation = angle + 90;
+            //Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
+            //transform.rotation = q;
+        }
         return true;
     }
 
@@ -128,6 +190,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     [Task]
     bool StopMovement() {
         addForce = Vector2.zero;
+        path = new List<Node>();
         return true;
     }
 
@@ -135,6 +198,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool Stop() {
         addForce = Vector2.zero;
         rigidbody.velocity = Vector2.zero;
+        path = new List<Node>();
         return true;
     }
 
@@ -151,6 +215,7 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool SetMovementTargetToCover() {
+
         return false;
     }
 
@@ -185,14 +250,16 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool PlayerInSight() {
-        float angle = Vector3.Angle(playerRigidbody.position - rigidbody.position, transform.up);
+        return IsInSight(rigidbody.position, playerRigidbody.position);
+    }
+
+    bool IsInSight(Vector2 from, Vector2 to) {
+        float angle = Vector2.Angle(to - from, transform.up);
         if(angle <= sightAngle) {
-            float distance = Vector3.Distance(rigidbody.position, playerRigidbody.position);
+            float distance = Vector2.Distance(from, to);
             if(distance <= sightDistance) {
-                RaycastHit2D raycastHit = Physics2D.Linecast(rigidbody.position, playerRigidbody.position, sightBlockMask);
+                RaycastHit2D raycastHit = Physics2D.Linecast(from, to, sightBlockMask);
                 if(!raycastHit) {
-                    //Temporary Test
-                    //playerLastKnownPosition = playerRigidbody.position;
                     return true;
                 }
             }
@@ -225,6 +292,11 @@ public class BasicEnemyTasks : MonoBehaviour {
     private void OnHealthPointUpdate(ParamsObject paramsObj) {
         lowOnHealth = paramsObj.Int <= lowHealthThreshold;
         hasZeroHealth = paramsObj.Int <= 0;
+    }
+
+    private void OnRoll(ParamsObject paramsObj) {
+        shouldRoll = true;
+        rollDirection = Vector3.Cross(paramsObj.Vector2, Vector3.forward);
     }
 
     private void SetPlayerRigidbody(ParamsObject paramsObj) {
