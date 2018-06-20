@@ -147,9 +147,9 @@ namespace Pathfinding {
                         }
                         //Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
 
-                        if(n.parent != null && false) {
-                            Gizmos.DrawLine(n.worldPosition, n.parent.worldPosition);
-                        }
+                        //if(n.parent != null) {
+                        //    Gizmos.DrawLine(n.worldPosition, n.parent.worldPosition);
+                        //}
                     }
 
                     if(n.fCost != Mathf.Infinity) {

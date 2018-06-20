@@ -30,6 +30,8 @@ public class BasicEnemyTasks : MonoBehaviour {
     private float rollCooldownTime = 5;
     [SerializeField]
     private float rollForce = 10;
+	[SerializeField]
+	private float maxPathSearchDistance = 20;
 
     private GameObjectEventManager eventManager;
     private Rigidbody2D playerRigidbody;
@@ -160,7 +162,7 @@ public class BasicEnemyTasks : MonoBehaviour {
 
         //If path is empty or the target is too far from the end of it, set it
         if(path.Count == 0 || Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance) {
-            path = pathfinding.FindPath(transform.position, movementTarget, collider);
+            path = pathfinding.FindPath(transform.position, movementTarget, collider, maxPathSearchDistance);
         }
 
         //If path still empty there is no route to the target and this should return TODO: make sure pathfinding does not return null

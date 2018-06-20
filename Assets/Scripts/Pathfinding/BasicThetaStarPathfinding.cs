@@ -10,7 +10,8 @@ namespace Pathfinding {
             grid = GetComponent<Grid>();
         }
 
-        public List<Node> FindPath(Vector3 startPos, Vector3 targetPos, Collider2D collider) {
+        public List<Node> FindPath(Vector3 startPos, Vector3 targetPos, Collider2D collider, float maxDistance) {
+
             grid.resetGrid();
 
             Node startNode = grid.NodeFromWorldPoint(startPos);
@@ -40,10 +41,14 @@ namespace Pathfinding {
                 }
 
                 foreach(Node neighbor in grid.GetNeighbors(currentNode)) {
-                    if(!neighbor.isWalkable || closedSet.Contains(neighbor)) continue;
 
-                    // Basic Theta * "UpdateVertex()" method
-                    if(currentNode.parent != null && LineOfSight(currentNode.parent, neighbor, collider)) {
+					if (!neighbor.isWalkable || closedSet.Contains(neighbor) ||
+						(neighbor.fCost != Mathf.Infinity && neighbor.fCost <= maxDistance)) {
+						continue;
+					}
+
+					// Basic Theta * "UpdateVertex()" method
+					if (currentNode.parent != null && LineOfSight(currentNode.parent, neighbor, collider)) {
                         float newMoveCost = currentNode.parent.gCost + GetStraightDistance(currentNode.parent, neighbor);
                         if(newMoveCost <= neighbor.gCost) {
                             neighbor.gCost = newMoveCost;

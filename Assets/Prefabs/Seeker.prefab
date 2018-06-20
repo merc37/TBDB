@@ -335,6 +335,8 @@ MonoBehaviour:
   maxWalkSpeed: 10
   recalculatePathDistance: 2
   rollCooldownTime: 5
+  rollForce: 10
+  maxPathSearchDistance: 20
 --- !u!114 &114342653404078254
 MonoBehaviour:
   m_ObjectHideFlags: 1
