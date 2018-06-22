@@ -18,6 +18,7 @@ tree("Live")
 						Roll
 					sequence
 						LowOnHealth
+						not InCover
 						SetMovementTargetToCover
 						mute
 							repeat
@@ -35,7 +36,12 @@ tree("Live")
 										MoveTowardsMovementTarget
 								Reload
 					sequence
-						PlayerInSight
+						tree("PlayerInSight")
+						PlayerInMedAttackRange
+						SetLookTargetToPlayer
+						Stop
+					sequence
+						tree("PlayerInSight")
 						SetLookTargetToPlayer
 						SetMovementTargetToPlayerPosition
 						MoveTowardsMovementTarget
@@ -51,7 +57,7 @@ tree("Live")
 
 tree("FireOnSight")
 	sequence
-		PlayerInSight
+		tree("PlayerInSight")
 		PlayerInAttackRange
 		not LowOnAmmo
 		AimAtPlayer
@@ -62,11 +68,7 @@ tree("DIE")
 		HasZeroHealth
 		DestroySelf
 
-tree("FindCoverAndReload")
+tree("PlayerInSight")
 	sequence
-		random
-			Reload
-			sequence
-				SetMovementTargetToCover
-				//tree("MoveToMovementTarget")
-				Reload
+		PlayerInSight
+		SetPlayerLastKnownPosition

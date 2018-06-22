@@ -264,7 +264,30 @@ Prefab:
     - target: {fileID: 114027638117899994, guid: fec2d2680068e8f469b9f4c09aec41a5,
         type: 2}
       propertyPath: gridScale
-      value: 0.5
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4832983565451218, guid: fec2d2680068e8f469b9f4c09aec41a5, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114861158545340640, guid: fec2d2680068e8f469b9f4c09aec41a5,
+        type: 2}
+      propertyPath: TmxPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4832983565451218, guid: fec2d2680068e8f469b9f4c09aec41a5, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 61930117294620470, guid: fec2d2680068e8f469b9f4c09aec41a5,
+        type: 2}
+      propertyPath: m_Offset.x
+      value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 114861158545340640, guid: fec2d2680068e8f469b9f4c09aec41a5,
+        type: 2}
+      propertyPath: TmxPosition.x
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114374399050986842, guid: fec2d2680068e8f469b9f4c09aec41a5, type: 2}
@@ -426,6 +449,11 @@ Prefab:
     - target: {fileID: 4034671404142482, guid: d0f821b630166453ebcc31ecad9e2088, type: 2}
       propertyPath: m_LocalScale.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 20912500232094488, guid: d0f821b630166453ebcc31ecad9e2088,
+        type: 2}
+      propertyPath: orthographic size
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: d0f821b630166453ebcc31ecad9e2088, type: 2}

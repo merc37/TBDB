@@ -8,7 +8,6 @@ public class LightObstacleImporter : Tiled2Unity.ICustomTiledImporter {
         
         if(gameObject && gameObject.transform.parent.name == "lightObstacle") {
             Bounds gameObjectBounds = gameObject.GetComponent<Collider2D>().bounds;
-
             //TODO: Support more shapes
             GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
             cube.name = gameObject.name;
@@ -34,4 +33,5 @@ public class LightObstacleImporter : Tiled2Unity.ICustomTiledImporter {
     public void CustomizePrefab(GameObject gameObject) {
         
     }
+
 }

@@ -122,8 +122,6 @@ public class BasicEnemyTasks : MonoBehaviour {
         Vector2 direction = rigidbody.position - playerRigidbody.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         rigidbody.rotation = angle + 90;
-        //Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-        //transform.rotation = q;
         return true;
     }
 
@@ -134,9 +132,13 @@ public class BasicEnemyTasks : MonoBehaviour {
             Vector2 direction = rigidbody.position - nodeWorldPos;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
             rigidbody.rotation = angle + 90;
-            //Quaternion q = Quaternion.AngleAxis(angle + 90, Vector3.forward);
-            //transform.rotation = q;
         }
+        return true;
+    }
+
+    [Task]
+    bool SetPlayerLastKnownPosition() {
+        playerLastKnownPosition = playerRigidbody.position;
         return true;
     }
 
@@ -166,12 +168,11 @@ public class BasicEnemyTasks : MonoBehaviour {
         }
 
         //If path still empty there is no route to the target and this should return TODO: make sure pathfinding does not return null
-        if(path.Count == 0) {
+        if(path == null) {
             return false;
         }
 
-        GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
-
+        //GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
 
         if(ReachedNode(path[0])) {
             path.RemoveAt(0);
@@ -192,7 +193,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     [Task]
     bool StopMovement() {
         addForce = Vector2.zero;
-        path = new List<Node>();
+        path.Clear();
         return true;
     }
 
@@ -200,7 +201,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool Stop() {
         addForce = Vector2.zero;
         rigidbody.velocity = Vector2.zero;
-        path = new List<Node>();
+        path.Clear();
         return true;
     }
 
@@ -216,8 +217,52 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
+    bool InCover() {
+        return !Physics2D.Linecast(playerRigidbody.position, rigidbody.position);
+    }
+    
+    List<Vector2> potentialCoverPoints = new List<Vector2>();
+    Vector2 bestCoverPoint;
+    [Task]
     bool SetMovementTargetToCover() {
+        return false;
 
+        potentialCoverPoints = new List<Vector2>();
+        float searchRadius = 3;
+        int samples = 10;
+        Vector2 point;
+        List<Node> coverPath;
+        int x = 0;
+        while(potentialCoverPoints.Count < (samples * 2)) {
+            for(int i = 0; i < samples; i++) {
+                point = rigidbody.position + (Random.insideUnitCircle * searchRadius);
+                RaycastHit2D pointNotInSightOfPlayer = Physics2D.Linecast(playerRigidbody.position, point, sightBlockMask);
+                if(pointNotInSightOfPlayer) {
+                    //RaycastHit2D pointBlocked = Physics2D.Linecast(point, point, sightBlockMask);
+                    potentialCoverPoints.Add(point);
+                }
+            }
+            searchRadius += 2;
+        }
+
+        float biggestDifference = float.MinValue;
+        float diff;
+        bestCoverPoint = NullVector;
+        foreach(Vector2 coverPoint in potentialCoverPoints) {
+            coverPath = pathfinding.FindPath(rigidbody.position, coverPoint, collider, 5);
+            if(coverPath != null) {
+                diff = Vector2.Distance(coverPoint, playerRigidbody.position) - Vector2.Distance(coverPoint, rigidbody.position);
+                if(diff > biggestDifference) {
+                    bestCoverPoint = coverPoint;
+                }
+            }
+        }
+
+        if(bestCoverPoint != NullVector) {
+            movementTarget = bestCoverPoint;
+            return true;
+        }
+        
         return false;
     }
 
@@ -245,6 +290,12 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
+    bool PlayerInMedAttackRange() {
+        float distanceToTarget = Vector2.Distance(rigidbody.position, playerRigidbody.position);
+        return distanceToTarget <= attackRange/2;
+    }
+
+    [Task]
     bool PlayerInAttackRange() {
         float distanceToTarget = Vector2.Distance(rigidbody.position, playerRigidbody.position);
         return distanceToTarget <= attackRange;
@@ -252,15 +303,11 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool PlayerInSight() {
-        return IsInSight(rigidbody.position, playerRigidbody.position);
-    }
-
-    bool IsInSight(Vector2 from, Vector2 to) {
-        float angle = Vector2.Angle(to - from, transform.up);
+        float angle = Vector2.Angle(playerRigidbody.position - rigidbody.position, transform.up);
         if(angle <= sightAngle) {
-            float distance = Vector2.Distance(from, to);
+            float distance = Vector2.Distance(rigidbody.position, playerRigidbody.position);
             if(distance <= sightDistance) {
-                RaycastHit2D raycastHit = Physics2D.Linecast(from, to, sightBlockMask);
+                RaycastHit2D raycastHit = Physics2D.Linecast(rigidbody.position, playerRigidbody.position, sightBlockMask);
                 if(!raycastHit) {
                     return true;
                 }
@@ -316,5 +363,11 @@ public class BasicEnemyTasks : MonoBehaviour {
         Quaternion q2 = Quaternion.AngleAxis(sightAngle, Vector3.forward);
         Gizmos.DrawRay(transform.position, q1 * transform.up * sightDistance);
         Gizmos.DrawRay(transform.position, q2 * transform.up * sightDistance);
+        //Gizmos.color = Color.cyan;
+        //for(int i = 0; i < potentialCoverPoints.Count; i++) {
+        //    Gizmos.DrawCube(potentialCoverPoints[i], new Vector3(.1f, .1f, 1));
+        //}
+        //Gizmos.color = Color.red;
+        //Gizmos.DrawCube(bestCoverPoint, new Vector3(.5f, .5f, 1));
     }
 }
