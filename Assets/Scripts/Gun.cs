@@ -9,7 +9,7 @@ public class Gun : MonoBehaviour {
     [SerializeField]
     private int speed;
     [SerializeField]
-    private bool automatic;
+    protected bool automatic;
     [SerializeField]
     private float fireRate;
     [SerializeField]
@@ -21,7 +21,7 @@ public class Gun : MonoBehaviour {
     [SerializeField]
     private AudioClip shotSound;
 
-    private GameObjectEventManager eventManager;
+    protected GameObjectEventManager eventManager;
     private AudioSource audioSource;
     private float fireTime;
     private float lastFireTime;
@@ -29,6 +29,8 @@ public class Gun : MonoBehaviour {
     private bool reloading;
     private float lastReloadTime;
     private float deltaReloadCheckTime;
+
+    private Rigidbody2D playerRigidbody;
 
     private Rigidbody2D lastFired;
     public Rigidbody2D LastFired
@@ -59,7 +61,7 @@ public class Gun : MonoBehaviour {
         }
     }
 
-    void Start() {
+    void Awake() {
         eventManager = GetComponentInParent<GameObjectEventManager>();
         audioSource = GetComponent<AudioSource>();
         lastFired = null;
@@ -69,11 +71,11 @@ public class Gun : MonoBehaviour {
         reloading = false;
         lastReloadTime = 0;
         eventManager.StartListening("OnReload", new UnityAction<ParamsObject>(OnReload));
-        if (automatic) {
-            eventManager.StartListening("OnAutoShoot", new UnityAction<ParamsObject>(OnAutoShoot));
-        } else {
-            eventManager.StartListening("OnShoot", new UnityAction<ParamsObject>(OnSingleShoot));
-        }
+        eventManager.StartListening("OnShoot", new UnityAction<ParamsObject>(OnShoot));
+    }
+
+    void Start() {
+        UpdateGunInfo();
     }
 
     void Update() {
@@ -93,17 +95,7 @@ public class Gun : MonoBehaviour {
         }
     }
 
-    private void OnSingleShoot(ParamsObject paramsObj) {
-        if (CurrentAmmo > 0 && !reloading) {
-            deltaFireTime = Time.time - lastFireTime;
-            if (deltaFireTime >= fireTime) {
-                lastFireTime = Time.time;
-                FireProjectile();
-            }
-        }
-    }
-
-    private void OnAutoShoot(ParamsObject paramsObj) {
+    protected virtual void OnShoot(ParamsObject paramsObj) {
         if (CurrentAmmo > 0 && !reloading) {
             deltaFireTime = Time.time - lastFireTime;
             if (deltaFireTime >= fireTime) {
@@ -116,12 +108,19 @@ public class Gun : MonoBehaviour {
     private void FireProjectile() {
         audioSource.PlayOneShot(shotSound);
         Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
-        Vector2 velocity = newProjectile.transform.up * speed;
+        Vector2 velocity = newProjectile.transform.up.normalized * speed;
         velocity += transform.root.GetComponent<Rigidbody2D>().velocity;
         newProjectile.velocity = velocity;
         newProjectile.GetComponent<DamageSource>().Damage = damage;
         newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
         lastFired = newProjectile;
         CurrentAmmo--;
+    }
+
+    private void UpdateGunInfo() {
+        ParamsObject paramsObj = new ParamsObject(transform);
+        paramsObj.Float = speed;
+        paramsObj.Int = damage;
+        eventManager.TriggerEvent("UpdateGunInfo", paramsObj);
     }
 }

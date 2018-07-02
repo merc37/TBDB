@@ -32,6 +32,8 @@ public class BasicEnemyTasks : MonoBehaviour {
     private float rollForce = 10;
 	[SerializeField]
 	private float maxPathSearchDistance = 20;
+    [SerializeField]
+    private float rotateSpeed = 5;
 
     private GameObjectEventManager eventManager;
     private Rigidbody2D playerRigidbody;
@@ -50,7 +52,12 @@ public class BasicEnemyTasks : MonoBehaviour {
     private bool roll;
 
     private Vector2 addForce = Vector2.zero;
+    private float moveToAngle = -90;
     private Vector2 playerLastKnownPosition = NullVector;
+    private Vector2 playerLastKnownHeading = NullVector;
+
+    private float gunProjectileSpeed;
+    private Transform gunTransform;
 
     void Awake() {
 
@@ -60,6 +67,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         eventManager.StartListening("AmmoCount", new UnityAction<ParamsObject>(OnAmmoCountUpdate));
         eventManager.StartListening("HealthPoints", new UnityAction<ParamsObject>(OnHealthPointUpdate));
         eventManager.StartListening("Roll", new UnityAction<ParamsObject>(OnRoll));
+        eventManager.StartListening("UpdateGunInfo", new UnityAction<ParamsObject>(OnGunInfoUpdate));
 
         rigidbody = GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
@@ -73,6 +81,12 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     void FixedUpdate() {
         rigidbody.AddForce(addForce);
+        if(moveToAngle != float.NegativeInfinity) {
+            rigidbody.rotation = Mathf.LerpAngle(rigidbody.rotation, moveToAngle, rotateSpeed * Time.fixedDeltaTime);
+            if(Mathf.DeltaAngle(rigidbody.rotation, moveToAngle) <= 1) {
+                moveToAngle = float.NegativeInfinity;
+            }
+        }
         if(roll) {
             rigidbody.AddForce(rollDirection.normalized * rollForce, ForceMode2D.Impulse);
             roll = false;
@@ -87,6 +101,44 @@ public class BasicEnemyTasks : MonoBehaviour {
                 rollCooldownTimer = rollCooldownTime;
             }
         }
+    }
+
+    [Task]
+    bool PlayerRunningAway() {
+        bool isAcute = Vector2.Dot(rigidbody.velocity, playerRigidbody.velocity) > 0;
+        bool playerRunning = playerRigidbody.velocity.magnitude >= rigidbody.velocity.magnitude;
+        return isAcute && playerRunning;
+    }
+
+    [Task]
+    bool SetMoveToAngleRandom() {
+        moveToAngle = Random.Range(-360, 360);
+        return true;
+    }
+
+    [Task]
+    bool SetMoveToAngleToPlayerLastKnownHeading() {
+        float angle = Mathf.Atan2(playerLastKnownHeading.y, playerLastKnownHeading.x) * Mathf.Rad2Deg;
+        moveToAngle = angle + 90;
+        return true;
+    }
+
+    [Task]
+    bool UnSetPlayerLastKnownHeading() {
+        playerLastKnownHeading = NullVector;
+        return true;
+    }
+
+    [Task]
+    bool PlayerLastHeadingKnown() {
+        return playerLastKnownHeading != NullVector;
+    }
+
+    [Task]
+    bool SetPlayerLastKnownHeading() {
+        Vector2 direction = playerRigidbody.position.normalized - playerRigidbody.velocity.normalized;
+        playerLastKnownHeading = direction;
+        return true;
     }
 
     [Task]
@@ -107,8 +159,30 @@ public class BasicEnemyTasks : MonoBehaviour {
         return !rolling;
     }
 
+    Vector2 pointToAimAt;
     [Task]
     bool AimAtPlayer() {
+        float playerSpeed = playerRigidbody.velocity.magnitude;
+
+        float projectileSpeed = gunProjectileSpeed;//Needs to be adjusted to reflect enemy motion
+        Vector2 projectileSpawn = gunTransform.GetChild(0).position;
+
+        float distanceBetweenProjectileAndPlayer = Vector2.Distance(projectileSpawn, playerRigidbody.position);
+        float angleBetweenPlayerVelocityAndProjectile = Vector2.Angle(playerRigidbody.position - playerRigidbody.velocity, playerRigidbody.position - projectileSpawn);
+
+        float x = 1 - (2 * distanceBetweenProjectileAndPlayer * Mathf.Cos(angleBetweenPlayerVelocityAndProjectile));
+        float y = (projectileSpeed * projectileSpeed) - ((playerSpeed * playerSpeed) * x);
+        float tSqrd = (distanceBetweenProjectileAndPlayer * distanceBetweenProjectileAndPlayer) / y;
+        if(tSqrd < 0) {
+            return true;//Return false?
+        }
+
+        float t = Mathf.Sqrt(tSqrd);
+        pointToAimAt = playerRigidbody.position + (t * playerRigidbody.velocity);
+        Vector2 direction = rigidbody.position - pointToAimAt;
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        rigidbody.rotation = angle + 90;
+
         return true;
     }
 
@@ -121,7 +195,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool SetLookTargetToPlayer() {
         Vector2 direction = rigidbody.position - playerRigidbody.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        rigidbody.rotation = angle + 90;
+        moveToAngle = angle + 90;
         return true;
     }
 
@@ -131,7 +205,7 @@ public class BasicEnemyTasks : MonoBehaviour {
             Vector2 nodeWorldPos = path[0].worldPosition;
             Vector2 direction = rigidbody.position - nodeWorldPos;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            rigidbody.rotation = angle + 90;
+            moveToAngle = angle + 90;
         }
         return true;
     }
@@ -172,9 +246,9 @@ public class BasicEnemyTasks : MonoBehaviour {
             return false;
         }
 
-        //GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
+        GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
 
-        if(ReachedNode(path[0])) {
+        if(path.Count != 0 && ReachedNode(path[0])) {
             path.RemoveAt(0);
         }
 
@@ -347,6 +421,11 @@ public class BasicEnemyTasks : MonoBehaviour {
         shouldRoll = true;
         rollDirection = Vector3.Cross(paramsObj.Vector2, Vector3.forward);
     }
+    
+    private void OnGunInfoUpdate(ParamsObject paramsObj) {
+        gunProjectileSpeed = paramsObj.Float;
+        gunTransform = paramsObj.Transform;
+    }
 
     private void SetPlayerRigidbody(ParamsObject paramsObj) {
         playerRigidbody = paramsObj.Rigidbody;
@@ -363,7 +442,8 @@ public class BasicEnemyTasks : MonoBehaviour {
         Quaternion q2 = Quaternion.AngleAxis(sightAngle, Vector3.forward);
         Gizmos.DrawRay(transform.position, q1 * transform.up * sightDistance);
         Gizmos.DrawRay(transform.position, q2 * transform.up * sightDistance);
-        //Gizmos.color = Color.cyan;
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawCube(pointToAimAt, new Vector3(.5f, .5f, 1));
         //for(int i = 0; i < potentialCoverPoints.Count; i++) {
         //    Gizmos.DrawCube(potentialCoverPoints[i], new Vector3(.1f, .1f, 1));
         //}

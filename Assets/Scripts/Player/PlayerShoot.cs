@@ -11,15 +11,15 @@ namespace Player {
         }
         
         void Update () {
-            if(Input.GetButtonDown("Fire")) {
-                if(eventManager != null) {
+            if (Input.GetButton("Fire")) {
+                if (eventManager != null) {
                     eventManager.TriggerEvent("OnShoot");
                 }
             }
 
-            if (Input.GetButton("Fire")) {
-                if (eventManager != null) {
-                    eventManager.TriggerEvent("OnAutoShoot");
+            if(Input.GetButtonUp("Fire")) {
+                if(eventManager != null) {
+                    eventManager.TriggerEvent("UnlockShoot");
                 }
             }
 
