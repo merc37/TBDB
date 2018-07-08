@@ -1,4 +1,5 @@
 ﻿using EventManagers;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace Player {
@@ -6,6 +7,14 @@ namespace Player {
 
         private bool shootLocked = false;
         private bool hasStarted = false;
+
+        private Rigidbody2D lastFired;
+        public Rigidbody2D LastFired
+        {
+            get {
+                return lastFired;
+            }
+        }
 
         protected override void OnShoot(ParamsObject paramsObj) {
             if(!hasStarted) {
@@ -19,6 +28,11 @@ namespace Player {
                     shootLocked = true;
                 }
             }
+        }
+
+        protected override Rigidbody2D FireProjectile() {
+            lastFired = base.FireProjectile();
+            return lastFired;
         }
 
         private void UnlockShoot(ParamsObject paramsObj) {

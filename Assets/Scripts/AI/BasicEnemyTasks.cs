@@ -134,10 +134,12 @@ public class BasicEnemyTasks : MonoBehaviour {
         return playerLastKnownHeading != NullVector;
     }
 
+    Vector2 seePlayerLastKnownHeading;
     [Task]
     bool SetPlayerLastKnownHeading() {
         Vector2 direction = playerRigidbody.position.normalized - playerRigidbody.velocity.normalized;
         playerLastKnownHeading = direction;
+        seePlayerLastKnownHeading = playerLastKnownHeading;
         return true;
     }
 
@@ -210,9 +212,11 @@ public class BasicEnemyTasks : MonoBehaviour {
         return true;
     }
 
+    Vector2 seePlayerLastKnownPosition;
     [Task]
     bool SetPlayerLastKnownPosition() {
         playerLastKnownPosition = playerRigidbody.position;
+        seePlayerLastKnownPosition = playerLastKnownPosition;
         return true;
     }
 
@@ -401,9 +405,9 @@ public class BasicEnemyTasks : MonoBehaviour {
         return false;
     }
 
-    private float pointAccuracy = 0.5f;
+    private float pointAccuracy = 0.1f;
     private bool isAtNode(Node node) {
-        float distanceFromNode = Vector2.Distance(transform.position, node.worldPosition);
+        float distanceFromNode = Vector2.Distance(rigidbody.position, node.worldPosition);
         if(distanceFromNode <= pointAccuracy) return true;
         else return false;
     }
@@ -443,7 +447,9 @@ public class BasicEnemyTasks : MonoBehaviour {
         Gizmos.DrawRay(transform.position, q1 * transform.up * sightDistance);
         Gizmos.DrawRay(transform.position, q2 * transform.up * sightDistance);
         Gizmos.color = Color.cyan;
-        Gizmos.DrawCube(pointToAimAt, new Vector3(.5f, .5f, 1));
+        Gizmos.DrawCube(seePlayerLastKnownPosition, new Vector3(.3f, .3f, 1));
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(seePlayerLastKnownPosition, seePlayerLastKnownHeading * 5);
         //for(int i = 0; i < potentialCoverPoints.Count; i++) {
         //    Gizmos.DrawCube(potentialCoverPoints[i], new Vector3(.1f, .1f, 1));
         //}

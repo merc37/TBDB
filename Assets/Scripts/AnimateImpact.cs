@@ -52,7 +52,7 @@ public class AnimateImpact : MonoBehaviour {
                 closest = point;
             }
         }
-        Debug.Log("Impact position:" + closest.point);
+        //Debug.Log("Impact position:" + closest.point);
         GameObject impact = (GameObject)Instantiate(impactAnim, closest.point + 0.5f * closest.normal, Quaternion.LookRotation(transform.forward, -closest.normal));
     }
 
@@ -69,9 +69,9 @@ public class AnimateImpact : MonoBehaviour {
             Vector2 originPoint = previousPosition + leftEdge;
             Vector2 castPoint = originPoint + (Rotate(myRigidbody.velocity.normalized, 90) * (width * x / 100));
             if (hitInfo = Physics2D.Raycast(castPoint, movementThisStep, movementThisStep.magnitude * 2.0f)) {
-                Debug.Log("hit");
+                //Debug.Log("hit");
                 if (!hitInfo.collider || hitInfo.collider == myCollider) continue;
-                Debug.Log("Impact position:" + hitInfo.point);
+                //Debug.Log("Impact position:" + hitInfo.point);
                 GameObject impact = (GameObject)Instantiate(impactAnim, hitInfo.point + 0.5f * hitInfo.normal, Quaternion.LookRotation(transform.forward, -hitInfo.normal));
                 return;
             }

@@ -32,14 +32,6 @@ public class Gun : MonoBehaviour {
 
     private Rigidbody2D playerRigidbody;
 
-    private Rigidbody2D lastFired;
-    public Rigidbody2D LastFired
-    {
-        get {
-            return lastFired;
-        }
-    }
-
     private int currAmmo;
     public int MaxAmmo {get {return maxAmmo;}}
     public int CurrentAmmo
@@ -64,7 +56,6 @@ public class Gun : MonoBehaviour {
     void Awake() {
         eventManager = GetComponentInParent<GameObjectEventManager>();
         audioSource = GetComponent<AudioSource>();
-        lastFired = null;
         CurrentAmmo = MaxAmmo;
         fireTime = 1 / fireRate;
         lastFireTime = 0;
@@ -105,7 +96,7 @@ public class Gun : MonoBehaviour {
         }
     }
 
-    private void FireProjectile() {
+    protected virtual Rigidbody2D FireProjectile() {
         audioSource.PlayOneShot(shotSound);
         Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
         Vector2 velocity = newProjectile.transform.up.normalized * speed;
@@ -113,8 +104,8 @@ public class Gun : MonoBehaviour {
         newProjectile.velocity = velocity;
         newProjectile.GetComponent<DamageSource>().Damage = damage;
         newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
-        lastFired = newProjectile;
         CurrentAmmo--;
+        return newProjectile;
     }
 
     private void UpdateGunInfo() {

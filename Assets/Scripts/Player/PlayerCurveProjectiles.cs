@@ -10,11 +10,11 @@ namespace Player {
 		[SerializeField]
 		private float curveDeadzone;
 
-        private Gun gun;
+        private PlayerGun gun;
         private Rigidbody2D lastFired;
 
         void Start() {
-            gun = GetComponentInChildren<Gun>();
+            gun = GetComponentInChildren<PlayerGun>();
             curveDeadzone *= Mathf.Deg2Rad;
 		}
 
