@@ -40,6 +40,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     private new Rigidbody2D rigidbody;
     private new Collider2D collider;
     private BasicThetaStarPathfinding pathfinding;
+    private Grid grid;
     private List<Node> path;
     private Vector2 movementTarget;
     private bool lowOnAmmo;
@@ -203,7 +204,7 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool SetLookTargetToMovementDirection() {
-        if(path.Count > 0) {
+        if(path != null && path.Count > 0) {
             Vector2 nodeWorldPos = path[0].worldPosition;
             Vector2 direction = rigidbody.position - nodeWorldPos;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
@@ -241,7 +242,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool MoveTowardsMovementTarget() {
 
         //If path is empty or the target is too far from the end of it, set it
-        if(path.Count == 0 || Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance) {
+        if(path == null || path.Count == 0 || Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance) {
             path = pathfinding.FindPath(transform.position, movementTarget, collider, maxPathSearchDistance);
         }
 
@@ -279,7 +280,9 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool Stop() {
         addForce = Vector2.zero;
         rigidbody.velocity = Vector2.zero;
-        path.Clear();
+        if(path != null) {
+            path.Clear();
+        }
         return true;
     }
 
@@ -298,41 +301,58 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool InCover() {
         return !Physics2D.Linecast(playerRigidbody.position, rigidbody.position);
     }
-    
-    List<Vector2> potentialCoverPoints = new List<Vector2>();
+
+    List<Node> potentialCoverNodes = new List<Node>();
     Vector2 bestCoverPoint;
+    bool returnFalse;
     [Task]
     bool SetMovementTargetToCover() {
-        return false;
-
-        potentialCoverPoints = new List<Vector2>();
-        float searchRadius = 3;
-        int samples = 10;
-        Vector2 point;
-        List<Node> coverPath;
-        int x = 0;
-        while(potentialCoverPoints.Count < (samples * 2)) {
-            for(int i = 0; i < samples; i++) {
-                point = rigidbody.position + (Random.insideUnitCircle * searchRadius);
-                RaycastHit2D pointNotInSightOfPlayer = Physics2D.Linecast(playerRigidbody.position, point, sightBlockMask);
-                if(pointNotInSightOfPlayer) {
-                    //RaycastHit2D pointBlocked = Physics2D.Linecast(point, point, sightBlockMask);
-                    potentialCoverPoints.Add(point);
+        if(returnFalse) {
+            return false;
+        }
+        potentialCoverNodes = new List<Node>();
+        HashSet<Vector2> inProcessQueue = new HashSet<Vector2>();
+        Queue<Node> nodesToProcess = new Queue<Node>();
+        grid.resetGrid();
+        Node node = grid.NodeFromWorldPoint(rigidbody.position);
+        node.parent = null;
+        nodesToProcess.Enqueue(node);
+        inProcessQueue.Add(node.worldPosition);
+        while(Vector2.Distance(rigidbody.position, node.worldPosition) < 20) {
+            node = nodesToProcess.Dequeue();
+            Quaternion left = Quaternion.AngleAxis(-7, Vector3.forward);
+            Quaternion right = Quaternion.AngleAxis(7, Vector3.forward);
+            RaycastHit2D leftRaycastHit = Physics2D.Linecast(playerRigidbody.position, left * node.worldPosition, sightBlockMask);
+            RaycastHit2D rightRaycastHit = Physics2D.Linecast(playerRigidbody.position, right * node.worldPosition, sightBlockMask);
+            if(leftRaycastHit && rightRaycastHit) {
+                potentialCoverNodes.Add(node);
+            }
+            foreach(Node neighbor in grid.GetNeighbors(node)) {
+                if(!inProcessQueue.Contains(neighbor.worldPosition)) {
+                    if(neighbor.isWalkable) {
+                        neighbor.parent = node;
+                        nodesToProcess.Enqueue(neighbor);
+                        inProcessQueue.Add(neighbor.worldPosition);
+                    }
                 }
             }
-            searchRadius += 2;
         }
-
-        float biggestDifference = float.MinValue;
-        float diff;
+        returnFalse = true;
+        int nodeCount = 0;
+        int smallestNodeCount = int.MaxValue;
+        Node currNode;
         bestCoverPoint = NullVector;
-        foreach(Vector2 coverPoint in potentialCoverPoints) {
-            coverPath = pathfinding.FindPath(rigidbody.position, coverPoint, collider, 5);
-            if(coverPath != null) {
-                diff = Vector2.Distance(coverPoint, playerRigidbody.position) - Vector2.Distance(coverPoint, rigidbody.position);
-                if(diff > biggestDifference) {
-                    bestCoverPoint = coverPoint;
-                }
+        foreach(Node coverPoint in potentialCoverNodes) {
+            currNode = coverPoint;
+            nodeCount = 0;
+            while(currNode != null) {
+                currNode = currNode.parent;
+                nodeCount++;
+            }
+
+            if(nodeCount < smallestNodeCount) {
+                smallestNodeCount = nodeCount;
+                bestCoverPoint = coverPoint.worldPosition;
             }
         }
 
@@ -398,7 +418,9 @@ public class BasicEnemyTasks : MonoBehaviour {
         if(isAtNode(node)) return true;
         if(rigidbody.velocity.magnitude > 0) {
             Vector2 p1 = node.worldPosition;
-            Vector2 p2 = node.worldPosition + Vector3.Cross(rigidbody.velocity.normalized, -Vector3.forward).normalized;
+            Vector2 p2 = Vector3.Cross(rigidbody.velocity.normalized, -Vector3.forward).normalized;
+            Vector2 nodeWorldPosition = node.worldPosition;
+            p2 = p2 + nodeWorldPosition;
             float d = (transform.position.x - p1.x) * (p2.y - p1.y) - (transform.position.y - p1.y) * (p2.x - p1.x);
             return d > 0;
         }
@@ -438,6 +460,7 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     private void SetPathfinding(ParamsObject paramsObj) {
         pathfinding = paramsObj.Transform.GetComponent<BasicThetaStarPathfinding>();
+        grid = paramsObj.Transform.GetComponent<Grid>();
         eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
     }
 
@@ -446,14 +469,15 @@ public class BasicEnemyTasks : MonoBehaviour {
         Quaternion q2 = Quaternion.AngleAxis(sightAngle, Vector3.forward);
         Gizmos.DrawRay(transform.position, q1 * transform.up * sightDistance);
         Gizmos.DrawRay(transform.position, q2 * transform.up * sightDistance);
-        Gizmos.color = Color.cyan;
-        Gizmos.DrawCube(seePlayerLastKnownPosition, new Vector3(.3f, .3f, 1));
-        Gizmos.color = Color.red;
-        Gizmos.DrawRay(seePlayerLastKnownPosition, seePlayerLastKnownHeading * 5);
-        //for(int i = 0; i < potentialCoverPoints.Count; i++) {
-        //    Gizmos.DrawCube(potentialCoverPoints[i], new Vector3(.1f, .1f, 1));
-        //}
+        //Gizmos.color = Color.cyan;
+        //Gizmos.DrawCube(seePlayerLastKnownPosition, new Vector3(.3f, .3f, 1));
         //Gizmos.color = Color.red;
-        //Gizmos.DrawCube(bestCoverPoint, new Vector3(.5f, .5f, 1));
+        //Gizmos.DrawRay(seePlayerLastKnownPosition, seePlayerLastKnownHeading * 5);
+        Gizmos.color = Color.cyan;
+        for(int i = 0; i < potentialCoverNodes.Count; i++) {
+            Gizmos.DrawCube(potentialCoverNodes[i].worldPosition, new Vector3(.3f, .3f, 1));
+        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(bestCoverPoint, new Vector3(.3f, .3f, 1));
     }
 }

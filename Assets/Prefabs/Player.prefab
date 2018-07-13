@@ -459,7 +459,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c60b515292336a42b8f17e53696c429, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 32
+  maxWalkSpeed: 10
 --- !u!114 &114783206365934860
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -506,7 +506,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a63c3cd345e045d4ea41c083c5918327, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rollTime: 0.2
+  rollCooldownTime: 0
   rollForce: 10
 --- !u!212 &212086436847376088
 SpriteRenderer:

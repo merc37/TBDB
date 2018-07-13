@@ -17,9 +17,8 @@ tree("Live")
 						StopMovement
 						Roll
 					sequence
-						Fail
 						LowOnHealth
-						not InCover
+						//not InCover
 						SetMovementTargetToCover
 						mute
 							repeat
