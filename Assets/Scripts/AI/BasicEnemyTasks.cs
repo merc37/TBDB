@@ -51,6 +51,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     private Vector2 rollDirection;
     private bool rolling;
     private bool roll;
+    private bool coverFound;
 
     private Vector2 addForce = Vector2.zero;
     private float moveToAngle = -90;
@@ -102,6 +103,17 @@ public class BasicEnemyTasks : MonoBehaviour {
                 rollCooldownTimer = rollCooldownTime;
             }
         }
+    }
+
+    [Task]
+    bool SetCoverFound() {
+        coverFound = true;
+        return true;
+    }
+
+    [Task]
+    bool FoundCover() {
+        return coverFound;
     }
 
     [Task]
@@ -163,8 +175,9 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     Vector2 pointToAimAt;
+    Vector2 aimDireaction;
     [Task]
-    bool AimAtPlayer() {
+    bool AimAtPlayers() {
         float playerSpeed = playerRigidbody.velocity.magnitude;
 
         float projectileSpeed = gunProjectileSpeed;//Needs to be adjusted to reflect enemy motion
@@ -182,8 +195,22 @@ public class BasicEnemyTasks : MonoBehaviour {
 
         float t = Mathf.Sqrt(tSqrd);
         pointToAimAt = playerRigidbody.position + (t * playerRigidbody.velocity);
-        Vector2 direction = rigidbody.position - pointToAimAt;
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        aimDireaction = rigidbody.position - pointToAimAt;
+        float angle = Mathf.Atan2(aimDireaction.y, aimDireaction.x) * Mathf.Rad2Deg;
+        rigidbody.rotation = angle + 90;
+
+        return true;
+    }
+
+    [Task]
+    bool AimAtPlayer() {
+        float timeguess1 = Vector2.Distance(rigidbody.position, playerRigidbody.position) / gunProjectileSpeed;
+        Vector2 Positionguess =(playerRigidbody.position + (playerRigidbody.velocity * (timeguess1)));
+        float timeguess = Vector2.Distance(rigidbody.position, Positionguess) / gunProjectileSpeed;
+        Vector2 playerguesstimation = playerRigidbody.position + (playerRigidbody.velocity * (timeguess));
+        aimDireaction = rigidbody.position - playerguesstimation;
+        float angle = Mathf.Atan2(aimDireaction.y, aimDireaction.x) * Mathf.Rad2Deg;
+
         rigidbody.rotation = angle + 90;
 
         return true;
@@ -307,9 +334,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool returnFalse;
     [Task]
     bool SetMovementTargetToCover() {
-        if(returnFalse) {
-            return false;
-        }
+
         potentialCoverNodes = new List<Node>();
         HashSet<Vector2> inProcessQueue = new HashSet<Vector2>();
         Queue<Node> nodesToProcess = new Queue<Node>();
@@ -318,6 +343,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         node.parent = null;
         nodesToProcess.Enqueue(node);
         inProcessQueue.Add(node.worldPosition);
+
         while(Vector2.Distance(rigidbody.position, node.worldPosition) < 20) {
             node = nodesToProcess.Dequeue();
             Quaternion left = Quaternion.AngleAxis(-7, Vector3.forward);
@@ -337,7 +363,7 @@ public class BasicEnemyTasks : MonoBehaviour {
                 }
             }
         }
-        returnFalse = true;
+
         int nodeCount = 0;
         int smallestNodeCount = int.MaxValue;
         Node currNode;
@@ -469,15 +495,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         Quaternion q2 = Quaternion.AngleAxis(sightAngle, Vector3.forward);
         Gizmos.DrawRay(transform.position, q1 * transform.up * sightDistance);
         Gizmos.DrawRay(transform.position, q2 * transform.up * sightDistance);
-        //Gizmos.color = Color.cyan;
-        //Gizmos.DrawCube(seePlayerLastKnownPosition, new Vector3(.3f, .3f, 1));
-        //Gizmos.color = Color.red;
-        //Gizmos.DrawRay(seePlayerLastKnownPosition, seePlayerLastKnownHeading * 5);
         Gizmos.color = Color.cyan;
-        for(int i = 0; i < potentialCoverNodes.Count; i++) {
-            Gizmos.DrawCube(potentialCoverNodes[i].worldPosition, new Vector3(.3f, .3f, 1));
-        }
-        Gizmos.color = Color.red;
-        Gizmos.DrawCube(bestCoverPoint, new Vector3(.3f, .3f, 1));
+        Gizmos.DrawRay(playerLastKnownPosition, playerLastKnownHeading.normalized * -20);
     }
 }

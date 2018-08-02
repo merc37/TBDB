@@ -17,33 +17,14 @@ tree("Live")
 						StopMovement
 						Roll
 					sequence
-						LowOnHealth
-						//not InCover
-						SetMovementTargetToCover
-						mute
-							repeat
-								sequence
-									SetLookTargetToMovementDirection
-									MoveTowardsMovementTarget
-					sequence
-						Fail
-						LowOnAmmo
-						random
-							Reload
-							fallback
-								sequence
-									SetMovementTargetToCover
-									repeat
-										MoveTowardsMovementTarget
-								Reload
-					sequence
 						tree("PlayerInSight")
-						PlayerInAttackRange
+						PlayerInMedAttackRange
 						not PlayerRunningAway
-						Stop
+						Stop 
 					sequence
 						tree("PlayerInSight")
 						SetMovementTargetToPlayerPosition
+						SetLookTargetToMovementDirection
 						MoveTowardsMovementTarget
 					sequence
 						PlayerLastPositionKnown
@@ -55,15 +36,9 @@ tree("Live")
 								Stop
 								UnSetPlayerLastKnownPosition
 					sequence
-						fallback
-							sequence
-								PlayerLastHeadingKnown
-								SetMoveToAngleToPlayerLastKnownHeading
-								UnSetPlayerLastKnownHeading
-							sequence
-								Fail
-								SetMoveToAngleRandom
-								Wait(5.0)
+						PlayerLastHeadingKnown
+						SetMoveToAngleToPlayerLastKnownHeading
+						UnSetPlayerLastKnownHeading
 							
 
 tree("FireOnSight")
@@ -85,3 +60,31 @@ tree("PlayerInSight")
 		SetLookTargetToPlayer
 		SetPlayerLastKnownPosition
 		SetPlayerLastKnownHeading
+
+tree("Temp")
+	sequence
+		sequence
+			LowOnHealth
+			not FoundCover
+			SetMovementTargetToCover
+			mute
+				fallback
+					repeat
+						sequence
+							SetLookTargetToMovementDirection
+							MoveTowardsMovementTarget
+					sequence
+						Stop
+						SetCoverFound
+		sequence
+			Fail
+			LowOnAmmo
+			random
+				Reload
+				fallback
+					sequence
+						SetMovementTargetToCover
+						repeat
+							MoveTowardsMovementTarget
+					Reload
+				

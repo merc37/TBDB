@@ -4644,6 +4644,26 @@ Prefab:
       propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: attackRange
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: sightDistance
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: rotateSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: sightAngle
+      value: 35
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: faaf22525cba0c34abcfcdef0237ff04, type: 2}
   m_IsPrefabParent: 0
