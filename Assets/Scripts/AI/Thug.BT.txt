@@ -10,62 +10,35 @@ tree("Live")
 				tree("FireOnSight")
 		repeat
 			mute
-				fallback
-					sequence
+				sequence
 						ShouldRoll
 						CanRoll
 						StopMovement
 						Roll
-					sequence
-						LowOnHealth
-						//not InCover
-						SetMovementTargetToCover
-						mute
-							repeat
-								sequence
-									SetLookTargetToMovementDirection
-									MoveTowardsMovementTarget
-					sequence
-						Fail
-						LowOnAmmo
-						random
-							Reload
-							fallback
-								sequence
-									SetMovementTargetToCover
-									repeat
-										MoveTowardsMovementTarget
-								Reload
+		repeat
+			mute
+				fallback
 					sequence
 						tree("PlayerInSight")
-						PlayerInAttackRange
+						PlayerInMedAttackRange
 						not PlayerRunningAway
-						Stop
+						Stop 
 					sequence
 						tree("PlayerInSight")
 						SetMovementTargetToPlayerPosition
-						MoveTowardsMovementTarget
+						SetLookTargetToMovementDirection
+						PathToMovementTarget
 					sequence
-						PlayerLastPositionKnown
 						SetMovementTargetToPlayerLastKnownPosition
 						SetLookTargetToMovementDirection
 						fallback
-							MoveTowardsMovementTarget
+							PathToMovementTarget
 							sequence
 								Stop
 								UnSetPlayerLastKnownPosition
-					sequence
-						fallback
-							sequence
-								PlayerLastHeadingKnown
-								SetMoveToAngleToPlayerLastKnownHeading
+								SetLookTargetToPlayerLastKnownHeading
 								UnSetPlayerLastKnownHeading
-							sequence
-								Fail
-								SetMoveToAngleRandom
-								Wait(5.0)
 							
-
 tree("FireOnSight")
 	sequence
 		tree("PlayerInSight")
@@ -85,3 +58,31 @@ tree("PlayerInSight")
 		SetLookTargetToPlayer
 		SetPlayerLastKnownPosition
 		SetPlayerLastKnownHeading
+
+tree("Temp")
+	sequence
+		sequence
+			LowOnHealth
+			not FoundCover
+			SetMovementTargetToCover
+			mute
+				fallback
+					repeat
+						sequence
+							SetLookTargetToMovementDirection
+							MoveTowardsMovementTarget
+					sequence
+						Stop
+						SetCoverFound
+		sequence
+			Fail
+			LowOnAmmo
+			random
+				Reload
+				fallback
+					sequence
+						SetMovementTargetToCover
+						repeat
+							MoveTowardsMovementTarget
+					Reload
+				

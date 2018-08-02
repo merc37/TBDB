@@ -96,9 +96,10 @@ public class Gun : MonoBehaviour {
         }
     }
 
+    Rigidbody2D newProjectile = null;
     protected virtual Rigidbody2D FireProjectile() {
         audioSource.PlayOneShot(shotSound);
-        Rigidbody2D newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
+        newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
         Vector2 velocity = newProjectile.transform.up.normalized * speed;
         velocity += transform.root.GetComponent<Rigidbody2D>().velocity;
         newProjectile.velocity = velocity;
@@ -113,5 +114,12 @@ public class Gun : MonoBehaviour {
         paramsObj.Float = speed;
         paramsObj.Int = damage;
         eventManager.TriggerEvent("UpdateGunInfo", paramsObj);
+    }
+
+    void OnDrawGizmos() {
+        Gizmos.color = Color.red;
+        if(newProjectile != null) {
+            Gizmos.DrawSphere(newProjectile.position, .5f);
+        }
     }
 }

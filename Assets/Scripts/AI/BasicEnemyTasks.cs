@@ -51,9 +51,10 @@ public class BasicEnemyTasks : MonoBehaviour {
     private Vector2 rollDirection;
     private bool rolling;
     private bool roll;
+    private bool coverFound;
 
     private Vector2 addForce = Vector2.zero;
-    private float moveToAngle = -90;
+    private float lookTarget = -90;
     private Vector2 playerLastKnownPosition = NullVector;
     private Vector2 playerLastKnownHeading = NullVector;
 
@@ -78,16 +79,18 @@ public class BasicEnemyTasks : MonoBehaviour {
         lowOnAmmo = false;
         hasZeroHealth = false;
         rollCooldownTimer = rollCooldownTime;
-    }
 
+    }
+    
     void FixedUpdate() {
         rigidbody.AddForce(addForce);
-        if(moveToAngle != float.NegativeInfinity) {
-            rigidbody.rotation = Mathf.LerpAngle(rigidbody.rotation, moveToAngle, rotateSpeed * Time.fixedDeltaTime);
-            if(Mathf.DeltaAngle(rigidbody.rotation, moveToAngle) <= 1) {
-                moveToAngle = float.NegativeInfinity;
+        if(lookTarget != float.NegativeInfinity) {
+            rigidbody.rotation = Mathf.LerpAngle(rigidbody.rotation, lookTarget, rotateSpeed * Time.fixedDeltaTime);
+            if(Mathf.Abs(Mathf.DeltaAngle(rigidbody.rotation, lookTarget)) <= 1) {
+                lookTarget = float.NegativeInfinity;
             }
         }
+
         if(roll) {
             rigidbody.AddForce(rollDirection.normalized * rollForce, ForceMode2D.Impulse);
             roll = false;
@@ -105,6 +108,17 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
+    bool SetCoverFound() {
+        coverFound = true;
+        return true;
+    }
+
+    [Task]
+    bool FoundCover() {
+        return coverFound;
+    }
+
+    [Task]
     bool PlayerRunningAway() {
         bool isAcute = Vector2.Dot(rigidbody.velocity, playerRigidbody.velocity) > 0;
         bool playerRunning = playerRigidbody.velocity.magnitude >= rigidbody.velocity.magnitude;
@@ -112,16 +126,19 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
-    bool SetMoveToAngleRandom() {
-        moveToAngle = Random.Range(-360, 360);
+    bool SetLookTargetRandom() {
+        lookTarget = Random.Range(-360, 360);
         return true;
     }
 
     [Task]
-    bool SetMoveToAngleToPlayerLastKnownHeading() {
-        float angle = Mathf.Atan2(playerLastKnownHeading.y, playerLastKnownHeading.x) * Mathf.Rad2Deg;
-        moveToAngle = angle + 90;
-        return true;
+    bool SetLookTargetToPlayerLastKnownHeading() {
+        if(playerLastKnownHeading != NullVector) {
+            float angle = Mathf.Atan2(playerLastKnownHeading.y, playerLastKnownHeading.x) * Mathf.Rad2Deg;
+            lookTarget = angle + 90;
+            return true;
+        }
+        return false;
     }
 
     [Task]
@@ -129,18 +146,11 @@ public class BasicEnemyTasks : MonoBehaviour {
         playerLastKnownHeading = NullVector;
         return true;
     }
-
-    [Task]
-    bool PlayerLastHeadingKnown() {
-        return playerLastKnownHeading != NullVector;
-    }
-
-    Vector2 seePlayerLastKnownHeading;
+    
     [Task]
     bool SetPlayerLastKnownHeading() {
         Vector2 direction = playerRigidbody.position.normalized - playerRigidbody.velocity.normalized;
         playerLastKnownHeading = direction;
-        seePlayerLastKnownHeading = playerLastKnownHeading;
         return true;
     }
 
@@ -162,28 +172,15 @@ public class BasicEnemyTasks : MonoBehaviour {
         return !rolling;
     }
 
-    Vector2 pointToAimAt;
     [Task]
     bool AimAtPlayer() {
-        float playerSpeed = playerRigidbody.velocity.magnitude;
-
-        float projectileSpeed = gunProjectileSpeed;//Needs to be adjusted to reflect enemy motion
-        Vector2 projectileSpawn = gunTransform.GetChild(0).position;
-
-        float distanceBetweenProjectileAndPlayer = Vector2.Distance(projectileSpawn, playerRigidbody.position);
-        float angleBetweenPlayerVelocityAndProjectile = Vector2.Angle(playerRigidbody.position - playerRigidbody.velocity, playerRigidbody.position - projectileSpawn);
-
-        float x = 1 - (2 * distanceBetweenProjectileAndPlayer * Mathf.Cos(angleBetweenPlayerVelocityAndProjectile));
-        float y = (projectileSpeed * projectileSpeed) - ((playerSpeed * playerSpeed) * x);
-        float tSqrd = (distanceBetweenProjectileAndPlayer * distanceBetweenProjectileAndPlayer) / y;
-        if(tSqrd < 0) {
-            return true;//Return false?
-        }
-
-        float t = Mathf.Sqrt(tSqrd);
-        pointToAimAt = playerRigidbody.position + (t * playerRigidbody.velocity);
-        Vector2 direction = rigidbody.position - pointToAimAt;
+        float timeguess1 = Vector2.Distance(rigidbody.position, playerRigidbody.position) / gunProjectileSpeed;
+        Vector2 Positionguess =(playerRigidbody.position + (playerRigidbody.velocity * (timeguess1)));
+        float timeguess = Vector2.Distance(rigidbody.position, Positionguess) / gunProjectileSpeed;
+        Vector2 playerguesstimation = playerRigidbody.position + (playerRigidbody.velocity * (timeguess));
+        Vector2 direction = rigidbody.position - playerguesstimation;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+
         rigidbody.rotation = angle + 90;
 
         return true;
@@ -198,7 +195,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool SetLookTargetToPlayer() {
         Vector2 direction = rigidbody.position - playerRigidbody.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        moveToAngle = angle + 90;
+        lookTarget = angle + 90;
         return true;
     }
 
@@ -208,16 +205,14 @@ public class BasicEnemyTasks : MonoBehaviour {
             Vector2 nodeWorldPos = path[0].worldPosition;
             Vector2 direction = rigidbody.position - nodeWorldPos;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            moveToAngle = angle + 90;
+            lookTarget = angle + 90;
         }
         return true;
     }
-
-    Vector2 seePlayerLastKnownPosition;
+    
     [Task]
     bool SetPlayerLastKnownPosition() {
         playerLastKnownPosition = playerRigidbody.position;
-        seePlayerLastKnownPosition = playerLastKnownPosition;
         return true;
     }
 
@@ -229,20 +224,27 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool SetMovementTargetToPlayerLastKnownPosition() {
-        movementTarget = playerLastKnownPosition;
-        return true;
-    }
-
-    [Task]
-    bool PlayerLastPositionKnown() {
-        return playerLastKnownPosition != NullVector;
+        if(playerLastKnownPosition != NullVector) {
+            movementTarget = playerLastKnownPosition;
+            return true;
+        }
+        return false;
     }
 
     [Task]
     bool MoveTowardsMovementTarget() {
+        Vector2 dir = (movementTarget - rigidbody.position).normalized;
+        addForce = dir * speed;
+        return true;
+    }
+
+    [Task]
+    bool PathToMovementTarget() {
 
         //If path is empty or the target is too far from the end of it, set it
-        if(path == null || path.Count == 0 || Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance) {
+        if(path == null || path.Count == 0) {
+            path = pathfinding.FindPath(transform.position, movementTarget, collider, maxPathSearchDistance);
+        } else if(Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance/* && ReachedNode(path[0])*/) {
             path = pathfinding.FindPath(transform.position, movementTarget, collider, maxPathSearchDistance);
         }
 
@@ -272,7 +274,9 @@ public class BasicEnemyTasks : MonoBehaviour {
     [Task]
     bool StopMovement() {
         addForce = Vector2.zero;
-        path.Clear();
+        if(path != null) {
+            path.Clear();
+        }
         return true;
     }
 
@@ -307,9 +311,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool returnFalse;
     [Task]
     bool SetMovementTargetToCover() {
-        if(returnFalse) {
-            return false;
-        }
+
         potentialCoverNodes = new List<Node>();
         HashSet<Vector2> inProcessQueue = new HashSet<Vector2>();
         Queue<Node> nodesToProcess = new Queue<Node>();
@@ -318,6 +320,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         node.parent = null;
         nodesToProcess.Enqueue(node);
         inProcessQueue.Add(node.worldPosition);
+
         while(Vector2.Distance(rigidbody.position, node.worldPosition) < 20) {
             node = nodesToProcess.Dequeue();
             Quaternion left = Quaternion.AngleAxis(-7, Vector3.forward);
@@ -337,7 +340,7 @@ public class BasicEnemyTasks : MonoBehaviour {
                 }
             }
         }
-        returnFalse = true;
+
         int nodeCount = 0;
         int smallestNodeCount = int.MaxValue;
         Node currNode;
@@ -390,7 +393,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     [Task]
     bool PlayerInMedAttackRange() {
         float distanceToTarget = Vector2.Distance(rigidbody.position, playerRigidbody.position);
-        return distanceToTarget <= attackRange/2;
+        return distanceToTarget <= attackRange/4;
     }
 
     [Task]
@@ -446,6 +449,9 @@ public class BasicEnemyTasks : MonoBehaviour {
     private void OnRoll(ParamsObject paramsObj) {
         shouldRoll = true;
         rollDirection = Vector3.Cross(paramsObj.Vector2, Vector3.forward);
+        if(Random.value > .5f) {
+            rollDirection = -rollDirection;
+        }
     }
     
     private void OnGunInfoUpdate(ParamsObject paramsObj) {
@@ -469,15 +475,9 @@ public class BasicEnemyTasks : MonoBehaviour {
         Quaternion q2 = Quaternion.AngleAxis(sightAngle, Vector3.forward);
         Gizmos.DrawRay(transform.position, q1 * transform.up * sightDistance);
         Gizmos.DrawRay(transform.position, q2 * transform.up * sightDistance);
-        //Gizmos.color = Color.cyan;
-        //Gizmos.DrawCube(seePlayerLastKnownPosition, new Vector3(.3f, .3f, 1));
-        //Gizmos.color = Color.red;
-        //Gizmos.DrawRay(seePlayerLastKnownPosition, seePlayerLastKnownHeading * 5);
         Gizmos.color = Color.cyan;
-        for(int i = 0; i < potentialCoverNodes.Count; i++) {
-            Gizmos.DrawCube(potentialCoverNodes[i].worldPosition, new Vector3(.3f, .3f, 1));
-        }
+        Gizmos.DrawRay(playerLastKnownPosition, playerLastKnownHeading.normalized * -20);
         Gizmos.color = Color.red;
-        Gizmos.DrawCube(bestCoverPoint, new Vector3(.3f, .3f, 1));
+        Gizmos.DrawCube(playerLastKnownPosition, new Vector3(.3f, .3f, 1));
     }
 }
