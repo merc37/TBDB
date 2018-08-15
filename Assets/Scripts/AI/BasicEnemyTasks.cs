@@ -22,12 +22,18 @@ public class BasicEnemyTasks : MonoBehaviour {
     [SerializeField]
     private int lowHealthThreshold = 3;
     [SerializeField]
-    private float maxWalkSpeed = 10;
+    private float acceleration = 10;
+    [SerializeField]
+    private float deceleration = 30;
+    [SerializeField]
+    private float maxSpeed = 10;
     private float speed;
     [SerializeField]
     private float recalculatePathDistance = 2;
     [SerializeField]
     private float rollCooldownTime = 5;
+    [SerializeField]
+    private float rollTime = .1f;
     [SerializeField]
     private float rollForce = 10;
 	[SerializeField]
@@ -49,17 +55,59 @@ public class BasicEnemyTasks : MonoBehaviour {
     private bool shouldRoll;
     private float rollCooldownTimer;
     private Vector2 rollDirection;
-    private bool rolling;
+    public bool Rolling { get; set; }
+    public bool RollOnCooldown { get; set; }
     private bool roll;
+    private float rollTimer;
     private bool coverFound;
+    private bool _accelerate;
+    private bool Accelerate {
+        get {
+            return _accelerate;
+        }
+        set {
+            _accelerate = value;
+            _decelerate = !value;
+        }
+    }
+    private bool _decelerate;
+    private bool Decelerate {
+        get {
+            return _decelerate;
+        }
+        set {
+            _decelerate = value;
+            _accelerate = !value;
+        }
+    }
 
-    private Vector2 addForce = Vector2.zero;
-    private float lookTarget = -90;
+    private float _rotationTarget;
+    private float RotationTarget {
+        get {
+            return _rotationTarget;
+        }
+        set {
+            if(value == float.NegativeInfinity) {
+                _rotationTarget = float.NegativeInfinity;
+            }
+            float angle = value + 90;
+            if(angle > 360) {
+                _rotationTarget = 360 - angle;
+                return;
+            }
+            if(angle < -360) {
+                _rotationTarget = 360 + angle;
+                return;
+            }
+            _rotationTarget = angle;
+        }
+    }
     private Vector2 playerLastKnownPosition = NullVector;
     private Vector2 playerLastKnownHeading = NullVector;
 
     private float gunProjectileSpeed;
     private Transform gunTransform;
+    private Vector2 movementDirection;
 
     void Awake() {
 
@@ -75,7 +123,6 @@ public class BasicEnemyTasks : MonoBehaviour {
         collider = GetComponent<Collider2D>();
 
         path = new List<Node>();
-        speed = maxWalkSpeed * rigidbody.drag;
         lowOnAmmo = false;
         hasZeroHealth = false;
         rollCooldownTimer = rollCooldownTime;
@@ -83,26 +130,52 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
     
     void FixedUpdate() {
-        rigidbody.AddForce(addForce);
-        if(lookTarget != float.NegativeInfinity) {
-            rigidbody.rotation = Mathf.LerpAngle(rigidbody.rotation, lookTarget, rotateSpeed * Time.fixedDeltaTime);
-            if(Mathf.Abs(Mathf.DeltaAngle(rigidbody.rotation, lookTarget)) <= 1) {
-                lookTarget = float.NegativeInfinity;
+        if(!Rolling) {
+            if(Accelerate) {
+                speed += acceleration * Time.deltaTime;
+                if(speed > maxSpeed) {
+                    speed = maxSpeed;
+                }
+            }
+            if(Decelerate) {
+                speed -= deceleration * Time.deltaTime;
+                if(speed < 0) {
+                    speed = 0;
+                }
+            }
+            rigidbody.velocity = movementDirection * speed;
+        }
+        if(RotationTarget != float.NegativeInfinity) {
+            rigidbody.rotation = Mathf.LerpAngle(rigidbody.rotation, RotationTarget, rotateSpeed * Time.fixedDeltaTime);
+            if(Mathf.Abs(Mathf.DeltaAngle(rigidbody.rotation, RotationTarget)) <= 1) {
+                RotationTarget = float.NegativeInfinity;
             }
         }
 
         if(roll) {
             rigidbody.AddForce(rollDirection.normalized * rollForce, ForceMode2D.Impulse);
+            shouldRoll = false;
             roll = false;
+            Rolling = true;
         }
     }
 
     void Update() {
-        if(rolling) {
-            rollCooldownTimer -= Time.time;
+        if(!RollOnCooldown) {
+            rollTimer -= Time.deltaTime;
+            if(rollTimer <= 0) {
+                rollTimer = rollTime;
+                Rolling = false;
+                RollOnCooldown = true;
+            }
+        }
+
+        if(RollOnCooldown) {
+            rollCooldownTimer -= Time.deltaTime;
             if(rollCooldownTimer <= 0) {
-                rolling = false;
                 rollCooldownTimer = rollCooldownTime;
+                RollOnCooldown = false;
+                roll = false;
             }
         }
     }
@@ -127,7 +200,7 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool SetLookTargetRandom() {
-        lookTarget = Random.Range(-360, 360);
+        RotationTarget = Random.Range(-360, 360);
         return true;
     }
 
@@ -135,7 +208,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool SetLookTargetToPlayerLastKnownHeading() {
         if(playerLastKnownHeading != NullVector) {
             float angle = Mathf.Atan2(playerLastKnownHeading.y, playerLastKnownHeading.x) * Mathf.Rad2Deg;
-            lookTarget = angle + 90;
+            RotationTarget = angle;
             return true;
         }
         return false;
@@ -155,21 +228,19 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
-    bool Roll() {
-        rolling = true;
-        shouldRoll = false;
-        roll = true;
-        return true;
-    }
-
-    [Task]
     bool ShouldRoll() {
         return shouldRoll;
     }
 
     [Task]
-    bool CanRoll() {
-        return !rolling;
+    bool IsRollOnCooldown() {
+        return RollOnCooldown;
+    }
+
+    [Task]
+    bool Roll() {
+        roll = true;
+        return true;
     }
 
     [Task]
@@ -187,20 +258,6 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
-    bool AimAtPlayer() {
-        float timeguess1 = Vector2.Distance(rigidbody.position, playerRigidbody.position) / gunProjectileSpeed;
-        Vector2 Positionguess =(playerRigidbody.position + (playerRigidbody.velocity * (timeguess1)));
-        float timeguess = Vector2.Distance(rigidbody.position, Positionguess) / gunProjectileSpeed;
-        Vector2 playerguesstimation = playerRigidbody.position + (playerRigidbody.velocity * (timeguess));
-        aimDireaction = rigidbody.position - playerguesstimation;
-        float angle = Mathf.Atan2(aimDireaction.y, aimDireaction.x) * Mathf.Rad2Deg;
-
-        rigidbody.rotation = angle + 90;
-
-        return true;
-    }
-
-    [Task]
     bool LowOnHealth() {
         return lowOnHealth;
     }
@@ -209,7 +266,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     bool SetLookTargetToPlayer() {
         Vector2 direction = rigidbody.position - playerRigidbody.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        lookTarget = angle + 90;
+        RotationTarget = angle;
         return true;
     }
 
@@ -219,7 +276,7 @@ public class BasicEnemyTasks : MonoBehaviour {
             Vector2 nodeWorldPos = path[0].worldPosition;
             Vector2 direction = rigidbody.position - nodeWorldPos;
             float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            lookTarget = angle + 90;
+            RotationTarget = angle;
         }
         return true;
     }
@@ -246,13 +303,6 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
-    bool MoveTowardsMovementTarget() {
-        Vector2 dir = (movementTarget - rigidbody.position).normalized;
-        addForce = dir * speed;
-        return true;
-    }
-
-    [Task]
     bool PathToMovementTarget() {
 
         //If path is empty or the target is too far from the end of it, set it
@@ -261,6 +311,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         } else if(Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance/* && ReachedNode(path[0])*/) {
             path = pathfinding.FindPath(transform.position, movementTarget, collider, maxPathSearchDistance);
         }
+        Debug.Log(path.Count);
 
         //If path still empty there is no route to the target and this should return TODO: make sure pathfinding does not return null
         if(path == null) {
@@ -279,15 +330,15 @@ public class BasicEnemyTasks : MonoBehaviour {
         }
 
         Vector2 nodeWorldPos = path[0].worldPosition;
-        Vector2 direction = (nodeWorldPos - rigidbody.position).normalized;
-        addForce = direction * speed;
+        movementDirection = (nodeWorldPos - rigidbody.position).normalized;
+        Accelerate = true;
 
         return true;
     }
 
     [Task]
     bool StopMovement() {
-        addForce = Vector2.zero;
+        Accelerate = false;
         if(path != null) {
             path.Clear();
         }
@@ -296,7 +347,8 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool Stop() {
-        addForce = Vector2.zero;
+        Accelerate = false;
+        speed = 0;
         rigidbody.velocity = Vector2.zero;
         if(path != null) {
             path.Clear();

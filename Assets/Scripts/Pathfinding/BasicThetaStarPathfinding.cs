@@ -9,13 +9,12 @@ namespace Pathfinding {
         void Awake() {
             grid = GetComponent<Grid>();
         }
-        Vector3 diff;
+        
         public List<Node> FindPath(Vector3 startPos, Vector3 targetPos, Collider2D collider, float maxDistance) {
 
             grid.resetGrid();
 
             Node startNode = grid.NodeFromWorldPoint(startPos);
-            diff = startPos;// - startNode.worldPosition;
             Node targetNode = grid.NodeFromWorldPoint(targetPos);
 
             List<Node> openSet = new List<Node>();
@@ -86,12 +85,10 @@ namespace Pathfinding {
             List<Node> path = new List<Node>();
             Node currentNode = endNode;
             while(currentNode != startNode /*&& path.Count < 50*/) {
-                //currentNode.worldPosition += diff;
                 path.Add(currentNode);
                 currentNode = currentNode.parent;
             }
             path.Reverse();
-            path[0].worldPosition = diff;
             return path;
         }
 

@@ -9,20 +9,20 @@ namespace Player {
 		private float slowMotionPercentage;
 		[SerializeField]
 		private float maxSlowMotionTime;
-		public float MaxSlowMotionTime {get{return maxSlowMotionTime;} set{maxSlowMotionTime = value;}}
+		public float MaxSlowMotionTime { get; set; }
 
-		private float slowMotionTime;
+		private float _slowMotionTime;
 		public float CurrentSlowMotionTime {
-			get{return slowMotionTime;}
+			get{return _slowMotionTime;}
 			set{
 				if(value < 0) {
-					slowMotionTime = 0;
+					_slowMotionTime = 0;
 				}
 				if(value > maxSlowMotionTime) {
-					slowMotionTime = maxSlowMotionTime;
+					_slowMotionTime = maxSlowMotionTime;
 				}
 
-				slowMotionTime = value;
+				_slowMotionTime = value;
                 eventManager.TriggerEvent("UpdatePlayerSlowMotionTimeMeter", new ParamsObject(CurrentSlowMotionTime / MaxSlowMotionTime));
             }
 		}

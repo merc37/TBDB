@@ -8,11 +8,11 @@ namespace Player {
         private bool shootLocked = false;
         private bool hasStarted = false;
 
-        private Rigidbody2D lastFired;
+        private Rigidbody2D _lastFired;
         public Rigidbody2D LastFired
         {
             get {
-                return lastFired;
+                return _lastFired;
             }
         }
 
@@ -31,8 +31,8 @@ namespace Player {
         }
 
         protected override Rigidbody2D FireProjectile() {
-            lastFired = base.FireProjectile();
-            return lastFired;
+            _lastFired = base.FireProjectile();
+            return LastFired;
         }
 
         private void UnlockShoot(ParamsObject paramsObj) {

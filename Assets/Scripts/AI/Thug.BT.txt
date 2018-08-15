@@ -12,7 +12,7 @@ tree("Live")
 			mute
 				sequence
 						ShouldRoll
-						CanRoll
+						not IsRollOnCooldown
 						StopMovement
 						Roll
 		repeat
@@ -22,7 +22,7 @@ tree("Live")
 						tree("PlayerInSight")
 						PlayerInMedAttackRange
 						not PlayerRunningAway
-						Stop 
+						StopMovement
 					sequence
 						tree("PlayerInSight")
 						SetMovementTargetToPlayerPosition
@@ -70,7 +70,8 @@ tree("Temp")
 					repeat
 						sequence
 							SetLookTargetToMovementDirection
-							MoveTowardsMovementTarget
+							Fail
+							//MoveTowardsMovementTarget
 					sequence
 						Stop
 						SetCoverFound
@@ -83,6 +84,7 @@ tree("Temp")
 					sequence
 						SetMovementTargetToCover
 						repeat
-							MoveTowardsMovementTarget
+							Fail
+							//MoveTowardsMovementTarget
 					Reload
 				
