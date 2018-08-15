@@ -10,12 +10,14 @@ tree("Live")
 				tree("FireOnSight")
 		repeat
 			mute
-				fallback
-					sequence
+				sequence
 						ShouldRoll
 						CanRoll
 						StopMovement
 						Roll
+		repeat
+			mute
+				fallback
 					sequence
 						tree("PlayerInSight")
 						PlayerInMedAttackRange
@@ -25,22 +27,18 @@ tree("Live")
 						tree("PlayerInSight")
 						SetMovementTargetToPlayerPosition
 						SetLookTargetToMovementDirection
-						MoveTowardsMovementTarget
+						PathToMovementTarget
 					sequence
-						PlayerLastPositionKnown
 						SetMovementTargetToPlayerLastKnownPosition
 						SetLookTargetToMovementDirection
 						fallback
-							MoveTowardsMovementTarget
+							PathToMovementTarget
 							sequence
 								Stop
 								UnSetPlayerLastKnownPosition
-					sequence
-						PlayerLastHeadingKnown
-						SetMoveToAngleToPlayerLastKnownHeading
-						UnSetPlayerLastKnownHeading
+								SetLookTargetToPlayerLastKnownHeading
+								UnSetPlayerLastKnownHeading
 							
-
 tree("FireOnSight")
 	sequence
 		tree("PlayerInSight")

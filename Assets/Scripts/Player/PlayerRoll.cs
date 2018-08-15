@@ -33,6 +33,7 @@ namespace Player {
 
         void FixedUpdate() {
             if (!rolling && Input.GetButtonDown("Roll")) {
+                //rigidbody.velocity = Vector2.zero;
                 rigidbody.AddForce(rigidbody.velocity.normalized * rollForce, ForceMode2D.Impulse);
                 rolling = true;
             }
