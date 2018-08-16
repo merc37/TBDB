@@ -46,7 +46,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     private new Rigidbody2D rigidbody;
     private new Collider2D collider;
     private BasicThetaStarPathfinding pathfinding;
-    private Grid grid;
+    private Pathfinding.Grid grid;
     private List<Node> path;
     private Vector2 movementTarget;
     private bool lowOnAmmo;
@@ -311,14 +311,13 @@ public class BasicEnemyTasks : MonoBehaviour {
         } else if(Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance/* && ReachedNode(path[0])*/) {
             path = pathfinding.FindPath(transform.position, movementTarget, collider, maxPathSearchDistance);
         }
-        Debug.Log(path.Count);
 
         //If path still empty there is no route to the target and this should return TODO: make sure pathfinding does not return null
         if(path == null) {
             return false;
         }
 
-        GameObject.Find("testMap2").GetComponent<Grid>().path = new List<Node>(path);//Just for gizmos
+        GameObject.Find("testMap2").GetComponent<Pathfinding.Grid>().path = new List<Node>(path);//Just for gizmos
 
         if(path.Count != 0 && ReachedNode(path[0])) {
             path.RemoveAt(0);
@@ -532,7 +531,7 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     private void SetPathfinding(ParamsObject paramsObj) {
         pathfinding = paramsObj.Transform.GetComponent<BasicThetaStarPathfinding>();
-        grid = paramsObj.Transform.GetComponent<Grid>();
+        grid = paramsObj.Transform.GetComponent<Pathfinding.Grid>();
         eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
     }
 
