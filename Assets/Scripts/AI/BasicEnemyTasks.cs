@@ -303,6 +303,13 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
+    bool MoveTowardsMovementTarget() {
+        movementDirection = (movementTarget - rigidbody.position).normalized;
+        Accelerate = true;
+        return true;
+    }
+
+    [Task]
     bool PathToMovementTarget() {
 
         //If path is empty or the target is too far from the end of it, set it
@@ -331,8 +338,24 @@ public class BasicEnemyTasks : MonoBehaviour {
         Vector2 nodeWorldPos = path[0].worldPosition;
         movementDirection = (nodeWorldPos - rigidbody.position).normalized;
         Accelerate = true;
+        float distanceToEndOfPath = DistanceToEndOfPath();
+        float timeToEndOfPath = (distanceToEndOfPath / speed);
+        float timeToDecelerate = (speed / deceleration);
+        if(Mathf.Abs(timeToEndOfPath - timeToDecelerate) < 0.1) {
+            Accelerate = false;
+        }
 
         return true;
+    }
+
+    float DistanceToEndOfPath() {
+        float total = 0;
+        Vector2 prevPos = rigidbody.position;
+        foreach(Node node in path) {
+            total += Vector2.Distance(prevPos, node.worldPosition);
+            prevPos = node.worldPosition;
+        }
+        return total;
     }
 
     [Task]
