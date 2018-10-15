@@ -4,7 +4,7 @@ namespace Pathfinding {
     public class Node {
 
         public Vector3 worldPosition;
-        public IntVector2 gridPos;
+        public Vector2Int gridPos;
         public bool isWalkable;
 
         public float gCost;
@@ -20,7 +20,7 @@ namespace Pathfinding {
 
         public Node(Vector3 worldPosition, int gridX, int gridY, bool isWalkable) {
             this.worldPosition = worldPosition;
-            this.gridPos = new IntVector2(gridX, gridY);
+            this.gridPos = new Vector2Int(gridX, gridY);
             this.isWalkable = isWalkable;
         }
 

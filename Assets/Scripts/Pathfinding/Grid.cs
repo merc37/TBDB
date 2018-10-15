@@ -24,8 +24,8 @@ namespace Pathfinding {
         }
 
         private Vector3 gridPosition;
-        private IntVector2 gridWorldSize;
-        private IntVector2 gridSize;
+        private Vector2Int gridWorldSize;
+        private Vector2Int gridSize;
         private float nodeDiameter, nodeRadius;
         private Node[,] grid;
 
@@ -109,7 +109,7 @@ namespace Pathfinding {
         void OnDrawGizmos() {
             if(grid != null) {
                 // Draw grid bounds
-                Gizmos.DrawWireCube(gridPosition + new Vector3(gridWorldSize.x / 2, -gridWorldSize.y / 2, transform.position.z), gridWorldSize);
+                Gizmos.DrawWireCube(gridPosition + new Vector3(gridWorldSize.x / 2, -gridWorldSize.y / 2, transform.position.z), new Vector3(gridWorldSize.x, gridWorldSize.y, 0));
 
                 // Draw nodes
                 if(path != null && path.Count > 0) pathCost = path[path.Count - 1].fCost;

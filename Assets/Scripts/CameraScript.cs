@@ -6,7 +6,7 @@ using EventManagers;
 public class CameraScript : MonoBehaviour {
     
 	private Rigidbody2D playerRigidbody;
-	private TiledMap map;
+    private LayeredTilemap map;
 	private Vector3 newCameraPosition;
 	private float halfWorldWidth;
 	private float halfWorldHeight;
@@ -24,24 +24,24 @@ public class CameraScript : MonoBehaviour {
         newCameraPosition = new Vector3(0, 0, -10);
 		halfWorldHeight = Camera.main.orthographicSize;
 		halfWorldWidth = (Camera.main.aspect * (halfWorldHeight*2))/2;
-        map = mapTransform.GetComponent<TiledMap>();
-        mapWidth = map.NumTilesWide;
-        mapHeight = map.NumTilesHigh;
+        map = mapTransform.GetComponent<LayeredTilemap>();
+        mapWidth = map.MapSize.x;
+        mapHeight = map.MapSize.y;
     }
     
 	void LateUpdate () {
         newCameraPosition.Set(playerRigidbody.position.x, playerRigidbody.position.y, -10);
-        if(newCameraPosition.x - halfWorldWidth < mapTransform.position.x) {
-            newCameraPosition.x = mapTransform.position.x + halfWorldWidth;
+        if(newCameraPosition.x - halfWorldWidth < mapTransform.position.x - mapWidth / 2) {
+            newCameraPosition.x = (mapTransform.position.x - mapWidth / 2) + halfWorldWidth;
         }
-        if(newCameraPosition.x + halfWorldWidth > mapTransform.position.x + mapWidth) {
-            newCameraPosition.x = (mapTransform.position.x + mapWidth) - halfWorldWidth;
+        if(newCameraPosition.x + halfWorldWidth > mapTransform.position.x + mapWidth / 2) {
+            newCameraPosition.x = (mapTransform.position.x + mapWidth / 2) - halfWorldWidth;
         }
-        if(newCameraPosition.y + halfWorldHeight > mapTransform.position.y) {
-            newCameraPosition.y = mapTransform.position.y - halfWorldHeight;
+        if(newCameraPosition.y + halfWorldHeight > mapTransform.position.y + mapHeight / 2) {
+            newCameraPosition.y = (mapTransform.position.y + mapHeight / 2) - halfWorldHeight;
         }
-        if(newCameraPosition.y - halfWorldHeight < mapTransform.position.y - mapHeight) {
-            newCameraPosition.y = (mapTransform.position.y - mapHeight) + halfWorldHeight;
+        if(newCameraPosition.y - halfWorldHeight < mapTransform.position.y - mapHeight / 2) {
+            newCameraPosition.y = (mapTransform.position.y - mapHeight / 2) + halfWorldHeight;
         }
         transform.position = newCameraPosition;
     }
