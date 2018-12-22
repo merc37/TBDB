@@ -98,17 +98,6 @@ namespace Pathfinding {
             return path;
         }
 
-        float GetGridDistance(Node nodeA, Node nodeB) {
-            int distX = Mathf.Abs(nodeA.gridPos.x - nodeB.gridPos.x);
-            int distY = Mathf.Abs(nodeA.gridPos.y - nodeB.gridPos.y);
-
-            if(distX > distY) {
-                return Mathf.Sqrt(Mathf.Pow(grid.nodeSize, 2) * 2) * distY + grid.nodeSize * (distX - distY);
-            } else {
-                return Mathf.Sqrt(Mathf.Pow(grid.nodeSize, 2) * 2) * distX + grid.nodeSize * (distY - distX);
-            }
-        }
-
         float GetStraightDistance(Node nodeA, Node nodeB) {
             return Vector2.Distance(nodeA.worldPosition, nodeB.worldPosition);
         }
