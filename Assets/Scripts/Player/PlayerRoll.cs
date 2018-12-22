@@ -1,5 +1,6 @@
 ﻿using EventManagers;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Player {
 
@@ -8,57 +9,80 @@ namespace Player {
         [SerializeField]
         private float rollCooldownTime = 1;
         [SerializeField]
-        private float rollForce = 60;
+        private float rollDistance = 5;
         [SerializeField]
-        private float rollTime = .1f;
+        private float velocityThreshold = .1f;
 
         private GameObjectEventManager eventManager;
         private new Rigidbody2D rigidbody;
-        public bool Rolling { get; set; }
-        public bool RollOnCooldown { get; set; }
-        private bool roll;
-        private float rollCooldownTimer;
-        private float rollTimer;
 
-        void Start()  {
+        private bool shouldRoll;
+        private bool rolling;
+        private bool rollOnCooldown;
+        private float rollCooldownTimer;
+        private Vector2 rollStartPos;
+        private Vector2 rollVelocity;
+        private float movementSpeed;
+
+        void Awake() {
             eventManager = GetComponent<GameObjectEventManager>();
             rigidbody = GetComponent<Rigidbody2D>();
             rollCooldownTimer = rollCooldownTime;
-            rollTimer = rollTime;
+            rollOnCooldown = false;
+            rolling = false;
+            eventManager.StartListening("SendMovementSpeed", new UnityAction<ParamsObject>(ReturnMovementSpeed));
         }
 
         void Update() {
 
-            if(!RollOnCooldown && Input.GetButtonDown("Roll")) {
-                roll = true;
-            }
-
-            if (!RollOnCooldown) {
-                rollTimer -= Time.deltaTime;
-                if(rollTimer <= 0) {
-                    rollTimer = rollTime;
-                    Rolling = false;
-                    RollOnCooldown = true;
-                }
-            }
-
-            if(RollOnCooldown) {
+            if(rollOnCooldown && !rolling) {
                 rollCooldownTimer -= Time.deltaTime;
                 if(rollCooldownTimer <= 0) {
                     rollCooldownTimer = rollCooldownTime;
-                    RollOnCooldown = false;
-                    roll = false;
+                    eventManager.TriggerEvent("OnRollCooldownEnd");
+                    rollOnCooldown = false;
                 }
+            }
+
+            if(!rollOnCooldown && rolling) {
+                if(Vector2.Distance(rollStartPos, rigidbody.position) >= rollDistance) {
+                    rigidbody.velocity = Vector2.zero;
+                    eventManager.TriggerEvent("OnRollEnd");
+                    rolling = false;
+                    eventManager.TriggerEvent("OnRollCooldownStart");
+                    rollOnCooldown = true;
+                }
+                if(!rollVelocity.Equals(rigidbody.velocity)) {
+                    eventManager.TriggerEvent("OnRollEnd");
+                    rolling = false;
+                    eventManager.TriggerEvent("OnRollCooldownStart");
+                    rollOnCooldown = true;
+                }
+            }
+
+            if(!rollOnCooldown && !rolling && Input.GetButtonDown("Roll")) {
+                shouldRoll = true;
             }
 
         }
 
         void FixedUpdate() {
-            if (roll) {
-                rigidbody.AddForce(rigidbody.velocity.normalized * 30, ForceMode2D.Impulse);
-                roll = false;
-                Rolling = true;
+            if (shouldRoll) {
+                if(rigidbody.velocity.magnitude > velocityThreshold) {
+                    rollStartPos = rigidbody.position;
+                    rollVelocity = rigidbody.velocity.normalized * movementSpeed * 3;
+                    rigidbody.velocity = rollVelocity;
+                    shouldRoll = false;
+                    eventManager.TriggerEvent("OnRollStart");
+                    rolling = true;
+                } else {
+                    shouldRoll = false;
+                }
             }
+        }
+
+        private void ReturnMovementSpeed(ParamsObject paramsObj) {
+            movementSpeed = paramsObj.Float;
         }
     }
 }

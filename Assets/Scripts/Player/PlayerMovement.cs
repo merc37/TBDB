@@ -1,54 +1,88 @@
-﻿using UnityEngine;
+﻿using EventManagers;
+using UnityEngine;
+using UnityEngine.Events;
 
 namespace Player {
 	public class PlayerMovement : MonoBehaviour {
-
-		[SerializeField]
-	    private float maxSpeed = 13;
+        
         [SerializeField]
-        private float acceleration = 10;
+        private float maxRunSpeed = 30;
+        [SerializeField]
+        private float maxWalkSpeed = 10;
+        [SerializeField]
+        private float runAcceleration = 1;
+        [SerializeField]
+        private float walkAcceleration = .3f;
+
         private new Rigidbody2D rigidbody;
+        private GameObjectEventManager eventManager;
 
-        private float _speed;
-        private float Speed {
-            get { return _speed; }
-            set {
-                if(value > maxSpeed) {
-                    _speed = maxSpeed;
-                    return;
-                }
-                if(value < 0) {
-                    _speed = 0;
-                    return;
-                }
+        private float currentMaxSpeed;
+        private float currentAcceleration;
 
-                _speed = value;
-            }
+        private Vector2 directionVector = Vector2.zero;
+        private Vector2 newVelocity = Vector2.zero;
+
+        private bool walking;
+        private bool rolling;
+
+        void Awake() {
+            eventManager = GetComponent<GameObjectEventManager>();
+            rigidbody = GetComponent<Rigidbody2D>();
+            rolling = false;
+            eventManager.StartListening("OnRollStart", new UnityAction<ParamsObject>(OnRollStart));
+            eventManager.StartListening("OnRollEnd", new UnityAction<ParamsObject>(OnRollEnd));
         }
 
         void Start() {
-            rigidbody = GetComponent<Rigidbody2D>();
+            eventManager.TriggerEvent("SendMovementSpeed", new ParamsObject(maxRunSpeed));
+        }
+
+        void Update() {
+            directionVector.Set(Input.GetAxisRaw("HorizontalMovement"), Input.GetAxisRaw("VerticalMovement"));
+            walking = Input.GetButton("Walk");
         }
         
         void FixedUpdate() {
-            if(!GetComponent<PlayerRoll>().Rolling) {
-                float horizInput = Input.GetAxis("HorizontalMovement");
-                float vertInput = Input.GetAxis("VerticalMovement");
-                Vector2 direction = Vector2.zero;
-                if(horizInput != 0) {
-                    direction += horizInput * Vector2.right;
+            currentMaxSpeed = walking ? maxWalkSpeed : maxRunSpeed;
+            currentAcceleration = walking ? walkAcceleration : runAcceleration;
+            if(!rolling) {
+                newVelocity = rigidbody.velocity;
+                if(directionVector.x != 0 && directionVector.x == -Mathf.Sign(newVelocity.x)) {
+                    newVelocity.x = 0;
                 }
-                if(vertInput != 0) {
-                    direction += vertInput * Vector2.up;
+                if(directionVector.y != 0 && directionVector.y == -Mathf.Sign(newVelocity.y)) {
+                    newVelocity.y = 0;
                 }
-                if(direction != Vector2.zero) {
-                    Speed += acceleration * Time.fixedDeltaTime;
-                } else {
-                    Speed -= acceleration * Time.fixedDeltaTime;
+                if(directionVector.x == 0) {
+                    if(Mathf.Abs(newVelocity.x) < currentAcceleration) {
+                        newVelocity.Set(0, newVelocity.y);
+                    }
+                    if(Mathf.Abs(newVelocity.x) >= currentAcceleration) {
+                        directionVector.Set(-Mathf.Sign(newVelocity.x), directionVector.y);
+                    }
                 }
-                rigidbody.velocity = direction.normalized * Speed;
-            }
+                if(directionVector.y == 0) {
+                    if(Mathf.Abs(newVelocity.y) < currentAcceleration) {
+                        newVelocity.Set(newVelocity.x, 0);
+                    }
+                    if(Mathf.Abs(newVelocity.y) >= currentAcceleration) {
+                        directionVector.Set(directionVector.x, -Mathf.Sign(newVelocity.y));
+                    }
+                }
+                newVelocity += directionVector.normalized * currentAcceleration;
+                newVelocity = Vector2.ClampMagnitude(newVelocity, currentMaxSpeed);
 
+                rigidbody.velocity = newVelocity;
+            }
         }
-	}
+
+        private void OnRollStart(ParamsObject paramsObj) {
+            rolling = true;
+        }
+
+        private void OnRollEnd(ParamsObject paramsObj) {
+            rolling = false;
+        }
+    }
 }
