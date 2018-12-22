@@ -2,6 +2,14 @@
 using UnityEngine;
 using UnityEngine.Events;
 
+/*
+ * All events should start with On
+ * All message triggers should start with Send
+ * All message listens should start with Return and should stop listening after receviced
+ * Triggers should be put in Start
+ * Listens in Awake
+ */
+
 namespace EventManagers {
 
     public class GameObjectEventManager : MonoBehaviour {

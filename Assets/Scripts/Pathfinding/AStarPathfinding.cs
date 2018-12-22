@@ -12,6 +12,7 @@ namespace Pathfinding {
 
         public List<Node> FindPath(Vector3 startPos, Vector3 targetPos) {
             grid.resetGrid();
+
             Node startNode = grid.NodeFromWorldPoint(startPos);
             Node targetNode = grid.NodeFromWorldPoint(targetPos);
 

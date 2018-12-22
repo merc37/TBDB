@@ -57,7 +57,7 @@ public class AnimateImpact : MonoBehaviour {
     }
 
     void OnTriggerEnter2D(Collider2D coll) {
-        Debug.Log("Animate");
+        //Debug.Log("Animate");
         RaycastHit2D hitInfo;
         Vector2 movementThisStep = myRigidbody.position - previousPosition;
         Vector2 leftEdge = Vector3.Project(myCollider.bounds.extents, Rotate(myRigidbody.velocity.normalized, -90)); // relative to center

@@ -9,13 +9,19 @@ namespace Pathfinding {
         void Awake() {
             grid = GetComponent<Grid>();
         }
-        
+
         public List<Node> FindPath(Vector3 startPos, Vector3 targetPos, Collider2D collider, float maxDistance) {
 
-            grid.resetGrid();
-
             Node startNode = grid.NodeFromWorldPoint(startPos);
+            //print("Pos: " + startPos);
+            //print("Node: " + startNode.worldPosition);
             Node targetNode = grid.NodeFromWorldPoint(targetPos);
+
+            if(!targetNode.isWalkable) {//Maybe?
+                return null;
+            }
+
+            grid.resetGrid();
 
             List<Node> openSet = new List<Node>();
             HashSet<Node> closedSet = new HashSet<Node>();
@@ -23,7 +29,7 @@ namespace Pathfinding {
             startNode.gCost = 0;
             startNode.parent = startNode;
             openSet.Add(startNode);
-
+            
             while(openSet.Count > 0) {
                 Node currentNode = openSet[0];
                 for(int i = 1; i < openSet.Count; i++) {
@@ -75,7 +81,7 @@ namespace Pathfinding {
         bool LineOfSight(Node nodeA, Node nodeB) {
             return !Physics2D.Raycast(nodeA.worldPosition, nodeB.worldPosition - nodeA.worldPosition, Vector3.Distance(nodeA.worldPosition, nodeB.worldPosition));
         }
-
+        
         bool LineOfSight(Node nodeA, Node nodeB, Collider2D collider) {
             //return !Physics2D.Raycast(nodeA.worldPosition, nodeB.worldPosition - nodeA.worldPosition, Vector3.Distance(nodeA.worldPosition, nodeB.worldPosition));
             return !Physics2D.BoxCast(nodeA.worldPosition, collider.bounds.size, 0, (nodeB.worldPosition - nodeA.worldPosition).normalized, Vector2.Distance(nodeA.worldPosition, nodeB.worldPosition));
