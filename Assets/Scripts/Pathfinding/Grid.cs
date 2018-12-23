@@ -110,7 +110,7 @@ namespace Pathfinding {
             if(grid != null) {
                 // Draw grid bounds
                 Gizmos.DrawWireCube(gridPosition + new Vector3(gridWorldSize.x / 2, -gridWorldSize.y / 2, transform.position.z), gridWorldSize);
-
+                
                 // Draw nodes
                 if(path != null && path.Count > 0) pathCost = path[path.Count - 1].fCost;
                 Gradient g;

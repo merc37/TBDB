@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace Pathfinding {
-    public class BasicThetaStarPathfinding : MonoBehaviour {
+    public class LazyThetaStarPathfinding : MonoBehaviour {
 
         private Grid grid;
 
@@ -29,12 +29,28 @@ namespace Pathfinding {
             startNode.gCost = 0;
             startNode.parent = startNode;
             openSet.Add(startNode);
-            
+
             while(openSet.Count > 0) {
                 Node currentNode = openSet[0];
                 for(int i = 1; i < openSet.Count; i++) {
                     if(openSet[i].fCost < currentNode.fCost || (openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost)) {
                         currentNode = openSet[i];
+                    }
+                }
+
+                if(currentNode.parent != null && !LineOfSight(currentNode.parent, currentNode)) {
+                    currentNode.gCost = Mathf.Infinity;
+                    foreach(Node neighbor in grid.GetNeighbors(currentNode)) {
+                        if(neighbor.parent != null && !closedSet.Contains(neighbor.parent)) {
+                            float newMoveCost = neighbor.parent.gCost + GetStraightDistance(currentNode, neighbor);
+                            if(newMoveCost <= currentNode.gCost) {
+                                currentNode.gCost = newMoveCost;
+                                currentNode.parent = neighbor.parent;
+                                currentNode.hCost = GetStraightDistance(neighbor, targetNode);
+                            }
+
+
+                        }
                     }
                 }
 
@@ -48,30 +64,19 @@ namespace Pathfinding {
 
                 foreach(Node neighbor in grid.GetNeighbors(currentNode)) {
 
-					if (!neighbor.isWalkable || closedSet.Contains(neighbor)) {
-						continue;
-					}
-
-					// Basic Theta * "UpdateVertex()" method
-					if (currentNode.parent != null && LineOfSight(currentNode.parent, neighbor, collider)) {
-                        float newMoveCost = currentNode.parent.gCost + GetStraightDistance(currentNode.parent, neighbor);
-                        if(newMoveCost <= neighbor.gCost) {
-                            neighbor.gCost = newMoveCost;
-                            neighbor.hCost = GetStraightDistance(neighbor, targetNode);
-                            neighbor.parent = currentNode.parent;
-
-                            if(!openSet.Contains(neighbor)) openSet.Add(neighbor);
-                        }
-                    } else {
-                        float newMoveCost = currentNode.gCost + GetStraightDistance(currentNode, neighbor);
-                        if(newMoveCost < neighbor.gCost) {
-                            neighbor.gCost = newMoveCost;
-                            neighbor.hCost = GetStraightDistance(neighbor, targetNode);
-                            neighbor.parent = currentNode;
-
-                            if(!openSet.Contains(neighbor)) openSet.Add(neighbor);
-                        }
+                    if(!neighbor.isWalkable || closedSet.Contains(neighbor)) {
+                        continue;
                     }
+
+                    //
+                    float newMoveCost = currentNode.gCost + GetStraightDistance(currentNode, neighbor);
+                    if(newMoveCost < neighbor.gCost) {
+                        neighbor.parent = currentNode.parent;
+                        neighbor.gCost = currentNode.parent.gCost + GetStraightDistance(currentNode, neighbor);
+                        neighbor.hCost = GetStraightDistance(neighbor, targetNode);
+                    }
+
+                    if(!openSet.Contains(neighbor)) openSet.Add(neighbor);
                 }
             }
             return null;
@@ -80,9 +85,9 @@ namespace Pathfinding {
         bool LineOfSight(Node nodeA, Node nodeB) {
             return !Physics2D.Raycast(nodeA.worldPosition, nodeB.worldPosition - nodeA.worldPosition, Vector3.Distance(nodeA.worldPosition, nodeB.worldPosition));
         }
-        
+
         bool LineOfSight(Node nodeA, Node nodeB, Collider2D collider) {
-           return !Physics2D.BoxCast(nodeA.worldPosition, collider.bounds.size, 0, (nodeB.worldPosition - nodeA.worldPosition).normalized, Vector2.Distance(nodeA.worldPosition, nodeB.worldPosition));
+            return !Physics2D.BoxCast(nodeA.worldPosition, collider.bounds.size, 0, (nodeB.worldPosition - nodeA.worldPosition).normalized, Vector2.Distance(nodeA.worldPosition, nodeB.worldPosition));
         }
 
         List<Node> RetracePath(Node startNode, Node endNode) {

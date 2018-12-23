@@ -45,7 +45,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     private Rigidbody2D playerRigidbody;
     private new Rigidbody2D rigidbody;
     private new Collider2D collider;
-    private BasicThetaStarPathfinding pathfinding;
+    private LazyThetaStarPathfinding pathfinding;
     private Pathfinding.Grid grid;
     private List<Node> path;
     private Vector2 movementTarget;
@@ -522,7 +522,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     private void SetPathfinding(ParamsObject paramsObj) {
-        pathfinding = paramsObj.Transform.GetComponent<BasicThetaStarPathfinding>();
+        pathfinding = paramsObj.Transform.GetComponent<LazyThetaStarPathfinding>();
         grid = paramsObj.Transform.GetComponent<Pathfinding.Grid>();
         eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
     }

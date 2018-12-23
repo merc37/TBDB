@@ -10,7 +10,7 @@ namespace Pathfinding {
             grid = GetComponent<Grid>();
         }
 
-        public List<Node> FindPath(Vector3 startPos, Vector3 targetPos) {
+        public List<Node> FindPath(Vector2 startPos, Vector2 targetPos) {
             grid.resetGrid();
 
             Node startNode = grid.NodeFromWorldPoint(startPos);
@@ -40,10 +40,10 @@ namespace Pathfinding {
                     if(!neighbor.isWalkable || closedSet.Contains(neighbor)) continue;
 
                     // A* "UpdateVertex()" method
-                    float newMoveCost = currentNode.fCost + GetGridDistance(currentNode, neighbor);
+                    float newMoveCost = currentNode.fCost + GetManhattanDistance(currentNode, neighbor);
                     if(newMoveCost < neighbor.gCost || !openSet.Contains(neighbor)) {
                         neighbor.gCost = newMoveCost;
-                        neighbor.hCost = GetGridDistance(neighbor, targetNode);
+                        neighbor.hCost = GetManhattanDistance(neighbor, targetNode);
                         neighbor.parent = currentNode;
 
                         if(!openSet.Contains(neighbor)) openSet.Add(neighbor);
@@ -65,15 +65,11 @@ namespace Pathfinding {
             return path;
         }
 
-        int GetGridDistance(Node nodeA, Node nodeB) {
+        float GetManhattanDistance(Node nodeA, Node nodeB) {
             int distX = Mathf.Abs(nodeA.gridPos.x - nodeB.gridPos.x);
             int distY = Mathf.Abs(nodeA.gridPos.y - nodeB.gridPos.y);
 
-            if(distX > distY) {
-                return 14 * distY + 10 * (distX - distY);
-            } else {
-                return 14 * distX + 10 * (distY - distX);
-            }
+            return distX + distY;
         }
     }
 }
