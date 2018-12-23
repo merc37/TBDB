@@ -6,7 +6,7 @@ using UnityEngine.Experimental.PlayerLoop;
 
 namespace Pathfinding
 {
-	[ExecuteInEditMode]
+	//[ExecuteInEditMode]
 	public class PathfindingNode
 	{
 		public float gCost;
@@ -19,11 +19,11 @@ namespace Pathfinding
 		public PathfindingNode parent;
 		public bool isWalkable;
 
-		// Possibly temporary variables, try to remove to increase efficiency
+		// Possibly temporary variables, try to remove to increase memory efficiency
 		public Vector2Int gridPosition;
-		public Vector3 worldPosition;
+		public Vector2 worldPosition;
 
-		public PathfindingNode(Vector3 worldPosition, Vector2Int gridPosition, bool isWalkable)
+		public PathfindingNode(Vector2 worldPosition, Vector2Int gridPosition, bool isWalkable)
 		{
 			this.worldPosition = worldPosition;
 			this.gridPosition = gridPosition;
@@ -38,20 +38,20 @@ namespace Pathfinding
 			hCost = Mathf.Infinity;
 		}
 
-		internal void DrawGizmos(float nodeRadius)
+		internal void DrawGizmos(float nodeRadius, bool showPathCost)
 		{
 			if (!isWalkable)
 				Gizmos.color = Color.red;
-			else if (fCost != Mathf.Infinity)
+			else if (float.IsPositiveInfinity(fCost))
 				Gizmos.color = Color.blue;
 			else
 				Gizmos.color = Color.white;
 			
-			Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius);
+			Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius / 2);
 			
-			if(fCost != Mathf.Infinity)
+			if(showPathCost && !float.IsPositiveInfinity(fCost))
 			{
-				Vector3 GUIposition = worldPosition + new Vector3(-nodeRadius, nodeRadius);
+				Vector3 GUIposition = worldPosition + new Vector2(-nodeRadius, nodeRadius);
 				Handles.Label(GUIposition, "G:" + gCost.ToString("F1"));
 				Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + hCost.ToString("F1"));
 				Handles.Label(GUIposition + Vector3.up * -0.27f, "F:" + fCost.ToString("F1"));

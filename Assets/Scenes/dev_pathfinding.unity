@@ -386,6 +386,26 @@ Prefab:
       propertyPath: orthographic size
       value: 3
       objectReference: {fileID: 0}
+    - target: {fileID: 20912500232094488, guid: d0f821b630166453ebcc31ecad9e2088,
+        type: 2}
+      propertyPath: m_BackGroundColor.a
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 20912500232094488, guid: d0f821b630166453ebcc31ecad9e2088,
+        type: 2}
+      propertyPath: m_BackGroundColor.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 20912500232094488, guid: d0f821b630166453ebcc31ecad9e2088,
+        type: 2}
+      propertyPath: m_BackGroundColor.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 20912500232094488, guid: d0f821b630166453ebcc31ecad9e2088,
+        type: 2}
+      propertyPath: m_BackGroundColor.b
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0f821b630166453ebcc31ecad9e2088, type: 2}
   m_IsPrefabAsset: 0
@@ -903,14 +923,14 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 678800143}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e30d7a2306fa4069a54462a9563146c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   unwalkableMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   gridScale: 0.5
   showOnlyTestedNodes: 0
 --- !u!114 &678800147
