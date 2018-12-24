@@ -55,18 +55,18 @@ namespace Player {
                     newVelocity.y = 0;
                 }
                 if(directionVector.x == 0) {
-                    if(Mathf.Abs(newVelocity.x) < currentAcceleration) {
+                    if(Mathf.Abs(newVelocity.x) <= currentAcceleration) {
                         newVelocity.Set(0, newVelocity.y);
                     }
-                    if(Mathf.Abs(newVelocity.x) >= currentAcceleration) {
+                    if(Mathf.Abs(newVelocity.x) > currentAcceleration) {
                         directionVector.Set(-Mathf.Sign(newVelocity.x), directionVector.y);
                     }
                 }
                 if(directionVector.y == 0) {
-                    if(Mathf.Abs(newVelocity.y) < currentAcceleration) {
+                    if(Mathf.Abs(newVelocity.y) <= currentAcceleration) {
                         newVelocity.Set(newVelocity.x, 0);
                     }
-                    if(Mathf.Abs(newVelocity.y) >= currentAcceleration) {
+                    if(Mathf.Abs(newVelocity.y) > currentAcceleration) {
                         directionVector.Set(directionVector.x, -Mathf.Sign(newVelocity.y));
                     }
                 }

@@ -23,11 +23,9 @@ public class BasicEnemyTasks : MonoBehaviour {
     [SerializeField]
     private int lowHealthThreshold = 3;
     [SerializeField]
-    private float acceleration = 10;
+    private float acceleration = 2;
     [SerializeField]
-    private float deceleration = 30;
-    [SerializeField]
-    private float movementSpeed = 10;
+    private float movementSpeed = 20;
     [SerializeField]
     private float recalculatePathDistance = 2;
     [SerializeField]
@@ -45,7 +43,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     private Rigidbody2D playerRigidbody;
     private new Rigidbody2D rigidbody;
     private new Collider2D collider;
-    private LazyThetaStarPathfinding pathfinding;
+    private BasicThetaStarPathfinding pathfinding;
     private Pathfinding.Grid grid;
     private List<Node> path;
     private Vector2 movementTarget;
@@ -95,6 +93,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     private Vector2 movementDirection;
 
     void Awake() {
+
         eventManager = GetComponent<GameObjectEventManager>();
         eventManager.StartListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
         eventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
@@ -113,10 +112,43 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     }
 
+    Vector2 newVelocity;
     void FixedUpdate() {
 
         if(!rolling && !stopMovement) {
-            rigidbody.velocity = movementDirection.normalized * movementSpeed;
+            newVelocity = rigidbody.velocity;
+            if(movementDirection.x != 0 && Mathf.Sign(movementDirection.x) == -Mathf.Sign(newVelocity.x)) {
+                print("Useful 1");
+                newVelocity.x = 0;
+            }
+            if(movementDirection.y != 0 && Mathf.Sign(movementDirection.y) == -Mathf.Sign(newVelocity.y)) {
+                print("Useful 2");
+                newVelocity.y = 0;
+            }
+            if(movementDirection.x == 0) {
+                if(Mathf.Abs(newVelocity.x) < acceleration) {
+                    print("Useful 3");
+                    newVelocity.Set(0, newVelocity.y);
+                }
+                if(Mathf.Abs(newVelocity.x) >= acceleration) {
+                    print("Useful 4");
+                    movementDirection.Set(-Mathf.Sign(newVelocity.x), movementDirection.y);
+                }
+            }
+            if(movementDirection.y == 0) {
+                if(Mathf.Abs(newVelocity.y) < acceleration) {
+                    print("Useful 5");
+                    newVelocity.Set(newVelocity.x, 0);
+                }
+                if(Mathf.Abs(newVelocity.y) >= acceleration) {
+                    print("Useful 6");
+                    movementDirection.Set(movementDirection.x, -Mathf.Sign(newVelocity.y));
+                }
+            }
+            newVelocity += movementDirection.normalized * acceleration;
+            newVelocity = Vector2.ClampMagnitude(newVelocity, movementSpeed);
+
+            rigidbody.velocity = newVelocity;
         }
 
         if(stopMovement) {
@@ -150,6 +182,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     void Update() {
+
         if(Input.GetButtonDown("DebugInteract")) {
             SetPlayerLastKnownPosition();
             SetPlayerLastKnownHeading();
@@ -334,7 +367,16 @@ public class BasicEnemyTasks : MonoBehaviour {
         }
 
         Vector2 nodeWorldPos = path[0].worldPosition;
-        movementDirection = (nodeWorldPos - rigidbody.position);
+        Vector2 newMovementDirection = (nodeWorldPos - rigidbody.position);
+        //movementDirection = newMovementDirection;
+        print("New: " + newMovementDirection);
+        print("Old: " + movementDirection);
+        print("Angle: " + Vector2.Angle(newMovementDirection, movementDirection));
+        movementDirection = newMovementDirection;
+        if(movementDirection.Equals(Vector2.zero) ||
+            (!newMovementDirection.Equals(movementDirection) && Vector2.Angle(newMovementDirection.normalized, movementDirection.normalized) > 10)) {
+            movementDirection = newMovementDirection;
+        }
 
         return true;
     }
@@ -522,7 +564,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     private void SetPathfinding(ParamsObject paramsObj) {
-        pathfinding = paramsObj.Transform.GetComponent<LazyThetaStarPathfinding>();
+        pathfinding = paramsObj.Transform.GetComponent<BasicThetaStarPathfinding>();
         grid = paramsObj.Transform.GetComponent<Pathfinding.Grid>();
         eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
     }

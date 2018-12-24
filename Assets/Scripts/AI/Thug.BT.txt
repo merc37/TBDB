@@ -26,12 +26,13 @@ tree("Live")
 						not PlayerRunningAway
 						StopMovement
 					sequence
-						Fail
 						tree("PlayerInSight")
 						SetLookTargetToPlayer
 						SetMovementTargetToPlayerPosition
+						//MoveTowardsMovementTarget
 						PathToMovementTarget
 					sequence
+						Fail
 						SetMovementTargetToPlayerLastKnownPosition
 						SetLookTargetToMovementDirection
 						fallback
@@ -39,8 +40,8 @@ tree("Live")
 							sequence
 								StopMovement
 								UnSetPlayerLastKnownPosition
-								//SetLookTargetToPlayerLastKnownHeading
-								//UnSetPlayerLastKnownHeading
+								SetLookTargetToPlayerLastKnownHeading
+								UnSetPlayerLastKnownHeading
 							
 tree("FireOnSight")
 	sequence

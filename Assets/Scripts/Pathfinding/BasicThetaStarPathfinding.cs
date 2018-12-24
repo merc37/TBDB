@@ -48,7 +48,8 @@ namespace Pathfinding {
 
                 foreach(Node neighbor in grid.GetNeighbors(currentNode)) {
 
-					if (!neighbor.isWalkable || closedSet.Contains(neighbor)) {
+					if (!neighbor.isWalkable || closedSet.Contains(neighbor) ||
+                        (neighbor.fCost != Mathf.Infinity && neighbor.fCost <= maxDistance)) {
 						continue;
 					}
 
@@ -93,6 +94,7 @@ namespace Pathfinding {
                 currentNode = currentNode.parent;
             }
             path.Reverse();
+            path.RemoveAt(0);
             return path;
         }
 

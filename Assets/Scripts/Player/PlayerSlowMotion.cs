@@ -29,24 +29,27 @@ namespace Player {
 
 		public bool SlowMotionActivated {get; set;}
 
+        private float originalTimeScale;
+
 		// Use this for initialization
 		void Start () {
             eventManager = GetComponent<GameObjectEventManager>();
             CurrentSlowMotionTime = MaxSlowMotionTime;
+            originalTimeScale = Time.timeScale;
 		}
 		
 		// Update is called once per frame
 		void Update () {
 			// Slow Motion
 			if(Input.GetButtonDown("SlowMotion")) {
-				Time.timeScale = Time.timeScale == 1f ? (slowMotionPercentage/100) : 1f;
+				Time.timeScale = Time.timeScale == originalTimeScale ? (slowMotionPercentage/100) : originalTimeScale;
 				SlowMotionActivated = !SlowMotionActivated;
 			}
 
 			if(SlowMotionActivated) {
                 CurrentSlowMotionTime -= Time.deltaTime;
                 if(CurrentSlowMotionTime == 0) {
-					Time.timeScale = 1f;
+					Time.timeScale = originalTimeScale;
 					SlowMotionActivated = !SlowMotionActivated;
 				}
 			}
