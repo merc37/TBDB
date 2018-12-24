@@ -6,6 +6,7 @@ using Tiled2Unity;
 using UnityEditor;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 using UnityEngine.Tilemaps;
 
 namespace Pathfinding
@@ -33,9 +34,11 @@ namespace Pathfinding
 			InitializeGrid();
 		}
 		
+		Vector3 t1 = new Vector3(-1,-1,0);
+		Vector3 t2 = new Vector3(2,2,0);
 		void Start ()
 		{
-			
+			LineOfSight(NodeAtWorldPosition(t1), NodeAtWorldPosition(t2));
 		}
 	
 		void Update ()
@@ -140,6 +143,75 @@ namespace Pathfinding
 
 			return NodeAtGridPosition(x, y);
 		}
+
+		private List<PathfindingNode> test;
+		public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB, float width = 0)
+		{
+			
+			// if slope > 1 sample at ys
+			// if slope < 1 samlpe at xs
+			
+			bool transposeResult = false;
+			Vector2Int n1, n2;
+			
+			var vect = nodeB.gridPosition - nodeA.gridPosition;
+			if (vect.y > vect.x)
+			{
+				transposeResult = true;
+				n1 = new Vector2Int(nodeA.gridPosition.y, nodeA.gridPosition.x);
+				n2 = new Vector2Int(nodeB.gridPosition.y, nodeB.gridPosition.x);
+			}
+			else
+			{
+				n1 = nodeA.gridPosition;
+				n2 = nodeB.gridPosition;
+			}
+
+			vect = n2 - n1;
+			float slope = (float) vect.y / vect.x;
+			
+			HashSet<PathfindingNode> intersectedNodes = new HashSet<PathfindingNode>();
+
+			for (float ix = 0.5f; ix <= vect.x; ix++)
+			{
+				float y = n1.y + slope * ix;
+
+				Vector2Int left = new Vector2Int();
+				Vector2Int right = new Vector2Int();
+
+				left.x = Mathf.FloorToInt(n1.x + ix);
+				right.x = Mathf.CeilToInt(n1.x + ix);
+				
+				if (y % 0.5f == 0)
+				{
+					left.y = Mathf.FloorToInt(y);
+					right.y = Mathf.CeilToInt(y);
+				}
+				else
+				{
+					left.y = Mathf.RoundToInt(y);
+					right.y = left.y;
+				}
+
+				if (transposeResult)
+				{
+					var t = left.x;
+					left.x = left.y;
+					left.y = t;
+
+					t = right.x;
+					right.x = right.y;
+					right.y = t;
+				}
+
+				intersectedNodes.Add(NodeAtGridPosition(left));
+				intersectedNodes.Add(NodeAtGridPosition(right));
+			}
+
+			test = intersectedNodes.ToList();
+
+			return false;
+		}
 		
 		public void Reset()
 		{
@@ -156,6 +228,16 @@ namespace Pathfinding
 				foreach (var node in _pathfindingGrid)
 				{
 					node.DrawGizmos(_nodeRadius, false);
+				}
+			}
+
+			Gizmos.color = Color.yellow;
+			if (test != null)
+			{
+				Gizmos.DrawLine(t1, t2);
+				foreach (var node in test)
+				{
+					Gizmos.DrawWireSphere(node.worldPosition, _nodeRadius/2);
 				}
 			}
 		}

@@ -534,6 +534,7 @@ GameObject:
   - component: {fileID: 515187940}
   - component: {fileID: 515187942}
   - component: {fileID: 515187939}
+  - component: {fileID: 515187943}
   m_Layer: 0
   m_Name: Agent
   m_TagString: Untagged
@@ -547,7 +548,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 515187938}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aec608bc85736469caa1c3af223db2b1, type: 3}
   m_Name: 
@@ -633,6 +634,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &515187943
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 515187938}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a11fd10b955434915a13af488e6eb686, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _target: {fileID: 611817631}
 --- !u!1 &611817622
 GameObject:
   m_ObjectHideFlags: 0
@@ -884,6 +897,7 @@ GameObject:
   - component: {fileID: 678800146}
   - component: {fileID: 678800147}
   - component: {fileID: 678800148}
+  - component: {fileID: 678800149}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -923,7 +937,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 678800143}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e30d7a2306fa4069a54462a9563146c, type: 3}
   m_Name: 
@@ -932,7 +946,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   gridScale: 0.5
-  showOnlyTestedNodes: 0
 --- !u!114 &678800147
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -953,6 +966,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c60de44f2fc1b4e1b8854fbee17de1e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &678800149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 678800143}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db498b07f838c43ddbea56838b577641, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &771868593

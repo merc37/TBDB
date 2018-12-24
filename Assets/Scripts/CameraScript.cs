@@ -25,11 +25,28 @@ public class CameraScript : MonoBehaviour {
 		halfWorldHeight = Camera.main.orthographicSize;
 		halfWorldWidth = (Camera.main.aspect * (halfWorldHeight*2))/2;
         map = mapTransform.GetComponent<LayeredTilemap>();
-        mapWidth = map.MapSize.x;
-        mapHeight = map.MapSize.y;
+        mapWidth = map.MapBounds.size.x;
+        mapHeight = map.MapBounds.size.y;
     }
     
-	void LateUpdate () {
+    void LateUpdate () {
+        newCameraPosition.Set(playerRigidbody.position.x, playerRigidbody.position.y, -10);
+        if(newCameraPosition.x - halfWorldWidth < map.MapBounds.min.x) {
+            newCameraPosition.x = map.MapBounds.min.x + halfWorldWidth;
+        }
+        if(newCameraPosition.x + halfWorldWidth > map.MapBounds.max.x) {
+            newCameraPosition.x = map.MapBounds.max.x - halfWorldWidth;
+        }
+        if(newCameraPosition.y + halfWorldHeight > map.MapBounds.max.y) {
+            newCameraPosition.y = map.MapBounds.max.y - halfWorldHeight;
+        }
+        if(newCameraPosition.y - halfWorldHeight < map.MapBounds.min.y) {
+            newCameraPosition.y = map.MapBounds.min.y + halfWorldHeight;
+        }
+        transform.position = newCameraPosition;
+    }
+    
+	/*void LateUpdate () {
         newCameraPosition.Set(playerRigidbody.position.x, playerRigidbody.position.y, -10);
         if(newCameraPosition.x - halfWorldWidth < mapTransform.position.x - mapWidth / 2) {
             newCameraPosition.x = (mapTransform.position.x - mapWidth / 2) + halfWorldWidth;
@@ -44,7 +61,7 @@ public class CameraScript : MonoBehaviour {
             newCameraPosition.y = (mapTransform.position.y - mapHeight / 2) + halfWorldHeight;
         }
         transform.position = newCameraPosition;
-    }
+    }*/
 
     private void SetPlayerTransform(ParamsObject paramsObj) {
         playerRigidbody = paramsObj.Transform.GetComponent<Rigidbody2D>();

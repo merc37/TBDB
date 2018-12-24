@@ -47,7 +47,7 @@ namespace Pathfinding
 			else
 				Gizmos.color = Color.white;
 			
-			Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius / 2);
+			Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius * 0.5f);
 			
 			if(showPathCost && !float.IsPositiveInfinity(fCost))
 			{
