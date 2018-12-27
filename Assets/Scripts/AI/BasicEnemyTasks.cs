@@ -27,17 +27,13 @@ public class BasicEnemyTasks : MonoBehaviour {
     [SerializeField]
     private float movementSpeed = 20;
     [SerializeField]
-    private float recalculatePathDistance = 2;
+    private float recalculatePathDistance = 5;
     [SerializeField]
     private float rollCooldownTime = 5;
     [SerializeField]
-    private float rollTime = .1f;
+    private float rollDistance = 5;
     [SerializeField]
-    private float rollForce = 10;
-	[SerializeField]
 	private float maxPathSearchDistance = 20;
-    [SerializeField]
-    private float rotateSpeed = .3f;
 
     private GameObjectEventManager eventManager;
     private Rigidbody2D playerRigidbody;
@@ -47,6 +43,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     private Pathfinding.Grid grid;
     private List<Node> path;
     private Vector2 movementTarget;
+    private Vector2 newVelocity;
     private bool lowOnAmmo;
     private bool lowOnHealth;
     private bool hasZeroHealth;
@@ -56,10 +53,9 @@ public class BasicEnemyTasks : MonoBehaviour {
     private bool rolling;
     private bool rollOnCooldown;
     private bool roll;
-    private float rollTimer;
     private Vector2 rollStartPos;
     private Vector2 rollVelocity;
-    private float rollDistance;
+    
     private bool coverFound;
     private bool stopMovement;
 
@@ -111,37 +107,30 @@ public class BasicEnemyTasks : MonoBehaviour {
         rollCooldownTimer = rollCooldownTime;
 
     }
-
-    Vector2 newVelocity;
+    
     void FixedUpdate() {
 
-        if(!rolling && !stopMovement) {
+        if(!rolling) {
             newVelocity = rigidbody.velocity;
             if(movementDirection.x != 0 && Mathf.Sign(movementDirection.x) == -Mathf.Sign(newVelocity.x)) {
-                print("Useful 1");
                 newVelocity.x = 0;
             }
             if(movementDirection.y != 0 && Mathf.Sign(movementDirection.y) == -Mathf.Sign(newVelocity.y)) {
-                print("Useful 2");
                 newVelocity.y = 0;
             }
             if(movementDirection.x == 0) {
                 if(Mathf.Abs(newVelocity.x) < acceleration) {
-                    print("Useful 3");
                     newVelocity.Set(0, newVelocity.y);
                 }
                 if(Mathf.Abs(newVelocity.x) >= acceleration) {
-                    print("Useful 4");
                     movementDirection.Set(-Mathf.Sign(newVelocity.x), movementDirection.y);
                 }
             }
             if(movementDirection.y == 0) {
                 if(Mathf.Abs(newVelocity.y) < acceleration) {
-                    print("Useful 5");
                     newVelocity.Set(newVelocity.x, 0);
                 }
                 if(Mathf.Abs(newVelocity.y) >= acceleration) {
-                    print("Useful 6");
                     movementDirection.Set(movementDirection.x, -Mathf.Sign(newVelocity.y));
                 }
             }
@@ -150,42 +139,32 @@ public class BasicEnemyTasks : MonoBehaviour {
 
             rigidbody.velocity = newVelocity;
         }
+    }
 
+    void Update() {
         if(stopMovement) {
-            rigidbody.velocity = Vector2.zero;
             if(path != null) {
                 path.Clear();
             }
+            movementDirection = Vector2.zero;
             stopMovement = false;
         }
 
         if(RotationTarget != float.NegativeInfinity) {
-            rigidbody.MoveRotation(RotationTarget);
             rigidbody.rotation = RotationTarget;
             if(Mathf.Abs(Mathf.DeltaAngle(rigidbody.rotation, RotationTarget)) <= 1) {
                 RotationTarget = float.NegativeInfinity;
             }
         }
 
-        if(shouldRoll) {
-            if(rigidbody.velocity.magnitude > .1f) {
-                rollStartPos = rigidbody.position;
-                rigidbody.velocity = rollDirection.normalized * movementSpeed * 3;
-                rollVelocity = rigidbody.velocity;
-                shouldRoll = false;
-                eventManager.TriggerEvent("OnRollStart");
-                rolling = true;
-            } else {
-                shouldRoll = false;
-            }
-        }
-    }
-
-    void Update() {
-
-        if(Input.GetButtonDown("DebugInteract")) {
-            SetPlayerLastKnownPosition();
-            SetPlayerLastKnownHeading();
+        if(roll) {
+            rollStartPos = rigidbody.position;
+            rigidbody.velocity = rollDirection.normalized * movementSpeed * 3;
+            rollVelocity = rigidbody.velocity;
+            shouldRoll = false;
+            roll = false;
+            eventManager.TriggerEvent("OnRollStart");
+            rolling = true;
         }
 
         if(rollOnCooldown && !rolling) {
@@ -259,6 +238,11 @@ public class BasicEnemyTasks : MonoBehaviour {
         Vector2 direction = playerRigidbody.position.normalized - playerRigidbody.velocity.normalized;
         playerLastKnownHeading = direction;
         return true;
+    }
+
+    [Task]
+    bool IsRolling() {
+        return rolling;
     }
 
     [Task]
@@ -369,9 +353,6 @@ public class BasicEnemyTasks : MonoBehaviour {
         Vector2 nodeWorldPos = path[0].worldPosition;
         Vector2 newMovementDirection = (nodeWorldPos - rigidbody.position);
         //movementDirection = newMovementDirection;
-        print("New: " + newMovementDirection);
-        print("Old: " + movementDirection);
-        print("Angle: " + Vector2.Angle(newMovementDirection, movementDirection));
         movementDirection = newMovementDirection;
         if(movementDirection.Equals(Vector2.zero) ||
             (!newMovementDirection.Equals(movementDirection) && Vector2.Angle(newMovementDirection.normalized, movementDirection.normalized) > 10)) {
@@ -544,12 +525,11 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     private void OnRoll(ParamsObject paramsObj) {
-        if(!rollOnCooldown && !rolling) {
-            shouldRoll = true;
-            rollDirection = Vector3.Cross(paramsObj.Vector2, Vector3.forward);
-            if(Random.value > .5f) {
-                rollDirection = -rollDirection;
-            }
+        print("SHOUDL ROOLL");
+        shouldRoll = true;
+        rollDirection = Vector3.Cross(paramsObj.Vector2, Vector3.forward);
+        if(Random.value > .5f) {
+            rollDirection = -rollDirection;
         }
     }
     

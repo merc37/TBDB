@@ -11,28 +11,28 @@ tree("Live")
 		repeat
 			mute
 				sequence
-						Fail
-						ShouldRoll
-						not IsRollOnCooldown
-						Roll
+					Fail
 		repeat
 			mute
 				fallback
 					sequence
-						Fail
+						not IsRolling
+						ShouldRoll
+						not IsRollOnCooldown
+						Roll
+					repeat
+						IsRolling
+					sequence
 						tree("PlayerInSight")
-						SetLookTargetToPlayer
-						PlayerInMedAttackRange
 						not PlayerRunningAway
+						PlayerInMedAttackRange
 						StopMovement
 					sequence
 						tree("PlayerInSight")
-						SetLookTargetToPlayer
 						SetMovementTargetToPlayerPosition
-						//MoveTowardsMovementTarget
-						PathToMovementTarget
+						MoveTowardsMovementTarget
+						//PathToMovementTarget
 					sequence
-						Fail
 						SetMovementTargetToPlayerLastKnownPosition
 						SetLookTargetToMovementDirection
 						fallback
@@ -62,6 +62,7 @@ tree("PlayerInSight")
 		PlayerInSight
 		SetPlayerLastKnownPosition
 		SetPlayerLastKnownHeading
+		SetLookTargetToPlayer
 
 					
         
