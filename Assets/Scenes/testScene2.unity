@@ -1091,6 +1091,7 @@ MonoBehaviour:
   rollCooldownTime: 0
   rollDistance: 20
   velocityThreshold: 0.1
+  rollRecoveryTime: 0.1
 --- !u!114 &611817625
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1478,6 +1479,10 @@ Prefab:
     - target: {fileID: 4134245534757358, guid: 739c05033a2fa924bad4897d6199200e, type: 2}
       propertyPath: m_RootOrder
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4992776803796416, guid: 739c05033a2fa924bad4897d6199200e, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 739c05033a2fa924bad4897d6199200e, type: 2}
@@ -4735,7 +4740,7 @@ Prefab:
     - target: {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04,
         type: 2}
       propertyPath: acceleration
-      value: 20
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04,
         type: 2}
@@ -4775,6 +4780,31 @@ Prefab:
         type: 2}
       propertyPath: maxPathSearchDistance
       value: 50
+      objectReference: {fileID: 0}
+    - target: {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: rollDistance
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 61811532202274904, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: m_Offset.y
+      value: 0.5776
+      objectReference: {fileID: 0}
+    - target: {fileID: 61811532202274904, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: m_Size.y
+      value: 2.1552
+      objectReference: {fileID: 0}
+    - target: {fileID: 61811532202274904, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: m_Offset.x
+      value: -0.03541714
+      objectReference: {fileID: 0}
+    - target: {fileID: 61811532202274904, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 2}
+      propertyPath: m_Size.x
+      value: 1.4013945
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 50214324330173404, guid: faaf22525cba0c34abcfcdef0237ff04, type: 2}

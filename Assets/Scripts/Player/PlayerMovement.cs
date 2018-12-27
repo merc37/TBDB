@@ -40,13 +40,15 @@ namespace Player {
 
         void Update() {
             directionVector.Set(Input.GetAxisRaw("HorizontalMovement"), Input.GetAxisRaw("VerticalMovement"));
-            walking = Input.GetButton("Walk");
+            walking = Input.GetButton("Walk");    
         }
         
         void FixedUpdate() {
-            currentMaxSpeed = walking ? maxWalkSpeed : maxRunSpeed;
-            currentAcceleration = walking ? walkAcceleration : runAcceleration;
             if(!rolling) {
+                
+                currentMaxSpeed = walking ? maxWalkSpeed : maxRunSpeed;
+                currentAcceleration = walking ? walkAcceleration : runAcceleration;
+
                 newVelocity = rigidbody.velocity;
                 if(directionVector.x != 0 && directionVector.x == -Mathf.Sign(newVelocity.x)) {
                     newVelocity.x = 0;
@@ -74,6 +76,7 @@ namespace Player {
                 newVelocity = Vector2.ClampMagnitude(newVelocity, currentMaxSpeed);
 
                 rigidbody.velocity = newVelocity;
+
             }
         }
 
