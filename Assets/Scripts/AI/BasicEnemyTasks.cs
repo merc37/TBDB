@@ -31,6 +31,10 @@ public class BasicEnemyTasks : MonoBehaviour {
     [SerializeField]
     private float rollCooldownTime = 5;
     [SerializeField]
+    private float searchTime = 7;
+    [SerializeField]
+    private float searchRadius = 8.5f;
+    [SerializeField]
     private float rollDistance = 5;
     [SerializeField]
 	private float maxPathSearchDistance = 20;
@@ -49,15 +53,23 @@ public class BasicEnemyTasks : MonoBehaviour {
     private bool hasZeroHealth;
     private bool shouldRoll;
     private float rollCooldownTimer;
+    private float searchTimer;
     private Vector2 rollDirection;
     private bool rolling;
     private bool rollOnCooldown;
     private bool roll;
     private Vector2 rollStartPos;
     private Vector2 rollVelocity;
-    
+
+    private Vector2 searchDirection;
+    private Vector2 searchCenter;
+
+    private float pointAccuracy = 0.1f;
+
     private bool coverFound;
     private bool stopMovement;
+
+    private bool reachedEndOfPath;
 
     private float _rotationTarget;
     private float RotationTarget {
@@ -83,6 +95,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
     private Vector2 playerLastKnownPosition = NullVector;
     private Vector2 playerLastKnownHeading = NullVector;
+    private Vector2 currentSearchPoint = NullVector;
 
     private float gunProjectileSpeed;
     private Transform gunTransform;
@@ -105,7 +118,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         lowOnAmmo = false;
         hasZeroHealth = false;
         rollCooldownTimer = rollCooldownTime;
-
+        searchTimer = searchTime;
     }
     
     void FixedUpdate() {
@@ -150,14 +163,39 @@ public class BasicEnemyTasks : MonoBehaviour {
             stopMovement = false;
         }
 
-        if(RotationTarget != float.NegativeInfinity) {
-            rigidbody.rotation = RotationTarget;
-            if(Mathf.Abs(Mathf.DeltaAngle(rigidbody.rotation, RotationTarget)) <= 1) {
-                RotationTarget = float.NegativeInfinity;
-            }
+        //if(RotationTarget != float.NegativeInfinity) {
+        //    rigidbody.rotation = RotationTarget;
+        //    if(Mathf.Abs(Mathf.DeltaAngle(rigidbody.rotation, RotationTarget)) <= 1) {
+        //        RotationTarget = float.NegativeInfinity;
+        //    }
+        //}
+
+        if(Input.GetButtonDown("DebugInteract")) {
+            playerLastKnownPosition = playerRigidbody.position;
         }
 
         if(roll) {
+            RaycastHit2D posDir = Physics2D.Raycast(rigidbody.position, rollDirection.normalized, rollDistance, sightBlockMask);
+            RaycastHit2D negDir = Physics2D.Raycast(rigidbody.position, -rollDirection.normalized, rollDistance, sightBlockMask);
+            if(!posDir && !negDir) {
+                if(Random.value > .5f) {
+                    rollDirection = -rollDirection;
+                }
+            }
+            if(posDir && negDir) {
+                if(negDir.distance > posDir.distance) {
+                    rollDirection = -rollDirection;
+                }
+                if(negDir.distance == posDir.distance) {
+                    if(Random.value > .5f) {
+                        rollDirection = -rollDirection;
+                    }
+                }
+            }
+            if(posDir && !negDir) {
+                rollDirection = -rollDirection;
+            }
+            
             rollStartPos = rigidbody.position;
             rigidbody.velocity = rollDirection.normalized * movementSpeed * 3;
             rollVelocity = rigidbody.velocity;
@@ -212,8 +250,55 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
+    bool SetMovementTargetToCurrentSearchPoint() {
+        if(currentSearchPoint != NullVector) {
+            movementTarget = currentSearchPoint;
+            return true;
+        }
+        return false;
+    }
+
+    [Task]
+    bool SetSearchDirectionToLookDirection() {
+        searchDirection = new Vector2(Mathf.Cos(rigidbody.rotation), Mathf.Sin(rigidbody.rotation));
+        return true;
+    }
+
+    [Task]
+    bool SetSearchCenterFromPosition() {
+        searchCenter = rigidbody.position + (searchDirection.normalized * searchRadius);
+        return true;
+    }
+
+    [Task]
+    bool SetNextSearchPoint() {
+        Node walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
+        while(!walkableNode.isWalkable) {
+            walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
+        }
+        currentSearchPoint = walkableNode.worldPosition;
+        return true;
+    }
+
+    [Task]
+    bool ResetSearchTimer() {
+        searchTimer = searchTime;
+        return true;
+    }
+
+    [Task]
+    bool CheckSearchTimer() {
+        searchTimer -= Time.deltaTime;
+        if(searchTimer <= 0) {
+            return false;
+        }
+        return true;
+    }
+
+    [Task]
     bool SetLookTargetRandom() {
         RotationTarget = Random.Range(-360, 360);
+        rigidbody.rotation = RotationTarget;
         return true;
     }
 
@@ -222,6 +307,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         if(playerLastKnownHeading != NullVector) {
             float angle = Mathf.Atan2(playerLastKnownHeading.y, playerLastKnownHeading.x) * Mathf.Rad2Deg;
             RotationTarget = angle;
+            rigidbody.rotation = RotationTarget;
             return true;
         }
         return false;
@@ -262,6 +348,13 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
+    bool ReachedMovementTarget() {
+        bool ret = reachedEndOfPath || (Vector2.Distance(rigidbody.position, movementTarget) < pointAccuracy);
+        reachedEndOfPath = false;
+        return ret;
+    }
+
+    [Task]
     bool AimAtPlayer() {
         float timeguess1 = Vector2.Distance(rigidbody.position, playerRigidbody.position) / gunProjectileSpeed;
         Vector2 Positionguess =(playerRigidbody.position + (playerRigidbody.velocity * (timeguess1)));
@@ -269,6 +362,8 @@ public class BasicEnemyTasks : MonoBehaviour {
         Vector2 playerguesstimation = playerRigidbody.position + (playerRigidbody.velocity * (timeguess));
         Vector2 direction = rigidbody.position - playerguesstimation;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        RotationTarget = angle;
+        rigidbody.rotation = RotationTarget;
 
         return true;
     }
@@ -283,17 +378,15 @@ public class BasicEnemyTasks : MonoBehaviour {
         Vector2 direction = rigidbody.position - playerRigidbody.position;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         RotationTarget = angle;
+        rigidbody.rotation = RotationTarget;
         return true;
     }
 
     [Task]
     bool SetLookTargetToMovementDirection() {
-        if(path != null && path.Count > 0) {
-            Vector2 nodeWorldPos = path[0].worldPosition;
-            Vector2 direction = rigidbody.position - nodeWorldPos;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            RotationTarget = angle;
-        }
+        float angle = Mathf.Atan2(rigidbody.velocity.y, rigidbody.velocity.x) * Mathf.Rad2Deg;
+        RotationTarget = angle;
+        rigidbody.rotation = -RotationTarget;
         return true;
     }
     
@@ -343,13 +436,13 @@ public class BasicEnemyTasks : MonoBehaviour {
 
         if(path.Count != 0 && ReachedNode(path[0])) {
             path.RemoveAt(0);
+            //reached end of path
+            if(path.Count == 0) {
+                reachedEndOfPath = true;
+                return true;
+            }
         }
-
-        //reached end of path
-        if(path.Count == 0) {
-            return false;
-        }
-
+        
         Vector2 nodeWorldPos = path[0].worldPosition;
         Vector2 newMovementDirection = (nodeWorldPos - rigidbody.position);
         //movementDirection = newMovementDirection;
@@ -507,8 +600,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         }
         return false;
     }
-
-    private float pointAccuracy = 0.1f;
+    
     private bool isAtNode(Node node) {
         float distanceFromNode = Vector2.Distance(rigidbody.position, node.worldPosition);
         if(distanceFromNode <= pointAccuracy) return true;
@@ -525,12 +617,8 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     private void OnRoll(ParamsObject paramsObj) {
-        print("SHOUDL ROOLL");
         shouldRoll = true;
         rollDirection = Vector3.Cross(paramsObj.Vector2, Vector3.forward);
-        if(Random.value > .5f) {
-            rollDirection = -rollDirection;
-        }
     }
     
     private void OnGunInfoUpdate(ParamsObject paramsObj) {
@@ -555,8 +643,12 @@ public class BasicEnemyTasks : MonoBehaviour {
         Gizmos.DrawRay(transform.position, q1 * transform.up * sightDistance);
         Gizmos.DrawRay(transform.position, q2 * transform.up * sightDistance);
         Gizmos.color = Color.cyan;
-        Gizmos.DrawRay(playerLastKnownPosition, playerLastKnownHeading.normalized * -20);
+        Gizmos.DrawRay(playerLastKnownPosition, playerLastKnownHeading.normalized * 20);
         Gizmos.color = Color.red;
         Gizmos.DrawCube(playerLastKnownPosition, new Vector3(.3f, .3f, 1));
+        if(rigidbody != null) {
+            Gizmos.color = Color.green;
+            Gizmos.DrawRay(rigidbody.position, rigidbody.velocity.normalized * 20);
+        }
     }
 }

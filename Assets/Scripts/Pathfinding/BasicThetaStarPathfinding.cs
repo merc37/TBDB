@@ -94,7 +94,6 @@ namespace Pathfinding {
                 currentNode = currentNode.parent;
             }
             path.Reverse();
-            path.RemoveAt(0);
             return path;
         }
 

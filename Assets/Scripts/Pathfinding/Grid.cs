@@ -136,15 +136,15 @@ namespace Pathfinding {
                         Gizmos.DrawCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
                         if(n.parent != null) Gizmos.DrawLine(n.worldPosition, n.parent.worldPosition);
                     } else {
-                        if(!n.isWalkable) {
-                            Gizmos.color = Color.red;
-                            Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
-                        } else if(n.fCost != Mathf.Infinity) {
-                            Gizmos.color = g.Evaluate(n.gCost / pathCost);
-                            Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
-                        } else {
-                            Gizmos.color = Color.cyan;
-                        }
+                        //if(!n.isWalkable) {
+                        //    Gizmos.color = Color.red;
+                        //    Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
+                        //} else if(n.fCost != Mathf.Infinity) {
+                        //    Gizmos.color = g.Evaluate(n.gCost / pathCost);
+                        //    Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
+                        //} else {
+                        //    Gizmos.color = Color.cyan;
+                        //}
                         //Gizmos.DrawWireCube(n.worldPosition, Vector3.one * (nodeDiameter / 8));
 
                         //if(n.parent != null) {
@@ -152,12 +152,12 @@ namespace Pathfinding {
                         //}
                     }
 
-                    if(n.fCost != Mathf.Infinity) {
-                        Vector3 GUIposition = n.worldPosition + new Vector3(-nodeRadius, nodeRadius);
-                        Handles.Label(GUIposition, "G:" + n.gCost.ToString("F1"));
-                        Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + n.hCost.ToString("F1"));
-                        Handles.Label(GUIposition + Vector3.up * -0.27f, "F:" + n.fCost.ToString("F1"));
-                    }
+                    //if(n.fCost != Mathf.Infinity) {
+                    //    Vector3 GUIposition = n.worldPosition + new Vector3(-nodeRadius, nodeRadius);
+                    //    Handles.Label(GUIposition, "G:" + n.gCost.ToString("F1"));
+                    //    Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + n.hCost.ToString("F1"));
+                    //    Handles.Label(GUIposition + Vector3.up * -0.27f, "F:" + n.fCost.ToString("F1"));
+                    //}
                 }
             }
         }
