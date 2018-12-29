@@ -38,6 +38,12 @@ public class BasicEnemyTasks : MonoBehaviour {
     private float rollDistance = 5;
     [SerializeField]
 	private float maxPathSearchDistance = 20;
+    [SerializeField]
+    private int hearingLevelThreshold = 3;
+    [SerializeField]
+    private int hearingDistance = 20;
+    [SerializeField]
+    private int hearingObstructionThreshold = 2;
 
     private GameObjectEventManager eventManager;
     private Rigidbody2D playerRigidbody;
@@ -63,6 +69,9 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     private Vector2 searchDirection;
     private Vector2 searchCenter;
+
+    private int playerNoiseLevel = -1;
+    private Vector2 playerNoiseLocation;
 
     private float pointAccuracy = 0.1f;
 
@@ -110,6 +119,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         eventManager.StartListening("HealthPoints", new UnityAction<ParamsObject>(OnHealthPointUpdate));
         eventManager.StartListening("Roll", new UnityAction<ParamsObject>(OnRoll));
         eventManager.StartListening("UpdateGunInfo", new UnityAction<ParamsObject>(OnGunInfoUpdate));
+        GlobalEventManager.StartListening("OnPlayerMakeNoise", new UnityAction<ParamsObject>(OnPlayerMakeNoise));
 
         rigidbody = GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
@@ -169,6 +179,19 @@ public class BasicEnemyTasks : MonoBehaviour {
         //        RotationTarget = float.NegativeInfinity;
         //    }
         //}
+
+        if(playerNoiseLevel > -1) {
+            if(playerNoiseLevel >= hearingLevelThreshold) {
+                if(Vector2.Distance(rigidbody.position, playerNoiseLocation) <= hearingDistance) {
+                    Vector2 direction = rigidbody.position - playerNoiseLocation;
+                    RaycastHit2D[] walls = Physics2D.RaycastAll(rigidbody.position, playerNoiseLocation);
+                    if(walls.Length <= hearingObstructionThreshold) {
+                        playerLastKnownPosition = playerNoiseLocation;
+                    }
+                }
+            }
+            playerNoiseLevel = -1;
+        }
 
         if(Input.GetButtonDown("DebugInteract")) {
             playerLastKnownPosition = playerRigidbody.position;
@@ -624,6 +647,11 @@ public class BasicEnemyTasks : MonoBehaviour {
     private void OnGunInfoUpdate(ParamsObject paramsObj) {
         gunProjectileSpeed = paramsObj.Float;
         gunTransform = paramsObj.Transform;
+    }
+
+    private void OnPlayerMakeNoise(ParamsObject paramsObj) {
+        playerNoiseLevel = paramsObj.Int;
+        playerNoiseLocation = paramsObj.Vector2;
     }
 
     private void SetPlayerRigidbody(ParamsObject paramsObj) {

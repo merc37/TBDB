@@ -8,12 +8,19 @@ namespace Player {
         private bool shootLocked = false;
         private bool hasStarted = false;
 
+        protected Rigidbody2D playerRigidbody;
+
         private Rigidbody2D _lastFired;
         public Rigidbody2D LastFired
         {
             get {
                 return _lastFired;
             }
+        }
+
+        protected override void Awake() {
+            base.Awake();
+            playerRigidbody = GetComponentInParent<Rigidbody2D>();
         }
 
         protected override void OnShoot(ParamsObject paramsObj) {
@@ -32,6 +39,9 @@ namespace Player {
 
         protected override Rigidbody2D FireProjectile() {
             _lastFired = base.FireProjectile();
+            ParamsObject paramsObj = new ParamsObject(7);
+            paramsObj.Vector2 = playerRigidbody.position;
+            GlobalEventManager.TriggerEvent("OnPlayerMakeNoise", paramsObj);
             return LastFired;
         }
 

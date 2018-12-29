@@ -30,8 +30,6 @@ public class Gun : MonoBehaviour {
     private float lastReloadTime;
     private float deltaReloadCheckTime;
 
-    private Rigidbody2D playerRigidbody;
-
     private int currAmmo;
     public int MaxAmmo {get {return maxAmmo;}}
     public int CurrentAmmo
@@ -53,7 +51,7 @@ public class Gun : MonoBehaviour {
         }
     }
 
-    void Awake() {
+    protected virtual void Awake() {
         eventManager = GetComponentInParent<GameObjectEventManager>();
         audioSource = GetComponent<AudioSource>();
         CurrentAmmo = MaxAmmo;

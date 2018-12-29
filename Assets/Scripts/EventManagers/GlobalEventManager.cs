@@ -2,6 +2,18 @@
 using UnityEngine.Events;
 using System.Collections.Generic;
 
+/*
+ * All events should start with On
+ * All message triggers should start with Send
+ * All message listens should start with Return and should stop listening after receviced
+ * Triggers should be put in Start
+ * Listens in Awake
+ * And for Global events: make sure to hand off heavy operation to that entity, because events happen sequentially
+ * when triggered (I think)
+ * Essentially if the player invokes a global event, it runs every single method attached in the player's update
+ * So try to save it for enemy update
+ */
+
 namespace EventManagers {
     public class GlobalEventManager : MonoBehaviour {
 
