@@ -2,10 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security;
+using System.Threading;
 using Tiled2Unity;
 using UnityEditor;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.Assertions.Must;
 using UnityEngine.Experimental.UIElements;
 using UnityEngine.Tilemaps;
 
@@ -34,16 +37,23 @@ namespace Pathfinding
 			InitializeGrid();
 		}
 		
-		Vector3 t1 = new Vector3(-1,-1,0);
-		Vector3 t2 = new Vector3(2,2,0);
 		void Start ()
 		{
-			LineOfSight(NodeAtWorldPosition(t1), NodeAtWorldPosition(t2));
+			
 		}
-	
+
+		[SerializeField] private Vector2 p1;
+		[SerializeField] private Vector2 p2;
+		private Vector2 t1, t2;
+		
 		void Update ()
 		{
-		
+			if (t1 != p1 || t2 != p2)
+			{
+				t1 = p1;
+				t2 = p2;
+				LineOfSight2(NodeAtWorldPosition(t1), NodeAtWorldPosition(t2));
+			}
 		}
 
 		void InitializeGrid()
@@ -144,7 +154,8 @@ namespace Pathfinding
 			return NodeAtGridPosition(x, y);
 		}
 
-		private List<PathfindingNode> test;
+		//private List<PathfindingNode> test;
+		
 		public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB, float width = 0)
 		{
 			
@@ -155,7 +166,7 @@ namespace Pathfinding
 			Vector2Int n1, n2;
 			
 			var vect = nodeB.gridPosition - nodeA.gridPosition;
-			if (vect.y > vect.x)
+			if (Mathf.Abs(vect.y) > Mathf.Abs(vect.x))
 			{
 				transposeResult = true;
 				n1 = new Vector2Int(nodeA.gridPosition.y, nodeA.gridPosition.x);
@@ -208,9 +219,87 @@ namespace Pathfinding
 				intersectedNodes.Add(NodeAtGridPosition(right));
 			}
 
-			test = intersectedNodes.ToList();
+			//test = intersectedNodes.ToList();
 
 			return false;
+		}
+
+		//private List<Vector2> minor;
+
+		public bool LineOfSight2(PathfindingNode nodeA, PathfindingNode nodeB, float width = 0)
+		{
+			int limit = 100;
+			int count = 0;
+			//minor = new List<Vector2>();
+			
+			List<PathfindingNode> intersectedNodes = new List<PathfindingNode>();
+			
+			var dir = ((Vector2) (nodeB.gridPosition - nodeA.gridPosition)).normalized;
+			int signX = Math.Sign(dir.x);
+			int signY = Math.Sign(dir.y);
+			float slope = dir.y / dir.x;
+
+			var currentCell = nodeA;
+			Vector2 lastIntersection = nodeA.gridPosition;
+			float nextX = nodeA.gridPosition.x + 0.5f * signX;
+			float nextY = nodeA.gridPosition.y + 0.5f * signY;
+			
+			intersectedNodes.Add(currentCell);
+			
+			while (currentCell != nodeB)
+			{
+				if (count >= limit)
+					return false;
+
+				float y = (nextX - lastIntersection.x) * slope + lastIntersection.y;
+				Vector2 xInt = new Vector2(nextX, y);
+				float tx = dir.x == 0 ? Mathf.Infinity : Vector2.Distance(lastIntersection, xInt);
+
+				float x = (nextY - lastIntersection.y) / slope + lastIntersection.x;
+				Vector2 yInt = new Vector2(x, nextY);
+				float ty = dir.y == 0 ? Mathf.Infinity : Vector2.Distance(lastIntersection, yInt);
+
+				if (tx == ty)
+				{
+					
+					currentCell = NodeAtGridPosition( 	(signX == 1 ? Mathf.CeilToInt(nextX) : Mathf.FloorToInt(nextX)),
+														(signY == 1 ? Mathf.CeilToInt(nextY) : Mathf.FloorToInt(nextY))		);
+					intersectedNodes.Add(currentCell);
+					intersectedNodes.Add(NodeAtGridPosition(Mathf.FloorToInt(nextX), Mathf.CeilToInt(nextY)));
+					intersectedNodes.Add(NodeAtGridPosition(Mathf.CeilToInt(nextX), Mathf.FloorToInt(nextY)));
+					lastIntersection = xInt;
+					nextX += 1 * signX;
+					nextY += 1 * signY;
+
+					//minor.Add(xInt);
+				}
+				else if (tx < ty)
+				{
+					currentCell = NodeAtGridPosition( 	(signX == 1 ? Mathf.CeilToInt(nextX) : Mathf.FloorToInt(nextX)),
+														(signY == 1 ? Mathf.FloorToInt(nextY) : Mathf.CeilToInt(nextY))		);
+					intersectedNodes.Add(currentCell);
+					lastIntersection = xInt;
+					nextX += 1 * signX;
+					
+					//minor.Add(xInt);
+				}
+				else
+				{
+					currentCell = NodeAtGridPosition( 	(signX == 1 ? Mathf.FloorToInt(nextX) : Mathf.CeilToInt(nextX)),
+														(signY == 1 ? Mathf.CeilToInt(nextY) : Mathf.FloorToInt(nextY))		);
+					intersectedNodes.Add(currentCell);
+					lastIntersection = yInt;
+					nextY += 1 * signY;
+					
+					//minor.Add(yInt);
+				}
+
+				count++;
+			}
+
+			//test = intersectedNodes;
+
+			return intersectedNodes.All(n => n.isWalkable);
 		}
 		
 		public void Reset()
@@ -231,7 +320,7 @@ namespace Pathfinding
 				}
 			}
 
-			Gizmos.color = Color.yellow;
+			/*Gizmos.color = Color.yellow;
 			if (test != null)
 			{
 				Gizmos.DrawLine(t1, t2);
@@ -240,6 +329,17 @@ namespace Pathfinding
 					Gizmos.DrawWireSphere(node.worldPosition, _nodeRadius/2);
 				}
 			}
+
+			Gizmos.DrawWireSphere(_gridLocation, .02f);
+			if (minor != null)
+			{
+				Gizmos.color = Color.cyan;
+				foreach (var v in minor)
+				{
+					var c = _gridLocation + Vector2.one * _nodeDiameter * 0.5f + v * 0.5f;
+					Gizmos.DrawWireSphere(c, _nodeRadius/4);
+				}
+			}*/
 		}
 	}	
 }

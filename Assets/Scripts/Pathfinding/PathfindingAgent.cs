@@ -36,9 +36,11 @@ namespace Pathfinding
 		{
 			if (_path != null)
 			{
+				Gizmos.color = Color.white;
 				foreach (var node in _path)
 				{
-					node.DrawGizmos(0.5f, true);
+					Gizmos.DrawLine(node.worldPosition, node.parent.worldPosition);
+					node.DrawGizmos(0.25f, true);
 				}
 			}
 		}

@@ -93,9 +93,19 @@ namespace Pathfinding
 					}
 					
 					// Basic Theta Star update vertex
-					if (currentNode.parent != null && _pathfindingGrid.LineOfSight(currentNode, currentNode.parent))
+					if (currentNode.parent != null && _pathfindingGrid.LineOfSight2(currentNode, currentNode.parent))
 					{
-				
+						float newMoveCost = currentNode.parent.gCost +
+						                    Vector2.Distance(currentNode.parent.worldPosition, neighbor.worldPosition);
+						if (newMoveCost < neighbor.gCost)
+						{
+							neighbor.gCost = newMoveCost;
+							neighbor.hCost = Vector2.Distance(neighbor.worldPosition, targetNode.worldPosition);
+							neighbor.parent = currentNode.parent;
+							
+							if (!openSet.Contains(neighbor))
+								openSet.Add(neighbor);
+						}
 					}
 					else
 					{

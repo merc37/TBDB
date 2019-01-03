@@ -47,11 +47,14 @@ namespace Pathfinding
 			else
 				Gizmos.color = Color.white;
 			
-			Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius * 0.5f);
+			if (showPathCost)
+				Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius * 1.9f);
+			else
+				Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius * 0.5f);
 			
 			if(showPathCost && !float.IsPositiveInfinity(fCost))
 			{
-				Vector3 GUIposition = worldPosition + new Vector2(-nodeRadius, nodeRadius);
+				Vector3 GUIposition = (Vector3)(worldPosition + new Vector2(-nodeRadius, nodeRadius)) - Vector3.forward;
 				Handles.Label(GUIposition, "G:" + gCost.ToString("F1"));
 				Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + hCost.ToString("F1"));
 				Handles.Label(GUIposition + Vector3.up * -0.27f, "F:" + fCost.ToString("F1"));
