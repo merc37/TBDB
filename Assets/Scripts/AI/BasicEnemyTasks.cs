@@ -105,6 +105,7 @@ public class BasicEnemyTasks : MonoBehaviour {
     private Vector2 playerLastKnownPosition = NullVector;
     private Vector2 playerLastKnownHeading = NullVector;
     private Vector2 currentSearchPoint = NullVector;
+    private Vector2 strafeCenter = NullVector;
 
     private float gunProjectileSpeed;
     private Transform gunTransform;
@@ -180,6 +181,11 @@ public class BasicEnemyTasks : MonoBehaviour {
         //    }
         //}
 
+        if(Input.GetButtonDown("DebugInteract")) {
+            SetPlayerLastKnownPosition();
+            SetPlayerLastKnownHeading();
+        }
+
         if(playerNoiseLevel > -1) {
             if(playerNoiseLevel >= hearingLevelThreshold) {
                 if(Vector2.Distance(rigidbody.position, playerNoiseLocation) <= hearingDistance) {
@@ -191,10 +197,6 @@ public class BasicEnemyTasks : MonoBehaviour {
                 }
             }
             playerNoiseLevel = -1;
-        }
-
-        if(Input.GetButtonDown("DebugInteract")) {
-            playerLastKnownPosition = playerRigidbody.position;
         }
 
         if(roll) {
@@ -266,6 +268,52 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
+    bool SetMovementTargetToNull() {
+        movementTarget = NullVector;
+        return true;
+    }
+
+    [Task]
+    bool IsMovementTargetNull() {
+        return movementTarget == NullVector;
+    }
+
+    [Task]
+    bool DebugHold() {
+        return Input.GetButton("DebugInteract");
+    }
+
+    [Task]
+    bool SetStrafeCenter() {
+        strafeCenter = rigidbody.position;
+        return true;
+    }
+
+    [Task]
+    bool SetMovementTargetToStrafePoint() {
+        float angle = Random.Range(0, Mathf.PI * 2);
+        movementTarget = strafeCenter + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * 3;
+        return true;
+    }
+
+    [Task]
+    bool PlayerInMediumAttackRange() {
+        float distanceToTarget = Vector2.Distance(rigidbody.position, playerRigidbody.position);
+        return distanceToTarget <= attackRange / 2;
+    }
+
+    [Task]
+    bool StrafeCenterInMediumAttackRange() {
+        float distanceToTarget = Vector2.Distance(strafeCenter, playerRigidbody.position);
+        return distanceToTarget <= attackRange / 2;
+    }
+
+    [Task]
+    bool CheckMovementStopped() {
+        return rigidbody.velocity.magnitude < .1;
+    }
+
+    [Task]
     bool PlayerRunningAway() {
         bool isAcute = Vector2.Dot(rigidbody.velocity, playerRigidbody.velocity) > 0;
         bool playerRunning = playerRigidbody.velocity.magnitude >= rigidbody.velocity.magnitude;
@@ -273,12 +321,13 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
-    bool SetMovementTargetToCurrentSearchPoint() {
-        if(currentSearchPoint != NullVector) {
-            movementTarget = currentSearchPoint;
-            return true;
+    bool SetMovementTargetToSearchPoint() {
+        Node walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
+        while(!walkableNode.isWalkable) {
+            walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
         }
-        return false;
+        movementTarget = walkableNode.worldPosition;
+        return true;
     }
 
     [Task]
@@ -290,16 +339,6 @@ public class BasicEnemyTasks : MonoBehaviour {
     [Task]
     bool SetSearchCenterFromPosition() {
         searchCenter = rigidbody.position + (searchDirection.normalized * searchRadius);
-        return true;
-    }
-
-    [Task]
-    bool SetNextSearchPoint() {
-        Node walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
-        while(!walkableNode.isWalkable) {
-            walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
-        }
-        currentSearchPoint = walkableNode.worldPosition;
         return true;
     }
 
@@ -387,7 +426,6 @@ public class BasicEnemyTasks : MonoBehaviour {
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         RotationTarget = angle;
         rigidbody.rotation = RotationTarget;
-
         return true;
     }
 
@@ -407,7 +445,7 @@ public class BasicEnemyTasks : MonoBehaviour {
 
     [Task]
     bool SetLookTargetToMovementDirection() {
-        float angle = Mathf.Atan2(rigidbody.velocity.y, rigidbody.velocity.x) * Mathf.Rad2Deg;
+        float angle = Mathf.Atan2(movementDirection.y, movementDirection.x) * Mathf.Rad2Deg;
         RotationTarget = angle;
         rigidbody.rotation = -RotationTarget;
         return true;
@@ -426,12 +464,14 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
+    bool IsPlayerLastPositionKnown() {
+        return playerLastKnownPosition != NullVector;
+    }
+
+    [Task]
     bool SetMovementTargetToPlayerLastKnownPosition() {
-        if(playerLastKnownPosition != NullVector) {
-            movementTarget = playerLastKnownPosition;
-            return true;
-        }
-        return false;
+        movementTarget = playerLastKnownPosition;
+        return true;
     }
 
     [Task]
@@ -585,12 +625,6 @@ public class BasicEnemyTasks : MonoBehaviour {
     }
 
     [Task]
-    bool PlayerInMedAttackRange() {
-        float distanceToTarget = Vector2.Distance(rigidbody.position, playerRigidbody.position);
-        return distanceToTarget <= attackRange/3;
-    }
-
-    [Task]
     bool PlayerInAttackRange() {
         float distanceToTarget = Vector2.Distance(rigidbody.position, playerRigidbody.position);
         return distanceToTarget <= attackRange;
@@ -674,9 +708,11 @@ public class BasicEnemyTasks : MonoBehaviour {
         Gizmos.DrawRay(playerLastKnownPosition, playerLastKnownHeading.normalized * 20);
         Gizmos.color = Color.red;
         Gizmos.DrawCube(playerLastKnownPosition, new Vector3(.3f, .3f, 1));
-        if(rigidbody != null) {
+        if(movementTarget != NullVector) {
             Gizmos.color = Color.green;
-            Gizmos.DrawRay(rigidbody.position, rigidbody.velocity.normalized * 20);
+            Gizmos.DrawCube(movementTarget, new Vector3(.3f, .3f, 1));
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawCube(strafeCenter, new Vector3(.3f, .3f, 1));
         }
     }
 }

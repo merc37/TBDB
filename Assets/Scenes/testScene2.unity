@@ -4815,7 +4815,7 @@ Prefab:
     - target: {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04,
         type: 2}
       propertyPath: searchRadius
-      value: 15
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 50214324330173404, guid: faaf22525cba0c34abcfcdef0237ff04, type: 2}
