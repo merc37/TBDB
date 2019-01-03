@@ -55,5 +55,19 @@ namespace EventManagers {
                 thisEvent.Invoke(paramsObj);
             }
         }
+
+        public static void TriggerRadiusEvent(string eventName, Vector2 origin, float radius, LayerMask layerMask, ParamsObject paramsObj = null, Collider2D ignoreCollider = null) {
+            Collider2D[] hits = Physics2D.OverlapCircleAll(origin, radius, layerMask.value);
+            GameObjectEventManager eventManager;
+            foreach(Collider2D hit in hits) {
+                if(ignoreCollider != null && hit.Equals(ignoreCollider)) {
+                    continue;
+                }
+                eventManager = hit.GetComponent<GameObjectEventManager>();
+                if(eventManager != null) {
+                    eventManager.TriggerEvent(eventName, paramsObj);
+                }
+            }
+        }
     }
 }
