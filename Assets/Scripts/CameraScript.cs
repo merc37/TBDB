@@ -21,28 +21,25 @@ public class CameraScript : MonoBehaviour {
     void Start () {
         GlobalEventManager.TriggerEvent("RequestPlayerTransform");
         GlobalEventManager.TriggerEvent("RequestMapTransform");
-        newCameraPosition = new Vector3(0, 0, -10);
+        newCameraPosition = new Vector3(0, 0, transform.position.z);
 		halfWorldHeight = Camera.main.orthographicSize;
 		halfWorldWidth = (Camera.main.aspect * (halfWorldHeight*2))/2;
         map = mapTransform.GetComponent<TiledMap>();
         mapWidth = map.NumTilesWide;
         mapHeight = map.NumTilesHigh;
     }
-    
-	void LateUpdate () {
-        newCameraPosition.Set(playerRigidbody.position.x, playerRigidbody.position.y, -10);
-        if(newCameraPosition.x - halfWorldWidth < mapTransform.position.x) {
-            newCameraPosition.x = mapTransform.position.x + halfWorldWidth;
-        }
-        if(newCameraPosition.x + halfWorldWidth > mapTransform.position.x + mapWidth) {
-            newCameraPosition.x = (mapTransform.position.x + mapWidth) - halfWorldWidth;
-        }
-        if(newCameraPosition.y + halfWorldHeight > mapTransform.position.y) {
-            newCameraPosition.y = mapTransform.position.y - halfWorldHeight;
-        }
-        if(newCameraPosition.y - halfWorldHeight < mapTransform.position.y - mapHeight) {
-            newCameraPosition.y = (mapTransform.position.y - mapHeight) + halfWorldHeight;
-        }
+
+    private void Update() {
+        Vector2 mouseWorldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        newCameraPosition.Set(playerRigidbody.position.x, playerRigidbody.position.y, newCameraPosition.z);
+        //if(playerRigidbody.position.x > mouseWorldPos.x - halfWorldWidth) {
+        //    if(playerRigidbody.position.x < mouseWorldPos.x + halfWorldWidth) {
+        //        newCameraPosition.Set(mouseWorldPos.x, newCameraPosition.y, newCameraPosition.z);
+        //    }
+        //}
+    }
+
+    void LateUpdate () {
         transform.position = newCameraPosition;
     }
 
