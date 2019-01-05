@@ -120,7 +120,7 @@ public class BasicEnemyTasks : MonoBehaviour {
         eventManager.StartListening("HealthPoints", new UnityAction<ParamsObject>(OnHealthPointUpdate));
         eventManager.StartListening("Roll", new UnityAction<ParamsObject>(OnRoll));
         eventManager.StartListening("UpdateGunInfo", new UnityAction<ParamsObject>(OnGunInfoUpdate));
-        GlobalEventManager.StartListening("OnPlayerMakeNoise", new UnityAction<ParamsObject>(OnPlayerMakeNoise));
+        eventManager.StartListening("OnPlayerMakeNoise", new UnityAction<ParamsObject>(OnPlayerMakeNoise));
 
         rigidbody = GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
@@ -188,12 +188,10 @@ public class BasicEnemyTasks : MonoBehaviour {
 
         if(playerNoiseLevel > -1) {
             if(playerNoiseLevel >= hearingLevelThreshold) {
-                if(Vector2.Distance(rigidbody.position, playerNoiseLocation) <= hearingDistance) {
-                    Vector2 direction = rigidbody.position - playerNoiseLocation;
-                    RaycastHit2D[] walls = Physics2D.RaycastAll(rigidbody.position, playerNoiseLocation);
-                    if(walls.Length <= hearingObstructionThreshold) {
-                        playerLastKnownPosition = playerNoiseLocation;
-                    }
+                Vector2 direction = rigidbody.position - playerNoiseLocation;
+                RaycastHit2D[] walls = Physics2D.RaycastAll(rigidbody.position, playerNoiseLocation);
+                if(walls.Length <= hearingObstructionThreshold) {
+                    playerLastKnownPosition = playerNoiseLocation;
                 }
             }
             playerNoiseLevel = -1;

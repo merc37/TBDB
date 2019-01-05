@@ -41,7 +41,7 @@ namespace Player {
             _lastFired = base.FireProjectile();
             ParamsObject paramsObj = new ParamsObject(7);
             paramsObj.Vector2 = playerRigidbody.position;
-            GlobalEventManager.TriggerEvent("OnPlayerMakeNoise", paramsObj);
+            GameObjectEventManager.TriggerRadiusEvent("OnPlayerMakeNoise", transform.position, 10, LayerMask.NameToLayer("Enemy"), paramsObj);
             return LastFired;
         }
 

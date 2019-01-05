@@ -7,11 +7,6 @@ tree("Root")
 		repeat mute tree("DIE")
 
 tree("Live")
-	parallel
-		repeat
-			mute
-				//Combat Actions
-				tree("FireOnSight")
 		repeat
 			mute
 				fallback
@@ -52,7 +47,15 @@ tree("Live")
 					sequence
 						tree("PlayerInSight")
 						PlayerInAttackRange
-						not LowOnAmmo
+						fallback
+							not LowOnAmmo
+							SetMovementTargetToCover
+							repeat
+								sequence
+									not ReachedMovementTarget
+									PathToMovementTarget
+							StopMovement
+							Reload
 						AimAtPlayer
 						Shoot
 						SetMovementTargetToPlayerPosition
