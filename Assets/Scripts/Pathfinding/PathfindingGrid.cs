@@ -14,12 +14,11 @@ using UnityEngine.Tilemaps;
 
 namespace Pathfinding
 {
-	//[ExecuteInEditMode]
 	[RequireComponent(typeof(LayeredTilemap))]
 	public class PathfindingGrid : MonoBehaviour
 	{
-		[SerializeField] private LayerMask unwalkableMask;
-		[SerializeField] private float gridScale = 0.5f;
+		[SerializeField] private LayerMask _unwalkableMask;
+		[SerializeField] private float _gridScale = 0.5f;
 
 		//[Header("Gizmo Settings")]
 		
@@ -41,35 +40,26 @@ namespace Pathfinding
 		{
 			
 		}
-
-		[SerializeField] private Vector2 p1;
-		[SerializeField] private Vector2 p2;
-		private Vector2 t1, t2;
 		
 		void Update ()
 		{
-			if (t1 != p1 || t2 != p2)
-			{
-				t1 = p1;
-				t2 = p2;
-				LineOfSight2(NodeAtWorldPosition(t1), NodeAtWorldPosition(t2));
-			}
+			
 		}
 
 		void InitializeGrid()
 		{
-			_nodeDiameter = gridScale;
+			_nodeDiameter = _gridScale;
 			_nodeRadius = _nodeDiameter / 2;
 
 			_gridLocation = _layeredTilemap.MapBounds.min - (_nodeRadius * Vector3.one);
-			_gridSize = new Vector2Int(Mathf.RoundToInt(_layeredTilemap.MapBounds.size.x / gridScale) + 1,
-									   Mathf.RoundToInt(_layeredTilemap.MapBounds.size.y / gridScale) + 1);
+			_gridSize = new Vector2Int(Mathf.RoundToInt(_layeredTilemap.MapBounds.size.x / _gridScale) + 1,
+									   Mathf.RoundToInt(_layeredTilemap.MapBounds.size.y / _gridScale) + 1);
 			_gridWorldSize = (Vector2) _gridSize * _nodeDiameter;
 			
 			_pathfindingGrid = new PathfindingNode[_gridSize.x, _gridSize.y];
 
 			var unwalkableLayers =
-				_layeredTilemap.Layers.Where(layer => unwalkableMask == (unwalkableMask | 1 << layer.gameObject.layer));
+				_layeredTilemap.Layers.Where(layer => _unwalkableMask == (_unwalkableMask | 1 << layer.gameObject.layer));
 			
 			for (int y = 0; y < _gridSize.y; y++)
 			{
@@ -88,8 +78,8 @@ namespace Pathfinding
 					{
 						foreach (var cell in overlappingCells)
 						{
-							var cell3 = new Vector3Int(cell.x, cell.y, 0);
-							if (layer.GetTile(cell3) != null)
+							var cellIndex = new Vector3Int(cell.x, cell.y, 0);
+							if (layer.GetTile(cellIndex) != null)
 							{
 								isWalkable = false;
 							}
@@ -112,8 +102,8 @@ namespace Pathfinding
 					if (x == 0 && y == 0)
 						continue;
 
-					int checkX = node.gridPosition.x + x;
-					int checkY = node.gridPosition.y + y;
+					int checkX = node.GridPosition.x + x;
+					int checkY = node.GridPosition.y + y;
 
 					if (checkX >= 0 && checkX < _gridSize.x &&
 					    checkY >= 0 && checkY < _gridSize.y)
@@ -154,95 +144,26 @@ namespace Pathfinding
 			return NodeAtGridPosition(x, y);
 		}
 
-		//private List<PathfindingNode> test;
-		
-		public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB, float width = 0)
+		// TODO Add support for LineOfSight to take line width into account
+		public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB)
 		{
-			
-			// if slope > 1 sample at ys
-			// if slope < 1 samlpe at xs
-			
-			bool transposeResult = false;
-			Vector2Int n1, n2;
-			
-			var vect = nodeB.gridPosition - nodeA.gridPosition;
-			if (Mathf.Abs(vect.y) > Mathf.Abs(vect.x))
-			{
-				transposeResult = true;
-				n1 = new Vector2Int(nodeA.gridPosition.y, nodeA.gridPosition.x);
-				n2 = new Vector2Int(nodeB.gridPosition.y, nodeB.gridPosition.x);
-			}
-			else
-			{
-				n1 = nodeA.gridPosition;
-				n2 = nodeB.gridPosition;
-			}
-
-			vect = n2 - n1;
-			float slope = (float) vect.y / vect.x;
-			
-			HashSet<PathfindingNode> intersectedNodes = new HashSet<PathfindingNode>();
-
-			for (float ix = 0.5f; ix <= vect.x; ix++)
-			{
-				float y = n1.y + slope * ix;
-
-				Vector2Int left = new Vector2Int();
-				Vector2Int right = new Vector2Int();
-
-				left.x = Mathf.FloorToInt(n1.x + ix);
-				right.x = Mathf.CeilToInt(n1.x + ix);
-				
-				if (y % 0.5f == 0)
-				{
-					left.y = Mathf.FloorToInt(y);
-					right.y = Mathf.CeilToInt(y);
-				}
-				else
-				{
-					left.y = Mathf.RoundToInt(y);
-					right.y = left.y;
-				}
-
-				if (transposeResult)
-				{
-					var t = left.x;
-					left.x = left.y;
-					left.y = t;
-
-					t = right.x;
-					right.x = right.y;
-					right.y = t;
-				}
-
-				intersectedNodes.Add(NodeAtGridPosition(left));
-				intersectedNodes.Add(NodeAtGridPosition(right));
-			}
-
-			//test = intersectedNodes.ToList();
-
-			return false;
-		}
-
-		//private List<Vector2> minor;
-
-		public bool LineOfSight2(PathfindingNode nodeA, PathfindingNode nodeB, float width = 0)
-		{
+			// Simple limit to the number of cells that can checked in one call
+			// Prevents runaway computation
+			// TODO Make sure excecution always terminates so this hard limit can be removed
 			int limit = 100;
 			int count = 0;
-			//minor = new List<Vector2>();
 			
 			List<PathfindingNode> intersectedNodes = new List<PathfindingNode>();
 			
-			var dir = ((Vector2) (nodeB.gridPosition - nodeA.gridPosition)).normalized;
+			var dir = ((Vector2) (nodeB.GridPosition - nodeA.GridPosition)).normalized;
 			int signX = Math.Sign(dir.x);
 			int signY = Math.Sign(dir.y);
 			float slope = dir.y / dir.x;
 
 			var currentCell = nodeA;
-			Vector2 lastIntersection = nodeA.gridPosition;
-			float nextX = nodeA.gridPosition.x + 0.5f * signX;
-			float nextY = nodeA.gridPosition.y + 0.5f * signY;
+			Vector2 lastIntersection = nodeA.GridPosition;
+			float nextX = nodeA.GridPosition.x + 0.5f * signX;
+			float nextY = nodeA.GridPosition.y + 0.5f * signY;
 			
 			intersectedNodes.Add(currentCell);
 			
@@ -261,7 +182,6 @@ namespace Pathfinding
 
 				if (tx == ty)
 				{
-					
 					currentCell = NodeAtGridPosition( 	(signX == 1 ? Mathf.CeilToInt(nextX) : Mathf.FloorToInt(nextX)),
 														(signY == 1 ? Mathf.CeilToInt(nextY) : Mathf.FloorToInt(nextY))		);
 					intersectedNodes.Add(currentCell);
@@ -270,8 +190,6 @@ namespace Pathfinding
 					lastIntersection = xInt;
 					nextX += 1 * signX;
 					nextY += 1 * signY;
-
-					//minor.Add(xInt);
 				}
 				else if (tx < ty)
 				{
@@ -280,8 +198,6 @@ namespace Pathfinding
 					intersectedNodes.Add(currentCell);
 					lastIntersection = xInt;
 					nextX += 1 * signX;
-					
-					//minor.Add(xInt);
 				}
 				else
 				{
@@ -290,16 +206,12 @@ namespace Pathfinding
 					intersectedNodes.Add(currentCell);
 					lastIntersection = yInt;
 					nextY += 1 * signY;
-					
-					//minor.Add(yInt);
 				}
 
 				count++;
 			}
 
-			//test = intersectedNodes;
-
-			return intersectedNodes.All(n => n.isWalkable);
+			return intersectedNodes.All(n => n.IsWalkable);
 		}
 		
 		public void Reset()
@@ -319,27 +231,6 @@ namespace Pathfinding
 					node.DrawGizmos(_nodeRadius, false);
 				}
 			}
-
-			/*Gizmos.color = Color.yellow;
-			if (test != null)
-			{
-				Gizmos.DrawLine(t1, t2);
-				foreach (var node in test)
-				{
-					Gizmos.DrawWireSphere(node.worldPosition, _nodeRadius/2);
-				}
-			}
-
-			Gizmos.DrawWireSphere(_gridLocation, .02f);
-			if (minor != null)
-			{
-				Gizmos.color = Color.cyan;
-				foreach (var v in minor)
-				{
-					var c = _gridLocation + Vector2.one * _nodeDiameter * 0.5f + v * 0.5f;
-					Gizmos.DrawWireSphere(c, _nodeRadius/4);
-				}
-			}*/
 		}
 	}	
 }

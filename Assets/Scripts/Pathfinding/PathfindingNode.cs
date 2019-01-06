@@ -6,58 +6,57 @@ using UnityEngine.Experimental.PlayerLoop;
 
 namespace Pathfinding
 {
-	//[ExecuteInEditMode]
 	public class PathfindingNode
 	{
-		public float gCost;
-		public float hCost;
-		public float fCost
+		public float GCost;
+		public float HCost;
+		public float FCost
 		{
-			get { return gCost + hCost; }
+			get { return GCost + HCost; }
 		}
 
-		public PathfindingNode parent;
-		public bool isWalkable;
+		public PathfindingNode Parent;
+		public bool IsWalkable;
 
 		// Possibly temporary variables, try to remove to increase memory efficiency
-		public Vector2Int gridPosition;
-		public Vector2 worldPosition;
+		public Vector2Int GridPosition;
+		public Vector2 WorldPosition;
 
 		public PathfindingNode(Vector2 worldPosition, Vector2Int gridPosition, bool isWalkable)
 		{
-			this.worldPosition = worldPosition;
-			this.gridPosition = gridPosition;
-			this.isWalkable = isWalkable;
+			WorldPosition = worldPosition;
+			GridPosition = gridPosition;
+			IsWalkable = isWalkable;
 			Reset();
 		}
 
 		public void Reset()
 		{
-			parent = null;
-			gCost = Mathf.Infinity;
-			hCost = Mathf.Infinity;
+			Parent = null;
+			GCost = Mathf.Infinity;
+			HCost = Mathf.Infinity;
 		}
 
 		internal void DrawGizmos(float nodeRadius, bool showPathCost)
 		{
-			if (!isWalkable)
+			if (!IsWalkable)
 				Gizmos.color = Color.red;
-			else if (float.IsPositiveInfinity(fCost))
+			else if (float.IsPositiveInfinity(FCost))
 				Gizmos.color = Color.blue;
 			else
 				Gizmos.color = Color.white;
 			
 			if (showPathCost)
-				Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius * 1.9f);
+				Gizmos.DrawWireCube(WorldPosition, Vector3.one * nodeRadius * 1.9f);
 			else
-				Gizmos.DrawWireCube(worldPosition, Vector3.one * nodeRadius * 0.5f);
+				Gizmos.DrawWireCube(WorldPosition, Vector3.one * nodeRadius * 0.5f);
 			
-			if(showPathCost && !float.IsPositiveInfinity(fCost))
+			if(showPathCost && !float.IsPositiveInfinity(FCost))
 			{
-				Vector3 GUIposition = (Vector3)(worldPosition + new Vector2(-nodeRadius, nodeRadius)) - Vector3.forward;
-				Handles.Label(GUIposition, "G:" + gCost.ToString("F1"));
-				Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + hCost.ToString("F1"));
-				Handles.Label(GUIposition + Vector3.up * -0.27f, "F:" + fCost.ToString("F1"));
+				Vector3 GUIposition = (Vector3)(WorldPosition + new Vector2(-nodeRadius, nodeRadius)) - Vector3.forward;
+				Handles.Label(GUIposition, "G:" + GCost.ToString("F1"));
+				Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + HCost.ToString("F1"));
+				Handles.Label(GUIposition + Vector3.up * -0.27f, "F:" + FCost.ToString("F1"));
 			}
 		}
 	}

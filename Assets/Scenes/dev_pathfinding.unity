@@ -640,7 +640,7 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 515187938}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a11fd10b955434915a13af488e6eb686, type: 3}
   m_Name: 
@@ -937,17 +937,15 @@ MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 678800143}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 3e30d7a2306fa4069a54462a9563146c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unwalkableMask:
+  _unwalkableMask:
     serializedVersion: 2
     m_Bits: 256
-  gridScale: 0.5
-  p1: {x: 1, y: -1}
-  p2: {x: -2, y: 2}
+  _gridScale: 0.5
 --- !u!114 &678800147
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -35,9 +35,9 @@ namespace Pathfinding
 			var targetNode = _pathfindingGrid.NodeAtWorldPosition(targetPosition);
 
 			// Try to find valid node if target is not walkable
-			if (!targetNode.isWalkable)
+			if (!targetNode.IsWalkable)
 			{
-				var walkableNeighbors = _pathfindingGrid.GetNeighbors(targetNode).Where(n => n.isWalkable);
+				var walkableNeighbors = _pathfindingGrid.GetNeighbors(targetNode).Where(n => n.IsWalkable);
 				if (!walkableNeighbors.Any())
 				{
 					return null;
@@ -46,7 +46,7 @@ namespace Pathfinding
 				float minDistToStart = Mathf.Infinity;
 				foreach (var node in walkableNeighbors)
 				{
-					var dist = Vector2.Distance(startPosition, node.worldPosition);
+					var dist = Vector2.Distance(startPosition, node.WorldPosition);
 					if (dist < minDistToStart)
 					{
 						targetNode = node;
@@ -59,8 +59,8 @@ namespace Pathfinding
 			List<PathfindingNode> openSet = new List<PathfindingNode>();
 			HashSet<PathfindingNode> closedSet = new HashSet<PathfindingNode>();
 
-			startNode.gCost = 0;
-			startNode.parent = startNode;
+			startNode.GCost = 0;
+			startNode.Parent = startNode;
 			openSet.Add(startNode);
 
 			while (openSet.Count > 0)
@@ -68,8 +68,8 @@ namespace Pathfinding
 				var currentNode = openSet[0];
 				foreach (var node in openSet)
 				{
-					if (node.fCost < currentNode.fCost
-						|| (node.fCost == currentNode.fCost && node.hCost < currentNode.hCost))
+					if (node.FCost < currentNode.FCost
+						|| (node.FCost == currentNode.FCost && node.HCost < currentNode.HCost))
 					{
 						currentNode = node;
 					}
@@ -86,22 +86,22 @@ namespace Pathfinding
 				var neighbors = _pathfindingGrid.GetNeighbors(currentNode);
 				foreach (var neighbor in neighbors)
 				{
-					if (!neighbor.isWalkable || closedSet.Contains(neighbor)
-						|| neighbor.fCost > maxDistance)
+					if (!neighbor.IsWalkable || closedSet.Contains(neighbor)
+						|| neighbor.FCost > maxDistance)
 					{
 						continue;
 					}
 					
 					// Basic Theta Star update vertex
-					if (currentNode.parent != null && _pathfindingGrid.LineOfSight2(currentNode, currentNode.parent))
+					if (currentNode.Parent != null && _pathfindingGrid.LineOfSight(currentNode, currentNode.Parent))
 					{
-						float newMoveCost = currentNode.parent.gCost +
-						                    Vector2.Distance(currentNode.parent.worldPosition, neighbor.worldPosition);
-						if (newMoveCost < neighbor.gCost)
+						float newMoveCost = currentNode.Parent.GCost +
+						                    Vector2.Distance(currentNode.Parent.WorldPosition, neighbor.WorldPosition);
+						if (newMoveCost < neighbor.GCost)
 						{
-							neighbor.gCost = newMoveCost;
-							neighbor.hCost = Vector2.Distance(neighbor.worldPosition, targetNode.worldPosition);
-							neighbor.parent = currentNode.parent;
+							neighbor.GCost = newMoveCost;
+							neighbor.HCost = Vector2.Distance(neighbor.WorldPosition, targetNode.WorldPosition);
+							neighbor.Parent = currentNode.Parent;
 							
 							if (!openSet.Contains(neighbor))
 								openSet.Add(neighbor);
@@ -109,12 +109,12 @@ namespace Pathfinding
 					}
 					else
 					{
-						float newMoveCost = currentNode.gCost + Vector2.Distance(currentNode.worldPosition, neighbor.worldPosition);
-						if (newMoveCost < neighbor.gCost)
+						float newMoveCost = currentNode.GCost + Vector2.Distance(currentNode.WorldPosition, neighbor.WorldPosition);
+						if (newMoveCost < neighbor.GCost)
 						{
-							neighbor.gCost = newMoveCost;
-							neighbor.hCost = Vector2.Distance(neighbor.worldPosition, targetNode.worldPosition);
-							neighbor.parent = currentNode;
+							neighbor.GCost = newMoveCost;
+							neighbor.HCost = Vector2.Distance(neighbor.WorldPosition, targetNode.WorldPosition);
+							neighbor.Parent = currentNode;
 					
 							if (!openSet.Contains(neighbor))
 								openSet.Add(neighbor);
@@ -134,7 +134,7 @@ namespace Pathfinding
 			while (node != null && node != start)
 			{
 				path.Add(node);
-				node = node.parent;
+				node = node.Parent;
 			}
 
 			return path;

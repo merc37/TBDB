@@ -6,9 +6,8 @@ namespace Pathfinding
 {
 	public class PathfindingAgent : MonoBehaviour
 	{
-		//[SerializeField] private Vector3 _target;
+		// Editor-assignable target for testing
 		[SerializeField] private Transform _target;
-
 		private Vector3 _pathTarget;
 		
 		private Pathfinder _pathfinder;
@@ -24,7 +23,8 @@ namespace Pathfinding
 			
 		}
 		
-		void Update () {
+		void Update ()
+		{
 			if (_pathTarget != _target.position)
 			{
 				_pathTarget = _target.position;
@@ -39,7 +39,7 @@ namespace Pathfinding
 				Gizmos.color = Color.white;
 				foreach (var node in _path)
 				{
-					Gizmos.DrawLine(node.worldPosition, node.parent.worldPosition);
+					Gizmos.DrawLine(node.WorldPosition, node.Parent.WorldPosition);
 					node.DrawGizmos(0.25f, true);
 				}
 			}

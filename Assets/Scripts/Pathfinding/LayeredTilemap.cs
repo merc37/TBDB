@@ -1,29 +1,25 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Permissions;
-using Tiled2Unity;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using UnityScript.Scripting;
 
 //[ExecuteInEditMode]
 public class LayeredTilemap : MonoBehaviour
 {
     private UnityEngine.Grid _grid;
+    private Tilemap[] _tilemapLayers;
+    private BoundsInt _mapBounds;
+    
     public UnityEngine.Grid Grid
     {
         get { return _grid; }
     }
-    
-    private Tilemap[] _tilemapLayers;
     public Tilemap[] Layers
     {
         get { return _tilemapLayers; }
     }
-
-    private BoundsInt _mapBounds;
     public BoundsInt MapBounds
     {
         get { return _mapBounds; }
@@ -46,7 +42,7 @@ public class LayeredTilemap : MonoBehaviour
         
         foreach (Tilemap layer in _tilemapLayers)
         {
-            //layer.CompressBounds();
+            layer.CompressBounds();
             _mapBounds.min = Vector3Int.Min(layer.cellBounds.min, _mapBounds.min);
             _mapBounds.max = Vector3Int.Max(layer.cellBounds.max, _mapBounds.max);
         }
@@ -61,12 +57,12 @@ public class LayeredTilemap : MonoBehaviour
     /// <param name="min">Bottom left corner in world space.</param>
     /// <param name="max">Top right corner in world space.</param>
     /// <returns>List of cell positions.</returns>
-    /// <exception cref="InvalidEnumArgumentException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public List<Vector2Int> GetCellsOverlappingArea(Vector2 min, Vector2 max)
     {
         if (Vector2.Min(min, max) != min)
         {
-            throw new InvalidEnumArgumentException("min is not strictly less than max");
+            throw new ArgumentException("min is not strictly less than max");
         }
 
         List<Vector2Int> cells = new List<Vector2Int>();
@@ -93,7 +89,6 @@ public class LayeredTilemap : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        // Draw bounds
         Gizmos.color = Color.cyan;
         
         var topLeft = _mapBounds.min + (_mapBounds.size.y * Vector3.up);
