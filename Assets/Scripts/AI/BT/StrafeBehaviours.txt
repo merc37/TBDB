@@ -1,0 +1,15 @@
+tree("RStrafe")
+	sequence
+		mute
+			sequence
+				IsMovementTargetNull
+				SetStrafeCenter
+				SetMovementTargetToStrafePoint
+		MoveTowardsMovementTarget
+		SetRotationToPlayer
+		mute
+			sequence
+				fallback
+					IsMovementStopped
+					ReachedMovementTarget
+				SetMovementTargetToStrafePoint

@@ -2,9 +2,11 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Player {
+namespace Player
+{
 
-    public class PlayerRoll : MonoBehaviour {
+    public class PlayerRoll : MonoBehaviour
+    {
 
         [SerializeField]
         private float rollCooldownTime = 1;
@@ -30,7 +32,8 @@ namespace Player {
         private Vector2 rollVelocity;
         private float movementSpeed;
 
-        void Awake() {
+        void Awake()
+        {
             eventManager = GetComponent<GameObjectEventManager>();
             rigidbody = GetComponent<Rigidbody2D>();
             rollCooldownTimer = rollCooldownTime;
@@ -41,33 +44,42 @@ namespace Player {
             eventManager.StartListening("SendMovementSpeed", new UnityAction<ParamsObject>(ReturnMovementSpeed));
         }
 
-        void Update() {
+        void Update()
+        {
 
-            if(shouldRoll) {
-                if(rigidbody.velocity.magnitude > velocityThreshold) {
+            if(shouldRoll)
+            {
+                if(rigidbody.velocity.magnitude > velocityThreshold)
+                {
                     rollStartPos = rigidbody.position;
                     rollVelocity = rigidbody.velocity.normalized * movementSpeed * 3;
                     rigidbody.velocity = rollVelocity;
                     shouldRoll = false;
                     eventManager.TriggerEvent("OnRollStart");
                     rolling = true;
-                } else {
+                }
+                else
+                {
                     shouldRoll = false;
                 }
             }
 
-            if(rollOnCooldown && !rolling && !rollRecovery) {
+            if(rollOnCooldown && !rolling && !rollRecovery)
+            {
                 rollCooldownTimer -= Time.deltaTime;
-                if(rollCooldownTimer <= 0) {
+                if(rollCooldownTimer <= 0)
+                {
                     rollCooldownTimer = rollCooldownTime;
                     eventManager.TriggerEvent("OnRollCooldownEnd");
                     rollOnCooldown = false;
                 }
             }
 
-            if(!rollOnCooldown && rolling && rollRecovery) {
+            if(!rollOnCooldown && rolling && rollRecovery)
+            {
                 rollRecoveryTimer -= Time.deltaTime;
-                if(rollRecoveryTimer <= 0) {
+                if(rollRecoveryTimer <= 0)
+                {
                     rollRecoveryTimer = rollRecoveryTime;
                     eventManager.TriggerEvent("OnRollCooldownStart");
                     rollRecovery = false;
@@ -77,32 +89,40 @@ namespace Player {
                 }
             }
 
-            if(!rollOnCooldown && !rollRecovery && rolling) {
-                if(Vector2.Distance(rollStartPos, rigidbody.position) >= rollDistance) {
+            if(!rollOnCooldown && !rollRecovery && rolling)
+            {
+                if(Vector2.Distance(rollStartPos, rigidbody.position) >= rollDistance)
+                {
                     rigidbody.velocity = Vector2.zero;
                     rollRecovery = true;
                 }
-                if(!rollVelocity.Equals(rigidbody.velocity)) {
+                if(!rollVelocity.Equals(rigidbody.velocity))
+                {
                     rollRecovery = true;
                 }
             }
 
-            if(!rollOnCooldown && !rolling && !rollRecovery && Input.GetButtonDown("Roll")) {
+            if(!rollOnCooldown && !rolling && !rollRecovery && Input.GetButtonDown("Roll"))
+            {
                 shouldRoll = true;
             }
 
         }
 
-        private void ReturnMovementSpeed(ParamsObject paramsObj) {
+        private void ReturnMovementSpeed(ParamsObject paramsObj)
+        {
             movementSpeed = paramsObj.Float;
         }
 
-        void OnDrawGizmos() {
-            if(rollRecovery && !rolling) {
+        void OnDrawGizmos()
+        {
+            if(rollRecovery && !rolling)
+            {
                 Gizmos.color = Color.magenta;
                 Gizmos.DrawSphere(rigidbody.position, .5f);
             }
-            if(rolling && !rollRecovery) {
+            if(rolling && !rollRecovery)
+            {
                 Gizmos.color = Color.green;
                 Gizmos.DrawSphere(rigidbody.position, .5f);
             }

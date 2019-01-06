@@ -1,0 +1,20 @@
+tree("Root")
+	parallel
+		repeat mute tree("Live")
+		repeat mute tree("DIE")
+
+
+tree("Live")
+	repeat
+		mute
+			fallback
+				//Put behaviors here, with higher priority actions higher up
+
+tree("DIE")
+	repeat
+		mute
+			sequence
+				//Put death conditions and actions here
+				//In most cases just
+				//IsHealthZero
+				//DestroySelf

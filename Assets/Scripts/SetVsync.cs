@@ -1,9 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class SetVsync : MonoBehaviour {
-	void Awake () {
+public class SetVsync : MonoBehaviour
+{
+    void Awake()
+    {
         QualitySettings.vSyncCount = 0;
         Application.targetFrameRate = 60;
     }

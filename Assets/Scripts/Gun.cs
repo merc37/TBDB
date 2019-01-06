@@ -2,8 +2,9 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class Gun : MonoBehaviour {
-    
+public class Gun : MonoBehaviour
+{
+
     [SerializeField]
     private Rigidbody2D projectileToBeFired;
     [SerializeField]
@@ -31,15 +32,18 @@ public class Gun : MonoBehaviour {
     private float deltaReloadCheckTime;
 
     private int currAmmo;
-    public int MaxAmmo {get {return maxAmmo;}}
+    public int MaxAmmo { get { return maxAmmo; } }
     public int CurrentAmmo
     {
         get { return currAmmo; }
-        set {
-            if(value < 0) {
+        set
+        {
+            if(value < 0)
+            {
                 currAmmo = 0;
             }
-            if(value > maxAmmo) {
+            if(value > maxAmmo)
+            {
                 currAmmo = maxAmmo;
             }
 
@@ -51,7 +55,8 @@ public class Gun : MonoBehaviour {
         }
     }
 
-    protected virtual void Awake() {
+    protected virtual void Awake()
+    {
         eventManager = GetComponentInParent<GameObjectEventManager>();
         audioSource = GetComponent<AudioSource>();
         CurrentAmmo = MaxAmmo;
@@ -63,39 +68,49 @@ public class Gun : MonoBehaviour {
         eventManager.StartListening("OnShoot", new UnityAction<ParamsObject>(OnShoot));
     }
 
-    void Start() {
+    void Start()
+    {
         UpdateGunInfo();
     }
 
-    void Update() {
-        if (reloading) {
+    void Update()
+    {
+        if(reloading)
+        {
             deltaReloadCheckTime = Time.time - lastReloadTime;
-            if (deltaReloadCheckTime >= reloadTime) {
+            if(deltaReloadCheckTime >= reloadTime)
+            {
                 reloading = false;
                 CurrentAmmo = MaxAmmo;
             }
         }
     }
 
-    private void OnReload(ParamsObject paramsObj) {
-        if(CurrentAmmo != MaxAmmo && !reloading) {
+    private void OnReload(ParamsObject paramsObj)
+    {
+        if(CurrentAmmo != MaxAmmo && !reloading)
+        {
             reloading = true;
             lastReloadTime = Time.time;
         }
     }
 
-    protected virtual void OnShoot(ParamsObject paramsObj) {
-        if (CurrentAmmo > 0 && !reloading) {
+    protected virtual void OnShoot(ParamsObject paramsObj)
+    {
+        if(CurrentAmmo > 0 && !reloading)
+        {
             deltaFireTime = Time.time - lastFireTime;
-            if (deltaFireTime >= fireTime) {
+            if(deltaFireTime >= fireTime)
+            {
                 lastFireTime = Time.time;
                 FireProjectile();
             }
         }
     }
 
-    Rigidbody2D newProjectile = null;
-    protected virtual Rigidbody2D FireProjectile() {
+    Rigidbody2D newProjectile = null;//TODO: delete, just for gizmo to be drawn
+    protected virtual Rigidbody2D FireProjectile()
+    {
         audioSource.PlayOneShot(shotSound);
         newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
         Vector2 velocity = newProjectile.transform.up.normalized * speed;
@@ -107,17 +122,20 @@ public class Gun : MonoBehaviour {
         return newProjectile;
     }
 
-    private void UpdateGunInfo() {
+    private void UpdateGunInfo()
+    {
         ParamsObject paramsObj = new ParamsObject(transform);
         paramsObj.Float = speed;
         paramsObj.Int = damage;
         eventManager.TriggerEvent("UpdateGunInfo", paramsObj);
     }
 
-    void OnDrawGizmos() {
+    void OnDrawGizmos()
+    {
         Gizmos.color = Color.red;
-        if(newProjectile != null) {
-            Gizmos.DrawSphere(newProjectile.position, .5f);
+        if(newProjectile != null)
+        {
+            Gizmos.DrawSphere(newProjectile.position, .3f);
         }
     }
 }

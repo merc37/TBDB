@@ -1,0 +1,19 @@
+tree("RSearchInLookDirection")
+	sequence
+		fallback
+			sequence
+				IsMovementTargetNull
+				ResetSearchTimer
+			CheckSearchTimer
+		mute
+			fallback
+				sequence
+					IsMovementTargetNull
+					SetSearchDirectionToLookDirection
+					SetSearchCenterFromPosition
+					SetMovementTargetToSearchPoint
+				sequence
+					PathToMovementTarget
+					SetRotationToMovementDirection
+					ReachedMovementTarget
+					SetMovementTargetToSearchPoint
