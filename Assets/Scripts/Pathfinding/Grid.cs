@@ -24,8 +24,8 @@ namespace Pathfinding {
         }
 
         private Vector3 gridPosition;
-        private IntVector2 gridWorldSize;
-        private IntVector2 gridSize;
+        private Vector2Int gridWorldSize;
+        private Vector2Int gridSize;
         private float nodeDiameter, nodeRadius;
         private Node[,] grid;
 

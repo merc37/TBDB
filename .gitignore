@@ -32,3 +32,11 @@ sysinfo.txt
 \.vs/TBDB/v15/Server/sqlite3/storage\.ide-shm
 
 \.vs/TBDB/v15/Server/sqlite3/storage\.ide-wal
+
+/\.idea/
+
+Assets/Plugins/Editor/JetBrains\.meta
+
+Assets/Plugins/Editor/JetBrains/JetBrains\.Rider\.Unity\.Editor\.Plugin\.Repacked\.dll
+
+Assets/Plugins/Editor/JetBrains/JetBrains\.Rider\.Unity\.Editor\.Plugin\.Repacked\.dll\.meta

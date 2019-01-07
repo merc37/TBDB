@@ -48,6 +48,23 @@ public class CameraScript : MonoBehaviour
     {
         transform.position = newCameraPosition;
     }
+    
+	/*void LateUpdate () {
+        newCameraPosition.Set(playerRigidbody.position.x, playerRigidbody.position.y, -10);
+        if(newCameraPosition.x - halfWorldWidth < mapTransform.position.x - mapWidth / 2) {
+            newCameraPosition.x = (mapTransform.position.x - mapWidth / 2) + halfWorldWidth;
+        }
+        if(newCameraPosition.x + halfWorldWidth > mapTransform.position.x + mapWidth / 2) {
+            newCameraPosition.x = (mapTransform.position.x + mapWidth / 2) - halfWorldWidth;
+        }
+        if(newCameraPosition.y + halfWorldHeight > mapTransform.position.y + mapHeight / 2) {
+            newCameraPosition.y = (mapTransform.position.y + mapHeight / 2) - halfWorldHeight;
+        }
+        if(newCameraPosition.y - halfWorldHeight < mapTransform.position.y - mapHeight / 2) {
+            newCameraPosition.y = (mapTransform.position.y - mapHeight / 2) + halfWorldHeight;
+        }
+        transform.position = newCameraPosition;
+    }*/
 
     private void OnPlayerSendRigidbody(ParamsObject paramsObj)
     {
