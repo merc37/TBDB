@@ -1,10 +1,13 @@
 ﻿using EventManagers;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
-namespace Player {
-	public class PlayerMovement : MonoBehaviour {
-        
+namespace Player
+{
+    public class PlayerMovement : MonoBehaviour
+    {
+
         [SerializeField]
         private float maxRunSpeed = 15;
         [SerializeField]
@@ -20,35 +23,39 @@ namespace Player {
         private bool walking;
         private bool rolling;
 
-        void Awake() {
+        void Awake()
+        {
             eventManager = GetComponent<GameObjectEventManager>();
             rigidbody = GetComponent<Rigidbody2D>();
             rolling = false;
-            eventManager.StartListening("OnRollStart", new UnityAction<ParamsObject>(OnRollStart));
-            eventManager.StartListening("OnRollEnd", new UnityAction<ParamsObject>(OnRollEnd));
+            eventManager.StartListening(PlayerEvents.OnRollStart, new UnityAction<ParamsObject>(OnRollStart));
+            eventManager.StartListening(PlayerEvents.OnRollEnd, new UnityAction<ParamsObject>(OnRollEnd));
         }
 
-        void Start() {
-            eventManager.TriggerEvent("SendMovementSpeed", new ParamsObject(maxRunSpeed));
+        void Start()
+        {
+            eventManager.TriggerEvent(PlayerEvents.OnSendMovementSpeed, new ParamsObject(maxRunSpeed));
         }
-        
-        void FixedUpdate() {
-            if(!rolling) {
 
+        void FixedUpdate()
+        {
+            if(!rolling)
+            {
                 currentMaxSpeed = Input.GetButton("Walk") ? maxWalkSpeed : maxRunSpeed;
 
                 directionVector.Set(Input.GetAxisRaw("HorizontalMovement"), Input.GetAxisRaw("VerticalMovement"));
 
                 rigidbody.velocity = Vector2.ClampMagnitude(directionVector.normalized * currentMaxSpeed, currentMaxSpeed);
-
             }
         }
 
-        private void OnRollStart(ParamsObject paramsObj) {
+        private void OnRollStart(ParamsObject paramsObj)
+        {
             rolling = true;
         }
 
-        private void OnRollEnd(ParamsObject paramsObj) {
+        private void OnRollEnd(ParamsObject paramsObj)
+        {
             rolling = false;
         }
     }

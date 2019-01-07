@@ -1,6 +1,7 @@
 ﻿using EventManagers;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 public class Gun : MonoBehaviour
 {
@@ -8,7 +9,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private Rigidbody2D projectileToBeFired;
     [SerializeField]
-    private int speed;
+    private float projectileSpeed;
     [SerializeField]
     protected bool automatic;
     [SerializeField]
@@ -16,7 +17,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private int maxAmmo;
     [SerializeField]
-    private int damage;
+    private short damage;
     [SerializeField]
     private float reloadTime;
     [SerializeField]
@@ -47,9 +48,7 @@ public class Gun : MonoBehaviour
                 currAmmo = maxAmmo;
             }
 
-            ParamsObject paramsObject = new ParamsObject(value);
-            paramsObject.Float = (float)MaxAmmo;
-            eventManager.TriggerEvent("AmmoCount", paramsObject);
+            eventManager.TriggerEvent(GunEvents.OnUpdateCurrentAmmo, new ParamsObject(CurrentAmmo));
 
             currAmmo = value;
         }
@@ -64,13 +63,17 @@ public class Gun : MonoBehaviour
         lastFireTime = 0;
         reloading = false;
         lastReloadTime = 0;
-        eventManager.StartListening("OnReload", new UnityAction<ParamsObject>(OnReload));
-        eventManager.StartListening("OnShoot", new UnityAction<ParamsObject>(OnShoot));
+        eventManager.StartListening(GunEvents.OnReload, new UnityAction<ParamsObject>(OnReload));
+        eventManager.StartListening(GunEvents.OnShoot, new UnityAction<ParamsObject>(OnShoot));
     }
 
     void Start()
     {
-        UpdateGunInfo();
+        eventManager.TriggerEvent(GunEvents.OnUpdateMaxAmmo, new ParamsObject(MaxAmmo));
+        eventManager.TriggerEvent(GunEvents.OnUpdateCurrentAmmo, new ParamsObject(CurrentAmmo));
+        eventManager.TriggerEvent(GunEvents.OnUpdateGunProjectileSpeed, new ParamsObject(projectileSpeed));
+        eventManager.TriggerEvent(GunEvents.OnUpdateGunDamage, new ParamsObject(damage));
+        eventManager.TriggerEvent(GunEvents.OnUpdateGunTransform, new ParamsObject(transform));
     }
 
     void Update()
@@ -112,22 +115,14 @@ public class Gun : MonoBehaviour
     protected virtual Rigidbody2D FireProjectile()
     {
         audioSource.PlayOneShot(shotSound);
-        newProjectile = (Rigidbody2D)Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
-        Vector2 velocity = newProjectile.transform.up.normalized * speed;
+        newProjectile = Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
+        Vector2 velocity = newProjectile.transform.up.normalized * projectileSpeed;
         velocity += transform.root.GetComponent<Rigidbody2D>().velocity;
         newProjectile.velocity = velocity;
         newProjectile.GetComponent<DamageSource>().Damage = damage;
         newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
         CurrentAmmo--;
         return newProjectile;
-    }
-
-    private void UpdateGunInfo()
-    {
-        ParamsObject paramsObj = new ParamsObject(transform);
-        paramsObj.Float = speed;
-        paramsObj.Int = damage;
-        eventManager.TriggerEvent("UpdateGunInfo", paramsObj);
     }
 
     void OnDrawGizmos()

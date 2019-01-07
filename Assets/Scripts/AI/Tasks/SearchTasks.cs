@@ -3,6 +3,7 @@ using Panda;
 using Pathfinding;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 namespace Enemy
 {
@@ -24,12 +25,15 @@ namespace Enemy
         private GameObjectEventManager eventManager;
         private new Rigidbody2D rigidbody;
 
+        private UnityAction<ParamsObject> onMapSendTransformUnityAction;
+
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
 
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetGrid));
+            onMapSendTransformUnityAction = new UnityAction<ParamsObject>(OnMapSendTransform);
+            eventManager.StartListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
 
             searchTimer = searchTime;
         }
@@ -42,7 +46,7 @@ namespace Enemy
             {
                 walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
             }
-            eventManager.TriggerEvent("OnSetMovementTarget", new ParamsObject(walkableNode.worldPosition));
+            eventManager.TriggerEvent(EnemyEvents.OnSetMovementTarget, new ParamsObject(walkableNode.worldPosition));
             return true;
         }
 
@@ -78,10 +82,10 @@ namespace Enemy
             return true;
         }
 
-        private void SetGrid(ParamsObject paramsObj)
+        private void OnMapSendTransform(ParamsObject paramsObj)
         {
             grid = paramsObj.Transform.GetComponent<Pathfinding.Grid>();
-            eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetGrid));
+            eventManager.StopListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
         }
     }
 }

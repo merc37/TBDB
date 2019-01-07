@@ -1,14 +1,14 @@
 ﻿using EventManagers;
 using UnityEngine;
 
-namespace Player {
-
-    public class PlayerMelee : MonoBehaviour {
-
+namespace Player
+{
+    public class PlayerMelee : MonoBehaviour
+    {
         [SerializeField]
         private Collider2D meleeBox;
         [SerializeField]
-        private int attackDamage;
+        private short attackDamage;
         [SerializeField]
         private float attackTime;
         [SerializeField]
@@ -22,17 +22,21 @@ namespace Player {
         private float lastEndAttackTime = 0;
         private float deltaEndAttackTime = 0;
 
-        void Start() {
+        void Start()
+        {
             eventManager = GetComponent<GameObjectEventManager>();
             meleeBox.GetComponent<DamageSource>().Source = transform.tag;
             meleeBox.GetComponent<DamageSource>().Damage = attackDamage;
             meleeBox.enabled = false;
         }
 
-        void Update() {
-            if(attacking) {
+        void Update()
+        {
+            if(attacking)
+            {
                 deltaStartAttackTime = Time.time - lastStartAttackTime;
-                if(deltaStartAttackTime >= attackTime) {
+                if(deltaStartAttackTime >= attackTime)
+                {
                     attacking = false;
                     cooldown = true;
                     lastEndAttackTime = Time.time;
@@ -40,14 +44,17 @@ namespace Player {
                 }
             }
 
-            if(cooldown) {
+            if(cooldown)
+            {
                 deltaEndAttackTime = Time.time - lastEndAttackTime;
-                if(deltaEndAttackTime >= meleeCooldownTime) {
+                if(deltaEndAttackTime >= meleeCooldownTime)
+                {
                     cooldown = false;
                 }
             }
 
-            if (Input.GetButtonDown("Melee") && !attacking && !cooldown) {
+            if(Input.GetButtonDown("Melee") && !attacking && !cooldown)
+            {
                 attacking = true;
                 lastStartAttackTime = Time.time;
                 meleeBox.enabled = true;

@@ -4,6 +4,7 @@ using Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 namespace Enemy
 {
@@ -22,13 +23,18 @@ namespace Enemy
         private Rigidbody2D playerRigidbody;
         private new Rigidbody2D rigidbody;
 
+        private UnityAction<ParamsObject> onPlayerSendRigidbodyUnityAction;
+        private UnityAction<ParamsObject> onMapSendTransformUnityAction;
+
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
 
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetGrid));
-            eventManager.StartListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
+            onMapSendTransformUnityAction = new UnityAction<ParamsObject>(OnMapSendTransform);
+            eventManager.StartListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
+            onPlayerSendRigidbodyUnityAction = new UnityAction<ParamsObject>(OnPlayerSendRigidbody);
+            eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
         [Task]
@@ -92,7 +98,7 @@ namespace Enemy
 
             if(bestCoverPoint != NullVector)
             {
-                eventManager.TriggerEvent("OnSetMovementTarget", new ParamsObject(bestCoverPoint));
+                eventManager.TriggerEvent(EnemyEvents.OnSetMovementTarget, new ParamsObject(bestCoverPoint));
                 return true;
             }
 
@@ -119,16 +125,16 @@ namespace Enemy
             return !Physics2D.Linecast(playerRigidbody.position, rigidbody.position);
         }
 
-        private void SetPlayerRigidbody(ParamsObject paramsObj)
+        private void OnPlayerSendRigidbody(ParamsObject paramsObj)
         {
             playerRigidbody = paramsObj.Rigidbody;
-            eventManager.StopListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
+            eventManager.StopListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
-        private void SetGrid(ParamsObject paramsObj)
+        private void OnMapSendTransform(ParamsObject paramsObj)
         {
             grid = paramsObj.Transform.GetComponent<Pathfinding.Grid>();
-            eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetGrid));
+            eventManager.StopListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
         }
     }
 }

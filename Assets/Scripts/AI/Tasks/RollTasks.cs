@@ -2,6 +2,7 @@
 using UnityEngine.Events;
 using EventManagers;
 using Panda;
+using Events;
 
 namespace Enemy
 {
@@ -29,13 +30,16 @@ namespace Enemy
         private GameObjectEventManager eventManager;
         private new Rigidbody2D rigidbody;
 
+        private UnityAction<ParamsObject> onSendMovementSpeedUnityAction;
+
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
 
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("Roll", new UnityAction<ParamsObject>(OnRoll));
-            eventManager.StartListening("SendMovementSpeed", new UnityAction<ParamsObject>(ReturnMovementSpeed));
+            eventManager.StartListening(EnemyEvents.OnRoll, new UnityAction<ParamsObject>(OnRoll));
+            onSendMovementSpeedUnityAction = new UnityAction<ParamsObject>(OnSendMovementSpeed);
+            eventManager.StartListening(EnemyEvents.OnSendMovementSpeed, onSendMovementSpeedUnityAction);
 
             rollCooldownTimer = rollCooldownTime;
         }
@@ -77,7 +81,7 @@ namespace Enemy
                 rollVelocity = rigidbody.velocity;
                 shouldRoll = false;
                 roll = false;
-                eventManager.TriggerEvent("OnRollStart");
+                eventManager.TriggerEvent(EnemyEvents.OnRollStart);
                 rolling = true;
             }
 
@@ -87,7 +91,7 @@ namespace Enemy
                 if(rollCooldownTimer <= 0)
                 {
                     rollCooldownTimer = rollCooldownTime;
-                    eventManager.TriggerEvent("OnRollCooldownEnd");
+                    eventManager.TriggerEvent(EnemyEvents.OnRollCooldownEnd);
                     rollOnCooldown = false;
                 }
             }
@@ -97,16 +101,16 @@ namespace Enemy
                 if(Vector2.Distance(rollStartPos, rigidbody.position) >= rollDistance)
                 {
                     rigidbody.velocity = Vector2.zero;
-                    eventManager.TriggerEvent("OnRollEnd");
+                    eventManager.TriggerEvent(EnemyEvents.OnRollEnd);
                     rolling = false;
-                    eventManager.TriggerEvent("OnRollCooldownStart");
+                    eventManager.TriggerEvent(EnemyEvents.OnRollCooldownStart);
                     rollOnCooldown = true;
                 }
                 if(!rollVelocity.Equals(rigidbody.velocity))
                 {
-                    eventManager.TriggerEvent("OnRollEnd");
+                    eventManager.TriggerEvent(EnemyEvents.OnRollEnd);
                     rolling = false;
-                    eventManager.TriggerEvent("OnRollCooldownStart");
+                    eventManager.TriggerEvent(EnemyEvents.OnRollCooldownStart);
                     rollOnCooldown = true;
                 }
             }
@@ -143,9 +147,10 @@ namespace Enemy
             rollDirection = Vector3.Cross(paramsObj.Vector2, Vector3.forward);
         }
 
-        private void ReturnMovementSpeed(ParamsObject paramsObj)
+        private void OnSendMovementSpeed(ParamsObject paramsObj)
         {
             movementSpeed = paramsObj.Float;
+            eventManager.StopListening(EnemyEvents.OnSendMovementSpeed, onSendMovementSpeedUnityAction);
         }
 
     }

@@ -1,6 +1,7 @@
 ﻿using EventManagers;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 namespace Player
 {
@@ -32,6 +33,8 @@ namespace Player
         private Vector2 rollVelocity;
         private float movementSpeed;
 
+        private UnityAction<ParamsObject> onSendMovementSpeedUnityAction;
+
         void Awake()
         {
             eventManager = GetComponent<GameObjectEventManager>();
@@ -41,12 +44,12 @@ namespace Player
             rollOnCooldown = false;
             rolling = false;
             rollRecovery = false;
-            eventManager.StartListening("SendMovementSpeed", new UnityAction<ParamsObject>(ReturnMovementSpeed));
+            onSendMovementSpeedUnityAction = new UnityAction<ParamsObject>(OnSendMovementSpeed);
+            eventManager.StartListening(PlayerEvents.OnSendMovementSpeed, onSendMovementSpeedUnityAction);
         }
 
         void Update()
         {
-
             if(shouldRoll)
             {
                 if(rigidbody.velocity.magnitude > velocityThreshold)
@@ -55,7 +58,7 @@ namespace Player
                     rollVelocity = rigidbody.velocity.normalized * movementSpeed * 3;
                     rigidbody.velocity = rollVelocity;
                     shouldRoll = false;
-                    eventManager.TriggerEvent("OnRollStart");
+                    eventManager.TriggerEvent(PlayerEvents.OnRollStart);
                     rolling = true;
                 }
                 else
@@ -70,7 +73,7 @@ namespace Player
                 if(rollCooldownTimer <= 0)
                 {
                     rollCooldownTimer = rollCooldownTime;
-                    eventManager.TriggerEvent("OnRollCooldownEnd");
+                    eventManager.TriggerEvent(PlayerEvents.OnRollCooldownEnd);
                     rollOnCooldown = false;
                 }
             }
@@ -81,11 +84,11 @@ namespace Player
                 if(rollRecoveryTimer <= 0)
                 {
                     rollRecoveryTimer = rollRecoveryTime;
-                    eventManager.TriggerEvent("OnRollCooldownStart");
+                    eventManager.TriggerEvent(PlayerEvents.OnRollCooldownStart);
                     rollRecovery = false;
                     rolling = false;
                     rollOnCooldown = true;
-                    eventManager.TriggerEvent("OnRollEnd");
+                    eventManager.TriggerEvent(PlayerEvents.OnRollEnd);
                 }
             }
 
@@ -109,9 +112,10 @@ namespace Player
 
         }
 
-        private void ReturnMovementSpeed(ParamsObject paramsObj)
+        private void OnSendMovementSpeed(ParamsObject paramsObj)
         {
             movementSpeed = paramsObj.Float;
+            eventManager.StopListening(PlayerEvents.OnSendMovementSpeed, onSendMovementSpeedUnityAction);
         }
 
         void OnDrawGizmos()

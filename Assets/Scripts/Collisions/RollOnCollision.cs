@@ -1,9 +1,12 @@
 ﻿using EventManagers;
 using UnityEngine;
 using System.Linq;
+using Events;
 
-namespace Collisions {
-    public class RollOnCollision : MonoBehaviour {
+namespace Collisions
+{
+    public class RollOnCollision : MonoBehaviour
+    {
 
         [SerializeField]
         [TagSelector]
@@ -11,15 +14,19 @@ namespace Collisions {
 
         private GameObjectEventManager eventManager;
 
-        void Awake() {
+        void Awake()
+        {
             eventManager = GetComponentInParent<GameObjectEventManager>();
         }
 
-        void OnTriggerEnter2D(Collider2D coll) {
+        void OnTriggerEnter2D(Collider2D coll)
+        {
             DamageSource damageSource = coll.GetComponent<DamageSource>();
-            if(damageSource) {
-                if(damageTags.Contains(damageSource.Source)) {
-                    eventManager.TriggerEvent("Roll", new ParamsObject(coll.attachedRigidbody.velocity));
+            if(damageSource)
+            {
+                if(damageTags.Contains(damageSource.Source))
+                {
+                    eventManager.TriggerEvent(EnemyEvents.OnRoll, new ParamsObject(coll.attachedRigidbody.velocity));
                 }
             }
         }

@@ -2,6 +2,7 @@
 using Panda;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 namespace Enemy
 {
@@ -16,20 +17,21 @@ namespace Enemy
         private Rigidbody2D playerRigidbody;
         private new Rigidbody2D rigidbody;
 
+        private UnityAction<ParamsObject> onPlayerSendRigidbodyUnityAction;
+
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
 
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
-            eventManager.StartListening("OnSetPlayerLastKnownPosition", new UnityAction<ParamsObject>(SetPlayerLastKnownPosition));
-            eventManager.StartListening("OnSetPlayerLastKnownHeading", new UnityAction<ParamsObject>(SetPlayerLastKnownHeading));
+            onPlayerSendRigidbodyUnityAction = new UnityAction<ParamsObject>(OnPlayerSendRigidbody);
+            eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
         [Task]
         bool SetMovementTargetToPlayerPosition()
         {
-            eventManager.TriggerEvent("OnSetMovementTarget", new ParamsObject(playerRigidbody.position));
+            eventManager.TriggerEvent(EnemyEvents.OnSetMovementTarget, new ParamsObject(playerRigidbody.position));
             return true;
         }
 
@@ -44,7 +46,7 @@ namespace Enemy
         [Task]
         bool SetMovementTargetToPlayerLastKnownPosition()
         {
-            eventManager.TriggerEvent("OnSetMovementTarget", new ParamsObject(playerLastKnownPosition));
+            eventManager.TriggerEvent(EnemyEvents.OnSetMovementTarget, new ParamsObject(playerLastKnownPosition));
             return true;
         }
 
@@ -96,10 +98,10 @@ namespace Enemy
             return true;
         }
 
-        private void SetPlayerRigidbody(ParamsObject paramsObj)
+        private void OnPlayerSendRigidbody(ParamsObject paramsObj)
         {
             playerRigidbody = paramsObj.Rigidbody;
-            eventManager.StopListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
+            eventManager.StopListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
         private void SetPlayerLastKnownPosition(ParamsObject paramsObj)

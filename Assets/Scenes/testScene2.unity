@@ -1147,7 +1147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8c5714b61857f43e5b4fe4ac7bf67dc2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100000
+  maxHealth: -31072
 --- !u!114 &611817626
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1546,6 +1546,11 @@ PrefabInstance:
     - target: {fileID: 4992776803796416, guid: 739c05033a2fa924bad4897d6199200e, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114894380615047748, guid: 739c05033a2fa924bad4897d6199200e,
+        type: 3}
+      propertyPath: projectileSpeed
+      value: 15
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 739c05033a2fa924bad4897d6199200e, type: 3}
@@ -2172,6 +2177,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lowAmmoThreshold: 0
+--- !u!114 &899538217
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899538208}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c929c6840bf38ea43bd4ffdb8d2dfc62, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &912995932
 GameObject:
   m_ObjectHideFlags: 0
@@ -5119,6 +5136,11 @@ PrefabInstance:
       propertyPath: damage
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 114804667547530350, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 3}
+      propertyPath: projectileSpeed
+      value: 15
+      objectReference: {fileID: 0}
     - target: {fileID: 114739528024976714, guid: faaf22525cba0c34abcfcdef0237ff04,
         type: 3}
       propertyPath: maxHealth
@@ -5152,7 +5174,7 @@ PrefabInstance:
     - target: {fileID: 114124924482454326, guid: faaf22525cba0c34abcfcdef0237ff04,
         type: 3}
       propertyPath: sourceInfos.Array.data[0].isFoldout
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114124924482454326, guid: faaf22525cba0c34abcfcdef0237ff04,
         type: 3}
@@ -5927,7 +5949,7 @@ PrefabInstance:
     - target: {fileID: 114124924482454326, guid: faaf22525cba0c34abcfcdef0237ff04,
         type: 3}
       propertyPath: sourceInfos.Array.data[3].isFoldout
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114124924482454326, guid: faaf22525cba0c34abcfcdef0237ff04,
         type: 3}
@@ -5967,9 +5989,15 @@ PrefabInstance:
       propertyPath: m_Size.x
       value: 1.4013945
       objectReference: {fileID: 0}
+    - target: {fileID: 82945923282245186, guid: faaf22525cba0c34abcfcdef0237ff04,
+        type: 3}
+      propertyPath: BypassReverbZones
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 114172620804946842, guid: faaf22525cba0c34abcfcdef0237ff04, type: 3}
+    - {fileID: 114342653404078254, guid: faaf22525cba0c34abcfcdef0237ff04, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: faaf22525cba0c34abcfcdef0237ff04, type: 3}
 --- !u!1 &2104643213
 GameObject:

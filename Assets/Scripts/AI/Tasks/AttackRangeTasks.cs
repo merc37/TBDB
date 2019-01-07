@@ -2,6 +2,7 @@
 using Panda;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 namespace Enemy
 {
@@ -14,12 +15,15 @@ namespace Enemy
         private Rigidbody2D playerRigidbody;
         private new Rigidbody2D rigidbody;
 
+        private UnityAction<ParamsObject> onPlayerSendRigidbodyUnityAction;
+
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
 
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
+            onPlayerSendRigidbodyUnityAction = new UnityAction<ParamsObject>(OnPlayerSendRigidbody);
+            eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
         [Task]
@@ -36,10 +40,10 @@ namespace Enemy
             return distanceToTarget <= attackRange / 2;
         }
 
-        private void SetPlayerRigidbody(ParamsObject paramsObj)
+        private void OnPlayerSendRigidbody(ParamsObject paramsObj)
         {
             playerRigidbody = paramsObj.Rigidbody;
-            eventManager.StopListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
+            eventManager.StopListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
     }
 }

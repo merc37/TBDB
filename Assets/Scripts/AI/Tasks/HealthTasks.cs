@@ -2,13 +2,14 @@
 using Panda;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 namespace Enemy
 {
     public class HealthTasks : MonoBehaviour
     {
         [SerializeField]
-        private int lowHealthThreshold = 3;
+        private short lowHealthThreshold = 3;
 
         private bool isLowOnHealth;
         private bool isHealthZero;
@@ -18,7 +19,7 @@ namespace Enemy
         void Awake()
         {
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("HealthPoints", new UnityAction<ParamsObject>(OnHealthPointUpdate));
+            eventManager.StartListening(HealthEvents.OnUpdateCurrentHealth, new UnityAction<ParamsObject>(OnUpdateCurrentHealth));
         }
 
         [Task]
@@ -33,10 +34,10 @@ namespace Enemy
             return isHealthZero;
         }
 
-        private void OnHealthPointUpdate(ParamsObject paramsObj)
+        private void OnUpdateCurrentHealth(ParamsObject paramsObj)
         {
-            isLowOnHealth = paramsObj.Int <= lowHealthThreshold;
-            isHealthZero = paramsObj.Int <= 0;
+            isLowOnHealth = paramsObj.Short <= lowHealthThreshold;
+            isHealthZero = paramsObj.Short <= 0;
         }
     }
 }

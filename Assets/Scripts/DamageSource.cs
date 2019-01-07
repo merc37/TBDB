@@ -1,30 +1,31 @@
 ﻿using UnityEngine;
 using System.Linq;
 
-public class DamageSource : MonoBehaviour {
+public class DamageSource : MonoBehaviour
+{
 
     private string source;
     public string Source
     {
-        get {
+        get
+        {
             return source;
         }
-        set {
-            if(UnityEditorInternal.InternalEditorUtility.tags.Contains<string>(value)) {
+        set
+        {
+            if(UnityEditorInternal.InternalEditorUtility.tags.Contains(value))
+            {
                 source = value;
-            } else {
+            }
+            else
+            {
                 source = "Untagged";
             }
         }
     }
-    private int damage;
-    public int Damage
+
+    public short Damage
     {
-        get {
-            return damage;
-        }
-        set {
-            damage = value;
-        }
+        get; set;
     }
 }

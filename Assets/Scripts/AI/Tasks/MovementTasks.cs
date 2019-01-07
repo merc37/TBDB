@@ -4,6 +4,7 @@ using Pathfinding;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 namespace Enemy
 {
@@ -32,14 +33,17 @@ namespace Enemy
         private new Rigidbody2D rigidbody;
         private new Collider2D collider;
 
+        private UnityAction<ParamsObject> onMapSendTransformUnityAction;
+
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
             collider = GetComponent<Collider2D>();
 
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
-            eventManager.StartListening("OnSetMovementTarget", new UnityAction<ParamsObject>(SetMovementTarget));
+            onMapSendTransformUnityAction = new UnityAction<ParamsObject>(OnMapSendTransform);
+            eventManager.StartListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
+            eventManager.StartListening(EnemyEvents.OnSetMovementTarget, new UnityAction<ParamsObject>(OnSetMovementTarget));
         }
 
         void FixedUpdate()
@@ -60,14 +64,6 @@ namespace Enemy
             //If path is empty or the target is too far from the end of it, set it
             bool recalculatePath = path == null || path.Count == 0;
             recalculatePath = recalculatePath || Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance;
-            //if(path == null || path.Count == 0)
-            //{
-            //    path = pathfinding.FindPath(rigidbody.position, movementTarget, collider, maxPathSearchDistance);
-            //}
-            //else if(Vector2.Distance(path[path.Count - 1].worldPosition, movementTarget) > recalculatePathDistance)
-            //{
-            //    path = pathfinding.FindPath(rigidbody.position, movementTarget, collider, maxPathSearchDistance);
-            //}
 
             if(recalculatePath)
             {
@@ -167,13 +163,13 @@ namespace Enemy
             else return false;
         }
 
-        private void SetPathfinding(ParamsObject paramsObj)
+        private void OnMapSendTransform(ParamsObject paramsObj)
         {
             pathfinding = paramsObj.Transform.GetComponent<BasicThetaStarPathfinding>();
-            eventManager.StopListening("ReturnMapTransform", new UnityAction<ParamsObject>(SetPathfinding));
+            eventManager.StopListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
         }
 
-        private void SetMovementTarget(ParamsObject paramsObj)
+        private void OnSetMovementTarget(ParamsObject paramsObj)
         {
             movementTarget = paramsObj.Vector2;
         }

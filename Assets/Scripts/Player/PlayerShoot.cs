@@ -1,33 +1,44 @@
 ﻿using EventManagers;
 using UnityEngine;
+using Events;
 
-namespace Player {
-	public class PlayerShoot : MonoBehaviour {
-        
-		private GameObjectEventManager eventManager;
+namespace Player
+{
+    public class PlayerShoot : MonoBehaviour
+    {
 
-        void Start() {
+        private GameObjectEventManager eventManager;
+
+        void Start()
+        {
             eventManager = GetComponent<GameObjectEventManager>();
         }
-        
-        void Update () {
-            if (Input.GetButton("Fire")) {
-                if (eventManager != null) {
-                    eventManager.TriggerEvent("OnShoot");
+
+        void Update()
+        {
+            if(Input.GetButton("Fire"))
+            {
+                if(eventManager != null)
+                {
+                    eventManager.TriggerEvent(GunEvents.OnShoot);
                 }
             }
 
-            if(Input.GetButtonUp("Fire")) {
-                if(eventManager != null) {
-                    eventManager.TriggerEvent("UnlockShoot");
+            if(Input.GetButtonUp("Fire"))
+            {
+                if(eventManager != null)
+                {
+                    eventManager.TriggerEvent(PlayerEvents.OnUnlockShoot);
                 }
             }
 
-            if(Input.GetButtonDown("Reload")) {
-                if(eventManager != null) {
-                    eventManager.TriggerEvent("OnReload");
+            if(Input.GetButtonDown("Reload"))
+            {
+                if(eventManager != null)
+                {
+                    eventManager.TriggerEvent(GunEvents.OnReload);
                 }
             }
         }
-	}
+    }
 }

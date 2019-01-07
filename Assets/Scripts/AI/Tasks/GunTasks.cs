@@ -2,6 +2,7 @@
 using Panda;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
 namespace Enemy
 {
@@ -14,33 +15,34 @@ namespace Enemy
 
         private float gunProjectileSpeed;
 
-        private Transform gunTransform;
-
         private GameObjectEventManager eventManager;
         private Rigidbody2D playerRigidbody;
         private new Rigidbody2D rigidbody;
 
-        private void Awake()
+        private UnityAction<ParamsObject> onPlayerSendRigidbodyUnityAction;
+
+        void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
 
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
-            eventManager.StartListening("AmmoCount", new UnityAction<ParamsObject>(OnAmmoCountUpdate));
-            eventManager.StartListening("UpdateGunInfo", new UnityAction<ParamsObject>(OnGunInfoUpdate));
+            onPlayerSendRigidbodyUnityAction = new UnityAction<ParamsObject>(OnPlayerSendRigidbody);
+            eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
+            eventManager.StartListening(GunEvents.OnUpdateCurrentAmmo, new UnityAction<ParamsObject>(OnUpdateCurrentAmmo));
+            eventManager.StartListening(GunEvents.OnUpdateGunProjectileSpeed, new UnityAction<ParamsObject>(OnUpdateGunProjectileSpeed));
         }
 
         [Task]
         bool Shoot()
         {
-            eventManager.TriggerEvent("OnShoot");
+            eventManager.TriggerEvent(GunEvents.OnShoot);
             return true;
         }
 
         [Task]
         bool Reload()
         {
-            eventManager.TriggerEvent("OnReload");
+            eventManager.TriggerEvent(GunEvents.OnReload);
             return true;
         }
 
@@ -62,19 +64,18 @@ namespace Enemy
             return isLowOnAmmo;
         }
 
-        private void SetPlayerRigidbody(ParamsObject paramsObj)
+        private void OnPlayerSendRigidbody(ParamsObject paramsObj)
         {
             playerRigidbody = paramsObj.Rigidbody;
-            eventManager.StopListening("ReturnPlayerRigidbody", new UnityAction<ParamsObject>(SetPlayerRigidbody));
+            eventManager.StopListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
-        private void OnGunInfoUpdate(ParamsObject paramsObj)
+        private void OnUpdateGunProjectileSpeed(ParamsObject paramsObj)
         {
             gunProjectileSpeed = paramsObj.Float;
-            gunTransform = paramsObj.Transform;
         }
 
-        private void OnAmmoCountUpdate(ParamsObject paramsObj)
+        private void OnUpdateCurrentAmmo(ParamsObject paramsObj)
         {
             isLowOnAmmo = paramsObj.Int <= lowAmmoThreshold;
         }

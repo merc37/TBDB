@@ -1,9 +1,12 @@
 ﻿using UnityEngine;
 using System.Linq;
 using EventManagers;
+using Events;
 
-namespace Collisions {
-    public class DamageOnCollision : MonoBehaviour {
+namespace Collisions
+{
+    public class DamageOnCollision : MonoBehaviour
+    {
 
         private GameObjectEventManager eventManager;
 
@@ -11,15 +14,19 @@ namespace Collisions {
         [TagSelector]
         private string[] damageTags = new string[1];
 
-        void Awake() {
+        void Awake()
+        {
             eventManager = GetComponentInParent<GameObjectEventManager>();
         }
 
-        void OnCollisionEnter2D(Collision2D coll) {
+        void OnCollisionEnter2D(Collision2D coll)
+        {
             DamageSource damageSource = coll.gameObject.GetComponent<DamageSource>();
-            if(damageSource) {
-                if(damageTags.Contains(damageSource.Source)) {
-                    eventManager.TriggerEvent("DecreaseHealth", new ParamsObject(damageSource.Damage));
+            if(damageSource)
+            {
+                if(damageTags.Contains(damageSource.Source))
+                {
+                    eventManager.TriggerEvent(HealthEvents.OnDecreaseHealth, new ParamsObject(damageSource.Damage));
                 }
             }
         }

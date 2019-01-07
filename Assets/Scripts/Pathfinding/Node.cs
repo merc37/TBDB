@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 
-namespace Pathfinding {
-    public class Node {
-
+namespace Pathfinding
+{
+    public class Node
+    {
         public Vector3 worldPosition;
         public IntVector2 gridPos;
         public bool isWalkable;
@@ -13,18 +14,21 @@ namespace Pathfinding {
 
         public float fCost
         {
-            get {
+            get
+            {
                 return gCost + hCost;
             }
         }
 
-        public Node(Vector3 worldPosition, int gridX, int gridY, bool isWalkable) {
+        public Node(Vector3 worldPosition, int gridX, int gridY, bool isWalkable)
+        {
             this.worldPosition = worldPosition;
             this.gridPos = new IntVector2(gridX, gridY);
             this.isWalkable = isWalkable;
         }
 
-        public void reset() {
+        public void reset()
+        {
             this.parent = null;
             this.gCost = Mathf.Infinity;
             this.hCost = Mathf.Infinity;

@@ -1,21 +1,21 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
 using EventManagers;
+using Panda;
+using Events;
 
 namespace Enemy
 {
     public class HearingTasks : MonoBehaviour
     {
         [SerializeField]
-        private int hearingLevelThreshold = 3;
-        [SerializeField]
-        private int hearingDistance = 20;
-        [SerializeField]
         private int hearingObstructionThreshold = 2;
+        [SerializeField]
+        private LayerMask hearingBlockMask;
 
-        private int playerNoiseLevel = -1;
+        private bool noiseHeard = false;
 
-        private Vector2 playerNoiseLocation;
+        private Vector2 noiseLocation;
 
         private GameObjectEventManager eventManager;
         private new Rigidbody2D rigidbody;
@@ -25,30 +25,42 @@ namespace Enemy
             rigidbody = GetComponent<Rigidbody2D>();
 
             eventManager = GetComponent<GameObjectEventManager>();
-            eventManager.StartListening("OnPlayerMakeNoise", new UnityAction<ParamsObject>(OnPlayerMakeNoise));
+            eventManager.StartListening(PlayerRadiusEvents.OnPlayerMakeNoise, new UnityAction<ParamsObject>(OnPlayerMakeNoise));
         }
 
-        void Update()
+        [Task]
+        private bool IsNoiseHeard()
         {
-            if(playerNoiseLevel > -1)
+            if(noiseHeard)
             {
-                if(playerNoiseLevel >= hearingLevelThreshold)
-                {
-                    Vector2 direction = rigidbody.position - playerNoiseLocation;
-                    RaycastHit2D[] walls = Physics2D.RaycastAll(rigidbody.position, playerNoiseLocation);
-                    if(walls.Length <= hearingObstructionThreshold)
-                    {
-                        eventManager.TriggerEvent("OnSetPlayerLastKnownPosition", new ParamsObject(playerNoiseLocation));
-                    }
-                }
-                playerNoiseLevel = -1;
+                noiseHeard = false;
+                return true;
             }
+            return false;
+        }
+
+        [Task]
+        private bool IsNoiseBlockedByWalls()
+        {
+            RaycastHit2D[] walls = Physics2D.LinecastAll(rigidbody.position, noiseLocation, hearingBlockMask);
+            if(walls.Length <= hearingObstructionThreshold)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        [Task]
+        private bool SetPlayerLastKnownPositionToNoiseLocation()
+        {
+            eventManager.TriggerEvent(EnemyEvents.OnSetPlayerLastKnownLocation, new ParamsObject(noiseLocation));
+            return true;
         }
 
         private void OnPlayerMakeNoise(ParamsObject paramsObj)
         {
-            playerNoiseLevel = paramsObj.Int;
-            playerNoiseLocation = paramsObj.Vector2;
+            noiseHeard = true;
+            noiseLocation = paramsObj.Vector2;
         }
     }
 }

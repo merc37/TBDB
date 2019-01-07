@@ -1,48 +1,58 @@
 ﻿using EventManagers;
 using UnityEngine;
 using UnityEngine.Events;
+using Events;
 
-public class Health : MonoBehaviour {
+public class Health : MonoBehaviour
+{
+    [SerializeField]
+    private short maxHealth;
+    public short MaxAmount { get { return maxHealth; } set { maxHealth = value; } }
 
     private GameObjectEventManager eventManager;
-    [SerializeField]
-	private int maxHealth;
-	public int MaxAmount {get{return maxHealth;} set{maxHealth = value;}}
 
-    void Awake() {
+    void Awake()
+    {
         eventManager = GetComponent<GameObjectEventManager>();
+        eventManager.StartListening(HealthEvents.OnDecreaseHealth, new UnityAction<ParamsObject>(OnDecreaseHealth));
+        eventManager.StartListening(HealthEvents.OnIncreaseHealth, new UnityAction<ParamsObject>(OnIncreaseHealth));
         CurrentAmount = MaxAmount;
-        eventManager.StartListening("DecreaseHealth", new UnityAction<ParamsObject>(DecreaseHealth));
     }
 
-    private int health;
-	private int CurrentAmount {
-		get{return health;}
-		set{
-			if(value < 0) {
-				health = 0;
-			}
-			if(value > maxHealth) {
-				health = maxHealth;
-			}
+    void Start()
+    {
+        eventManager.TriggerEvent(HealthEvents.OnUpdateMaxHealth, new ParamsObject(MaxAmount));
+        eventManager.TriggerEvent(HealthEvents.OnUpdateCurrentHealth, new ParamsObject(CurrentAmount));
+    }
 
-            ParamsObject paramsObject = new ParamsObject(value);
-            paramsObject.Float = (float)MaxAmount;
-            eventManager.TriggerEvent("HealthPoints", paramsObject);
+    private short health;
+    private short CurrentAmount
+    {
+        get { return health; }
+        set
+        {
+            if(value < 0)
+            {
+                health = 0;
+            }
+            if(value > maxHealth)
+            {
+                health = maxHealth;
+            }
 
             health = value;
-		}
-	}
 
-    private void DecreaseHealth(ParamsObject paramsObj) {
-        CurrentAmount -= paramsObj.Int;
+            eventManager.TriggerEvent(HealthEvents.OnUpdateCurrentHealth, new ParamsObject(CurrentAmount));
+        }
     }
 
-    private void IncreaseHealth(ParamsObject paramsObj) {
-        CurrentAmount += paramsObj.Int;
+    private void OnDecreaseHealth(ParamsObject paramsObj)
+    {
+        CurrentAmount -= paramsObj.Short;
     }
 
-    private void SetMaxHealth() {
-        CurrentAmount = MaxAmount;
+    private void OnIncreaseHealth(ParamsObject paramsObj)
+    {
+        CurrentAmount += paramsObj.Short;
     }
 }
