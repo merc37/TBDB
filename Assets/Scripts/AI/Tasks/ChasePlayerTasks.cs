@@ -28,6 +28,15 @@ namespace Enemy
             eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
+        void Update()
+        {
+            if(Input.GetButtonDown("DebugInteract"))
+            {
+                SetPlayerLastKnownPosition();
+                SetPlayerLastKnownHeading();
+            }
+        }
+
         [Task]
         bool SetMovementTargetToPlayerPosition()
         {
@@ -80,7 +89,7 @@ namespace Enemy
         [Task]
         bool SetPlayerLastKnownHeading()
         {
-            Vector2 direction = playerRigidbody.velocity.normalized - playerRigidbody.position.normalized;
+            Vector2 direction = playerRigidbody.velocity;
             playerLastKnownHeading = direction;
             return true;
         }
@@ -112,6 +121,15 @@ namespace Enemy
         private void SetPlayerLastKnownHeading(ParamsObject paramsObj)
         {
             playerLastKnownHeading = paramsObj.Vector2;
+        }
+
+        void OnDrawGizmos()
+        {
+            if(IsPlayerLastPositionKnown())
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawCube(playerLastKnownPosition, new Vector3(.3f, .3f, .3f));
+            }
         }
     }
 }

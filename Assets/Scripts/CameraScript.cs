@@ -1,14 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.Events;
-using Tiled2Unity;
 using EventManagers;
 using Events;
 
 public class CameraScript : MonoBehaviour
 {
-
     private Rigidbody2D playerRigidbody;
-    private TiledMap map;
     private Vector3 newCameraPosition;
     private float halfWorldWidth;
     private float halfWorldHeight;
@@ -48,8 +45,8 @@ public class CameraScript : MonoBehaviour
     {
         transform.position = newCameraPosition;
     }
-    
-	/*void LateUpdate () {
+
+    /*void LateUpdate () {
         newCameraPosition.Set(playerRigidbody.position.x, playerRigidbody.position.y, -10);
         if(newCameraPosition.x - halfWorldWidth < mapTransform.position.x - mapWidth / 2) {
             newCameraPosition.x = (mapTransform.position.x - mapWidth / 2) + halfWorldWidth;
@@ -74,9 +71,9 @@ public class CameraScript : MonoBehaviour
 
     private void OnMapSendTransform(ParamsObject paramsObj)
     {
-        map = paramsObj.Transform.GetComponent<TiledMap>();
-        mapWidth = map.NumTilesWide;
-        mapHeight = map.NumTilesHigh;
+        //map = paramsObj.Transform.GetComponent<TiledMap>();
+        //mapWidth = map.NumTilesWide;
+        //mapHeight = map.NumTilesHigh;
         GlobalEventManager.StopListening(MapGlobalEvents.OnMapSendTransform, onMapSendTransformUnityAction);
     }
 }

@@ -1,12 +1,22 @@
 //Succeeds: if player was chased
 //Fails: if player no longer in sight or reached
+//This one works better as the player is a continously moving object
 tree("ChasePlayer")
 	sequence
 		tree("PlayerInSight")
 		SetMovementTargetToPlayerPosition
 		not ReachedMovementTarget
 		MoveTowardsMovementTarget
-		//PathToMovementTarget
+		SetRotationToPlayer
+
+//Succeeds: if player was chased
+//Fails: if player no longer in sight or reached
+tree("PathChasePlayer")
+	sequence
+		tree("PlayerInSight")
+		SetMovementTargetToPlayerPosition
+		not ReachedMovementTarget
+		PathToMovementTarget
 		SetRotationToPlayer
 
 //Succeeds: if player last known position moved toward
@@ -16,6 +26,10 @@ tree("GoToPlayerLastKnownPosition")
 		sequence
 			IsPlayerLastPositionKnown
 			SetMovementTargetToPlayerLastKnownPosition
-		not ReachedMovementTarget
+		fallback
+			not ReachedMovementTarget
+			sequence
+				IsPlayerLastHeadingKnown
+				SetRotationToPlayerLastKnownHeading
 		PathToMovementTarget
 		SetRotationToMovementDirection

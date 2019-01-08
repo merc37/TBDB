@@ -14,7 +14,7 @@ namespace Enemy
         [SerializeField]
         private float searchRadius = 8.5f;
 
-        private Pathfinding.Grid grid;
+        private PathfindingGrid grid;
 
         private float searchTimer;
 
@@ -41,12 +41,12 @@ namespace Enemy
         [Task]
         bool SetMovementTargetToSearchPoint()
         {
-            Node walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
-            while(!walkableNode.isWalkable)
+            PathfindingNode walkableNode = grid.NodeAtWorldPosition(searchCenter + (Random.insideUnitCircle * searchRadius));
+            while(!walkableNode.IsWalkable)
             {
-                walkableNode = grid.NodeFromWorldPoint(searchCenter + (Random.insideUnitCircle * searchRadius));
+                walkableNode = grid.NodeAtWorldPosition(searchCenter + (Random.insideUnitCircle * searchRadius));
             }
-            eventManager.TriggerEvent(EnemyEvents.OnSetMovementTarget, new ParamsObject(walkableNode.worldPosition));
+            eventManager.TriggerEvent(EnemyEvents.OnSetMovementTarget, new ParamsObject(walkableNode.WorldPosition));
             return true;
         }
 
@@ -84,7 +84,7 @@ namespace Enemy
 
         private void OnMapSendTransform(ParamsObject paramsObj)
         {
-            grid = paramsObj.Transform.GetComponent<Pathfinding.Grid>();
+            grid = paramsObj.Transform.GetComponent<PathfindingGrid>();
             eventManager.StopListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
         }
     }

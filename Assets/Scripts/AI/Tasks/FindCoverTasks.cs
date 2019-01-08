@@ -13,11 +13,13 @@ namespace Enemy
         private static readonly Vector2 NullVector = Constants.NullVector;
 
         [SerializeField]
+        private float maxCoverSearchDistance = 20;
+        [SerializeField]
         private LayerMask sightBlockMask;
 
         private bool coverFound;
 
-        private Pathfinding.Grid grid;
+        private PathfindingGrid grid;
 
         private GameObjectEventManager eventManager;
         private Rigidbody2D playerRigidbody;
@@ -41,35 +43,35 @@ namespace Enemy
         bool SetMovementTargetToCover()
         {
             Vector2 bestCoverPoint;
-            List<Node> potentialCoverNodes = new List<Node>();
+            List<PathfindingNode> potentialCoverNodes = new List<PathfindingNode>();
             HashSet<Vector2> inProcessQueue = new HashSet<Vector2>();
-            Queue<Node> nodesToProcess = new Queue<Node>();
-            grid.resetGrid();
-            Node node = grid.NodeFromWorldPoint(rigidbody.position);
-            node.parent = null;
+            Queue<PathfindingNode> nodesToProcess = new Queue<PathfindingNode>();
+            grid.Reset();
+            PathfindingNode node = grid.NodeAtWorldPosition(rigidbody.position);
+            node.Parent = null;
             nodesToProcess.Enqueue(node);
-            inProcessQueue.Add(node.worldPosition);
+            inProcessQueue.Add(node.WorldPosition);
 
-            while(Vector2.Distance(rigidbody.position, node.worldPosition) < 20)
+            while(Vector2.Distance(rigidbody.position, node.WorldPosition) < maxCoverSearchDistance)
             {
                 node = nodesToProcess.Dequeue();
                 Quaternion left = Quaternion.AngleAxis(-7, Vector3.forward);
                 Quaternion right = Quaternion.AngleAxis(7, Vector3.forward);
-                RaycastHit2D leftRaycastHit = Physics2D.Linecast(playerRigidbody.position, left * node.worldPosition, sightBlockMask);
-                RaycastHit2D rightRaycastHit = Physics2D.Linecast(playerRigidbody.position, right * node.worldPosition, sightBlockMask);
+                RaycastHit2D leftRaycastHit = Physics2D.Linecast(playerRigidbody.position, left * node.WorldPosition, sightBlockMask);
+                RaycastHit2D rightRaycastHit = Physics2D.Linecast(playerRigidbody.position, right * node.WorldPosition, sightBlockMask);
                 if(leftRaycastHit && rightRaycastHit)
                 {
                     potentialCoverNodes.Add(node);
                 }
-                foreach(Node neighbor in grid.GetNeighbors(node))
+                foreach(PathfindingNode neighbor in grid.GetNeighbors(node))
                 {
-                    if(!inProcessQueue.Contains(neighbor.worldPosition))
+                    if(!inProcessQueue.Contains(neighbor.WorldPosition))
                     {
-                        if(neighbor.isWalkable)
+                        if(neighbor.IsWalkable)
                         {
-                            neighbor.parent = node;
+                            neighbor.Parent = node;
                             nodesToProcess.Enqueue(neighbor);
-                            inProcessQueue.Add(neighbor.worldPosition);
+                            inProcessQueue.Add(neighbor.WorldPosition);
                         }
                     }
                 }
@@ -77,22 +79,22 @@ namespace Enemy
 
             int nodeCount = 0;
             int smallestNodeCount = int.MaxValue;
-            Node currNode;
+            PathfindingNode currNode;
             bestCoverPoint = NullVector;
-            foreach(Node coverPoint in potentialCoverNodes)
+            foreach(PathfindingNode coverPoint in potentialCoverNodes)
             {
                 currNode = coverPoint;
                 nodeCount = 0;
                 while(currNode != null)
                 {
-                    currNode = currNode.parent;
+                    currNode = currNode.Parent;
                     nodeCount++;
                 }
 
                 if(nodeCount < smallestNodeCount)
                 {
                     smallestNodeCount = nodeCount;
-                    bestCoverPoint = coverPoint.worldPosition;
+                    bestCoverPoint = coverPoint.WorldPosition;
                 }
             }
 
@@ -133,7 +135,7 @@ namespace Enemy
 
         private void OnMapSendTransform(ParamsObject paramsObj)
         {
-            grid = paramsObj.Transform.GetComponent<Pathfinding.Grid>();
+            grid = paramsObj.Transform.GetComponent<PathfindingGrid>();
             eventManager.StopListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
         }
     }

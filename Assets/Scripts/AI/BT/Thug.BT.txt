@@ -8,6 +8,7 @@ tree("Live")
 			repeat
 				mute
 					sequence
+							Fail
 							tree("FireOnSight")
 			repeat
 				mute
@@ -16,7 +17,6 @@ tree("Live")
 						tree("GoToPlayerLastKnownPosition")
 						sequence
 							StopMovement
-							SetRotationRandom
 							
 tree("DIE")
 	sequence
