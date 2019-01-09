@@ -328,6 +328,28 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82e33e0144f594ae68ec6cdd1c9f8ca6, type: 3}
+--- !u!1 &402742650 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 899538208, guid: 82b2450d4d13fd74ea1342ff89bca418,
+    type: 3}
+  m_PrefabInstance: {fileID: 2005096771}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &402742651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 402742650}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e4f27228350b3741925c0c355d89e1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxCoverSearchDistance: 20
+  sightBlockMask:
+    serializedVersion: 2
+    m_Bits: 256
 --- !u!1001 &473904117
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4980,6 +5002,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7424083208193873791, guid: 2bb65744e5e76e64e8009fe0b2cc1f5e,
+        type: 3}
+      propertyPath: reloadTime
+      value: 0.13
+      objectReference: {fileID: 0}
+    - target: {fileID: 7424083208193873791, guid: 2bb65744e5e76e64e8009fe0b2cc1f5e,
+        type: 3}
+      propertyPath: maxAmmo
+      value: 999
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2bb65744e5e76e64e8009fe0b2cc1f5e, type: 3}
 --- !u!1001 &1386269068
@@ -4989,6 +5021,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 177638, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 22451668, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -6872,6 +6908,51 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1635979410
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1635979412}
+  - component: {fileID: 1635979411}
+  m_Layer: 0
+  m_Name: SetVysnc
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1635979411
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635979410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4aa60ee26eb3bb48be51291e1939be9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  vSyncCount: 0
+  targetFrameRate: 45
+--- !u!4 &1635979412
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1635979410}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -2.9683115, y: -2.5240812, z: -0.10001052}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2005096771
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6974,6 +7055,20 @@ PrefabInstance:
     - target: {fileID: 899538212, guid: 82b2450d4d13fd74ea1342ff89bca418, type: 3}
       propertyPath: maxRunSpeed
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 899538212, guid: 82b2450d4d13fd74ea1342ff89bca418, type: 3}
+      propertyPath: recalculatePathDistance
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7223075094503032704, guid: 82b2450d4d13fd74ea1342ff89bca418,
+        type: 3}
+      propertyPath: maxAmmo
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7223075094503032704, guid: 82b2450d4d13fd74ea1342ff89bca418,
+        type: 3}
+      propertyPath: reloadTime
+      value: 0.13
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82b2450d4d13fd74ea1342ff89bca418, type: 3}

@@ -8,12 +8,19 @@ tree("Live")
 			repeat
 				mute
 					sequence
-							Fail
 							tree("FireOnSight")
 			repeat
 				mute
 					fallback
+						//sequence
+							//IsAmmoZero
+							
+								//sequence
+									//SetRotationToOppositeMovementDirection
+									//StopMovement
+									//tree("WaitReload")
 						tree("ChasePlayer")
+						StopMovement
 						tree("GoToPlayerLastKnownPosition")
 						sequence
 							StopMovement

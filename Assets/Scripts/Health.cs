@@ -42,7 +42,7 @@ public class Health : MonoBehaviour
 
             health = value;
 
-            eventManager.TriggerEvent(HealthEvents.OnUpdateCurrentHealth, new ParamsObject(CurrentAmount));
+            eventManager.TriggerEvent(HealthEvents.OnUpdateCurrentHealth, new ParamsObject(value));
         }
     }
 

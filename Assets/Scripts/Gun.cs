@@ -25,12 +25,14 @@ public class Gun : MonoBehaviour
 
     protected GameObjectEventManager eventManager;
     private AudioSource audioSource;
+
+    private bool reloading;
+
     private float fireTime;
     private float lastFireTime;
     private float deltaFireTime;
-    private bool reloading;
-    private float lastReloadTime;
-    private float deltaReloadCheckTime;
+
+    private float reloadTimer;
 
     private int currAmmo;
     public int MaxAmmo { get { return maxAmmo; } }
@@ -48,7 +50,7 @@ public class Gun : MonoBehaviour
                 currAmmo = maxAmmo;
             }
 
-            eventManager.TriggerEvent(GunEvents.OnUpdateCurrentAmmo, new ParamsObject(CurrentAmmo));
+            eventManager.TriggerEvent(GunEvents.OnUpdateCurrentAmmo, new ParamsObject(value));
 
             currAmmo = value;
         }
@@ -62,7 +64,7 @@ public class Gun : MonoBehaviour
         fireTime = 1 / fireRate;
         lastFireTime = 0;
         reloading = false;
-        lastReloadTime = 0;
+        reloadTimer = reloadTime;
         eventManager.StartListening(GunEvents.OnReload, new UnityAction<ParamsObject>(OnReload));
         eventManager.StartListening(GunEvents.OnShoot, new UnityAction<ParamsObject>(OnShoot));
     }
@@ -80,11 +82,13 @@ public class Gun : MonoBehaviour
     {
         if(reloading)
         {
-            deltaReloadCheckTime = Time.time - lastReloadTime;
-            if(deltaReloadCheckTime >= reloadTime)
+            reloadTimer -= Time.deltaTime;
+            if(reloadTimer <= 0)
             {
                 reloading = false;
+                reloadTimer = reloadTime;
                 CurrentAmmo = MaxAmmo;
+                eventManager.TriggerEvent(GunEvents.OnReloadEnd);
             }
         }
     }
@@ -94,7 +98,7 @@ public class Gun : MonoBehaviour
         if(CurrentAmmo != MaxAmmo && !reloading)
         {
             reloading = true;
-            lastReloadTime = Time.time;
+            eventManager.TriggerEvent(GunEvents.OnReloadStart);
         }
     }
 
@@ -121,7 +125,7 @@ public class Gun : MonoBehaviour
         newProjectile.velocity = velocity;
         newProjectile.GetComponent<DamageSource>().Damage = damage;
         newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
-        CurrentAmmo--;
+        CurrentAmmo -= 1;
         return newProjectile;
     }
 

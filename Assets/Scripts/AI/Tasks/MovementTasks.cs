@@ -58,6 +58,7 @@ namespace Enemy
             return true;
         }
 
+        private List<PathfindingNode> gizmoPath;
         [Task]
         bool PathToMovementTarget()
         {
@@ -65,6 +66,11 @@ namespace Enemy
             if(path == null || path.Count <= 0)
             {
                 path = pathfinder.FindPath(rigidbody.position, movementTarget, maxPathSearchDistance);
+                gizmoPath = path.ConvertAll(node => new PathfindingNode(node.WorldPosition, node.GridPosition, node.IsWalkable));
+                for(int i = 0; i < gizmoPath.Count; i++)
+                {
+                    gizmoPath[i].Parent = path[i].Parent;
+                }
             }
             if(path != null && path.Count > 0)
             {
@@ -72,6 +78,7 @@ namespace Enemy
                 if(Vector2.Distance(lastNode.WorldPosition, movementTarget) > recalculatePathDistance)
                 {
                     path = pathfinder.FindPath(rigidbody.position, movementTarget, maxPathSearchDistance);
+                    gizmoPath = path.ConvertAll(node => new PathfindingNode(node.WorldPosition, node.GridPosition, node.IsWalkable));
                 }
             }
 
@@ -112,11 +119,19 @@ namespace Enemy
         }
 
         [Task]
+        bool SetRotationToOppositeMovementDirection()
+        {
+            rigidbody.rotation = (-movementDirection).AngleFromZero();
+            return true;
+        }
+
+        [Task]
         bool StopMovement()
         {
             if(path != null)
             {
                 path.Clear();
+                gizmoPath.Clear();
             }
             movementDirection = Vector2.zero;
 
@@ -179,15 +194,11 @@ namespace Enemy
 
         void OnDrawGizmos()
         {
-            if(path != null)
+            if(gizmoPath != null)
             {
-                Gizmos.color = Color.white;
-                foreach(var node in path)
+                foreach(var node in gizmoPath)
                 {
-                    if(node.WorldPosition == path[0].WorldPosition)
-                    {
-                        Gizmos.color = Color.red;
-                    }
+                    Gizmos.color = Color.white;
                     Gizmos.DrawLine(node.WorldPosition, node.Parent.WorldPosition);
                     node.DrawGizmos(0.25f, true);
                 }

@@ -3,7 +3,14 @@
 tree("FireOnSight")
 	sequence
 		tree("PlayerInSight")
+		not IsAmmoZero
+		//not IsReloading
 		PlayerInAttackRange
-		not LowOnAmmo
 		AimAtPlayer
 		Shoot
+
+tree("WaitReload")
+	sequence
+		Reload
+		repeat
+			IsReloading

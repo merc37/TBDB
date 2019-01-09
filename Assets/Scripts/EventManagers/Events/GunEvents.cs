@@ -9,6 +9,8 @@
         public static readonly string OnUpdateGunTransform = "OnUpdateGunTransform";
 
         public static readonly string OnReload = "OnReload";
+        public static readonly string OnReloadStart = "OnReloadStart";
+        public static readonly string OnReloadEnd = "OnReloadEnd";
         public static readonly string OnShoot = "OnShoot";
     }
 }

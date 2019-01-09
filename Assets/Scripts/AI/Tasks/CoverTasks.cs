@@ -8,7 +8,7 @@ using Events;
 
 namespace Enemy
 {
-    public class FindCoverTasks : MonoBehaviour
+    public class CoverTasks : MonoBehaviour
     {
         private static readonly Vector2 NullVector = Constants.NullVector;
 
@@ -52,14 +52,11 @@ namespace Enemy
             nodesToProcess.Enqueue(node);
             inProcessQueue.Add(node.WorldPosition);
 
-            while(Vector2.Distance(rigidbody.position, node.WorldPosition) < maxCoverSearchDistance)
+            while(nodesToProcess.Count > 0 && Vector2.Distance(rigidbody.position, node.WorldPosition) < maxCoverSearchDistance)
             {
                 node = nodesToProcess.Dequeue();
-                Quaternion left = Quaternion.AngleAxis(-7, Vector3.forward);
-                Quaternion right = Quaternion.AngleAxis(7, Vector3.forward);
-                RaycastHit2D leftRaycastHit = Physics2D.Linecast(playerRigidbody.position, left * node.WorldPosition, sightBlockMask);
-                RaycastHit2D rightRaycastHit = Physics2D.Linecast(playerRigidbody.position, right * node.WorldPosition, sightBlockMask);
-                if(leftRaycastHit && rightRaycastHit)
+                RaycastHit2D raycastHit = Physics2D.Linecast(playerRigidbody.position, node.WorldPosition, sightBlockMask);
+                if(raycastHit)
                 {
                     potentialCoverNodes.Add(node);
                 }

@@ -12,6 +12,8 @@ namespace Enemy
         private int lowAmmoThreshold = 0;
 
         private bool isLowOnAmmo;
+        private bool isAmmoZero;
+        private bool isReloading;
 
         private float gunProjectileSpeed;
 
@@ -30,6 +32,8 @@ namespace Enemy
             eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
             eventManager.StartListening(GunEvents.OnUpdateCurrentAmmo, new UnityAction<ParamsObject>(OnUpdateCurrentAmmo));
             eventManager.StartListening(GunEvents.OnUpdateGunProjectileSpeed, new UnityAction<ParamsObject>(OnUpdateGunProjectileSpeed));
+            eventManager.StartListening(GunEvents.OnReloadStart, new UnityAction<ParamsObject>(OnReloadStart));
+            eventManager.StartListening(GunEvents.OnReloadEnd, new UnityAction<ParamsObject>(OnReloadEnd));
         }
 
         [Task]
@@ -47,7 +51,7 @@ namespace Enemy
         }
 
         [Task]
-        bool AimAtPlayer()
+        bool AimAtPlayer()//Not sure this actually works
         {
             float intitalProjectileTravelTime = Vector2.Distance(rigidbody.position, playerRigidbody.position) / gunProjectileSpeed;
             Vector2 intialPlayerPositionGuess = (playerRigidbody.position + (playerRigidbody.velocity * (intitalProjectileTravelTime)));
@@ -59,9 +63,22 @@ namespace Enemy
         }
 
         [Task]
-        bool LowOnAmmo()
+        bool IsLowOnAmmo()
         {
             return isLowOnAmmo;
+        }
+
+        [Task]
+        bool IsAmmoZero()
+        {
+            return isAmmoZero;
+        }
+
+        [Task]
+        bool IsReloading()
+        {
+            print("IS: " + isReloading);
+            return isReloading;
         }
 
         private void OnPlayerSendRigidbody(ParamsObject paramsObj)
@@ -78,6 +95,19 @@ namespace Enemy
         private void OnUpdateCurrentAmmo(ParamsObject paramsObj)
         {
             isLowOnAmmo = paramsObj.Int <= lowAmmoThreshold;
+            isAmmoZero = paramsObj.Int <= 0;
+        }
+
+        private void OnReloadStart(ParamsObject paramsObj)
+        {
+            print("RELOAD START");
+            isReloading = true;
+        }
+
+        private void OnReloadEnd(ParamsObject paramsObj)
+        {
+            print("RELOAD END");
+            isReloading = false;
         }
     }
 }
