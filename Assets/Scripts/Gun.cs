@@ -17,6 +17,8 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private int maxAmmo;
     [SerializeField]
+    private int ammoConsumption = 1;
+    [SerializeField]
     private short damage;
     [SerializeField]
     private float reloadTime;
@@ -27,10 +29,10 @@ public class Gun : MonoBehaviour
     private AudioSource audioSource;
 
     private bool reloading;
+    private bool shotFiredCooldown;
 
     private float fireTime;
-    private float lastFireTime;
-    private float deltaFireTime;
+    private float fireTimer;
 
     private float reloadTimer;
 
@@ -62,8 +64,8 @@ public class Gun : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         CurrentAmmo = MaxAmmo;
         fireTime = 1 / fireRate;
-        lastFireTime = 0;
         reloading = false;
+        fireTimer = fireTime;
         reloadTimer = reloadTime;
         eventManager.StartListening(GunEvents.OnReload, new UnityAction<ParamsObject>(OnReload));
         eventManager.StartListening(GunEvents.OnShoot, new UnityAction<ParamsObject>(OnShoot));
@@ -76,6 +78,8 @@ public class Gun : MonoBehaviour
         eventManager.TriggerEvent(GunEvents.OnUpdateGunProjectileSpeed, new ParamsObject(projectileSpeed));
         eventManager.TriggerEvent(GunEvents.OnUpdateGunDamage, new ParamsObject(damage));
         eventManager.TriggerEvent(GunEvents.OnUpdateGunTransform, new ParamsObject(transform));
+        eventManager.TriggerEvent(GunEvents.OnUpdateGunFireType, new ParamsObject(automatic));
+        eventManager.TriggerEvent(GunEvents.OnUnlockFire);
     }
 
     void Update()
@@ -91,6 +95,17 @@ public class Gun : MonoBehaviour
                 eventManager.TriggerEvent(GunEvents.OnReloadEnd);
             }
         }
+
+        if(shotFiredCooldown)
+        {
+            fireTimer -= Time.deltaTime;
+            if(fireTimer <= 0)
+            {
+                shotFiredCooldown = false;
+                fireTimer = fireTime;
+                eventManager.TriggerEvent(GunEvents.OnUnlockFire);
+            }
+        }
     }
 
     private void OnReload(ParamsObject paramsObj)
@@ -104,14 +119,11 @@ public class Gun : MonoBehaviour
 
     protected virtual void OnShoot(ParamsObject paramsObj)
     {
-        if(CurrentAmmo > 0 && !reloading)
+        if(CurrentAmmo > 0 && !reloading && !shotFiredCooldown)
         {
-            deltaFireTime = Time.time - lastFireTime;
-            if(deltaFireTime >= fireTime)
-            {
-                lastFireTime = Time.time;
-                FireProjectile();
-            }
+            FireProjectile();
+            shotFiredCooldown = true;
+            eventManager.TriggerEvent(GunEvents.OnLockFire);
         }
     }
 
@@ -125,7 +137,7 @@ public class Gun : MonoBehaviour
         newProjectile.velocity = velocity;
         newProjectile.GetComponent<DamageSource>().Damage = damage;
         newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
-        CurrentAmmo -= 1;
+        CurrentAmmo -= ammoConsumption;
         return newProjectile;
     }
 

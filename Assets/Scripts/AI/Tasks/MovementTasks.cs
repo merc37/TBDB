@@ -58,6 +58,13 @@ namespace Enemy
             return true;
         }
 
+        [Task]
+        bool ForceRecalculatePathToMovementTarget()
+        {
+            path = pathfinder.FindPath(rigidbody.position, movementTarget, maxPathSearchDistance);
+            return path != null;
+        }
+
         private List<PathfindingNode> gizmoPath;
         [Task]
         bool PathToMovementTarget()
@@ -79,13 +86,25 @@ namespace Enemy
                 {
                     path = pathfinder.FindPath(rigidbody.position, movementTarget, maxPathSearchDistance);
                     gizmoPath = path.ConvertAll(node => new PathfindingNode(node.WorldPosition, node.GridPosition, node.IsWalkable));
+                    for(int i = 0; i < gizmoPath.Count; i++)
+                    {
+                        gizmoPath[i].Parent = path[i].Parent;
+                    }
                 }
             }
 
             //If path still empty there is no route to the target and this should return
-            if(path == null || path.Count == 0)
+            if(path == null)
             {
                 return false;
+            }
+
+            //If path count is 0, the target node is the start node so just move to movement targetd
+            if(path.Count == 0)
+            {
+                movementDirection = movementTarget - rigidbody.position;
+
+                return true;
             }
 
             if(path.Count != 0 && ReachedNode(path[0]))
@@ -109,6 +128,14 @@ namespace Enemy
         bool IsMovementStopped()
         {
             return rigidbody.velocity.magnitude < pointAccuracy;
+        }
+
+        [Task]
+        bool SetRotationToMovementTarget()
+        {
+            Vector2 direction = movementTarget - rigidbody.position;
+            rigidbody.rotation = direction.AngleFromZero();
+            return true;
         }
 
         [Task]

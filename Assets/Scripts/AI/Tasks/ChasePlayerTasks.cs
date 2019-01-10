@@ -26,15 +26,7 @@ namespace Enemy
             eventManager = GetComponent<GameObjectEventManager>();
             onPlayerSendRigidbodyUnityAction = new UnityAction<ParamsObject>(OnPlayerSendRigidbody);
             eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
-        }
-
-        void Update()
-        {
-            if(Input.GetButtonDown("DebugInteract"))
-            {
-                SetPlayerLastKnownPosition();
-                SetPlayerLastKnownHeading();
-            }
+            eventManager.StartListening(EnemyEvents.OnSetPlayerLastKnownLocation, new UnityAction<ParamsObject>(OnSetPlayerLastKnownLocation));
         }
 
         [Task]
@@ -62,7 +54,7 @@ namespace Enemy
         [Task]
         bool SetPlayerLastKnownPosition()
         {
-            playerLastKnownPosition = playerRigidbody.position;
+            eventManager.TriggerEvent(EnemyEvents.OnSetPlayerLastKnownLocation, new ParamsObject(playerRigidbody.position));
             return true;
         }
 
@@ -113,12 +105,12 @@ namespace Enemy
             eventManager.StopListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
-        private void SetPlayerLastKnownPosition(ParamsObject paramsObj)
+        private void OnSetPlayerLastKnownLocation(ParamsObject paramsObj)
         {
             playerLastKnownPosition = paramsObj.Vector2;
         }
 
-        private void SetPlayerLastKnownHeading(ParamsObject paramsObj)
+        private void OnSetPlayerLastKnownHeading(ParamsObject paramsObj)
         {
             playerLastKnownHeading = paramsObj.Vector2;
         }

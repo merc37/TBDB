@@ -17,12 +17,11 @@ namespace Enemy
         [SerializeField]
         private LayerMask sightBlockMask;
 
-        private bool coverFound;
+        private Vector2 playerLastKnownPosition = NullVector;
 
         private PathfindingGrid grid;
 
         private GameObjectEventManager eventManager;
-        private Rigidbody2D playerRigidbody;
         private new Rigidbody2D rigidbody;
 
         private UnityAction<ParamsObject> onPlayerSendRigidbodyUnityAction;
@@ -35,8 +34,7 @@ namespace Enemy
             eventManager = GetComponent<GameObjectEventManager>();
             onMapSendTransformUnityAction = new UnityAction<ParamsObject>(OnMapSendTransform);
             eventManager.StartListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
-            onPlayerSendRigidbodyUnityAction = new UnityAction<ParamsObject>(OnPlayerSendRigidbody);
-            eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
+            eventManager.StartListening(EnemyEvents.OnSetPlayerLastKnownLocation, new UnityAction<ParamsObject>(OnSetPlayerLastKnownLocation));
         }
 
         [Task]
@@ -55,7 +53,7 @@ namespace Enemy
             while(nodesToProcess.Count > 0 && Vector2.Distance(rigidbody.position, node.WorldPosition) < maxCoverSearchDistance)
             {
                 node = nodesToProcess.Dequeue();
-                RaycastHit2D raycastHit = Physics2D.Linecast(playerRigidbody.position, node.WorldPosition, sightBlockMask);
+                RaycastHit2D raycastHit = Physics2D.Linecast(playerLastKnownPosition, node.WorldPosition, sightBlockMask);
                 if(raycastHit)
                 {
                     potentialCoverNodes.Add(node);
@@ -104,36 +102,24 @@ namespace Enemy
             return false;
         }
 
-
-        [Task]
-        bool SetCoverFound()
+        private void OnSetPlayerLastKnownLocation(ParamsObject paramsObj)
         {
-            coverFound = true;
-            return true;
-        }
-
-        [Task]
-        bool FoundCover()
-        {
-            return coverFound;
-        }
-
-        [Task]
-        bool InCover()
-        {
-            return !Physics2D.Linecast(playerRigidbody.position, rigidbody.position);
-        }
-
-        private void OnPlayerSendRigidbody(ParamsObject paramsObj)
-        {
-            playerRigidbody = paramsObj.Rigidbody;
-            eventManager.StopListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
+            playerLastKnownPosition = paramsObj.Vector2;
         }
 
         private void OnMapSendTransform(ParamsObject paramsObj)
         {
             grid = paramsObj.Transform.GetComponent<PathfindingGrid>();
             eventManager.StopListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
+        }
+
+        void OnDrawGizmos()
+        {
+            if(playerLastKnownPosition != NullVector)
+            {
+                Gizmos.color = Color.blue;
+                Gizmos.DrawLine(playerLastKnownPosition, rigidbody.position);
+            }
         }
     }
 }

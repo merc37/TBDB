@@ -9,7 +9,6 @@ namespace Player
     {
 
         private bool shootLocked = false;
-        private bool hasStarted = false;
 
         protected Rigidbody2D playerRigidbody;
 
@@ -26,16 +25,11 @@ namespace Player
         {
             base.Awake();
             playerRigidbody = GetComponentInParent<Rigidbody2D>();
+            eventManager.StartListening(PlayerEvents.OnUnlockShoot, new UnityAction<ParamsObject>(OnUnlockShoot));
         }
 
         protected override void OnShoot(ParamsObject paramsObj)
         {
-            if(!hasStarted)
-            {
-                eventManager.StartListening(PlayerEvents.OnUnlockShoot, new UnityAction<ParamsObject>(UnlockShoot));
-                hasStarted = true;
-            }
-
             if(!shootLocked)
             {
                 base.OnShoot(paramsObj);
@@ -55,7 +49,7 @@ namespace Player
             return LastFired;
         }
 
-        private void UnlockShoot(ParamsObject paramsObj)
+        private void OnUnlockShoot(ParamsObject paramsObj)
         {
             shootLocked = false;
         }

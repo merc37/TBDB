@@ -8,22 +8,43 @@ tree("Live")
 			repeat
 				mute
 					sequence
-							tree("FireOnSight")
+							Fail
+							//tree("FireOnSight")
 			repeat
 				mute
-					fallback
-						//sequence
-							//IsAmmoZero
-							
-								//sequence
-									//SetRotationToOppositeMovementDirection
-									//StopMovement
-									//tree("WaitReload")
-						tree("ChasePlayer")
-						StopMovement
-						tree("GoToPlayerLastKnownPosition")
+					sequence
 						sequence
+							mute
+								sequence
+									tree("SetMovementTargetToPlayerLastKnownPosition")
+									repeat
+										sequence
+											mute
+												tree("PathToMovementTargetSetRotationToMovementDirection")
+											sequence
+												tree("PlayerInSight")
+												PlayerInAttackRange
+												Fail
+							repeat 3
+								sequence
+									tree("PlayerInSight")
+									PlayerInAttackRange
+									StopMovement
+									fallback
+										repeat
+											not ReadyToFire
+										Succeed
+									AimAtPlayer
+									Shoot
+						sequence
+							SetMovementTargetToCover
+							tree("PathToMovementTargetRepeatSetRotationToMovementDirection")
+							SetRotationToOppositeMovementDirection
 							StopMovement
+							fallback
+								Wait(3.0)
+								Succeed
+						
 							
 tree("DIE")
 	sequence

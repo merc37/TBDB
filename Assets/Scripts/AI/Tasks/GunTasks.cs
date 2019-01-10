@@ -14,6 +14,7 @@ namespace Enemy
         private bool isLowOnAmmo;
         private bool isAmmoZero;
         private bool isReloading;
+        private bool readyToFire;
 
         private float gunProjectileSpeed;
 
@@ -34,6 +35,8 @@ namespace Enemy
             eventManager.StartListening(GunEvents.OnUpdateGunProjectileSpeed, new UnityAction<ParamsObject>(OnUpdateGunProjectileSpeed));
             eventManager.StartListening(GunEvents.OnReloadStart, new UnityAction<ParamsObject>(OnReloadStart));
             eventManager.StartListening(GunEvents.OnReloadEnd, new UnityAction<ParamsObject>(OnReloadEnd));
+            eventManager.StartListening(GunEvents.OnUnlockFire, new UnityAction<ParamsObject>(OnUnlockFire));
+            eventManager.StartListening(GunEvents.OnLockFire, new UnityAction<ParamsObject>(OnLockFire));
         }
 
         [Task]
@@ -51,7 +54,7 @@ namespace Enemy
         }
 
         [Task]
-        bool AimAtPlayer()//Not sure this actually works
+        bool AimAtPlayer()//TODO: Not sure this actually works
         {
             float intitalProjectileTravelTime = Vector2.Distance(rigidbody.position, playerRigidbody.position) / gunProjectileSpeed;
             Vector2 intialPlayerPositionGuess = (playerRigidbody.position + (playerRigidbody.velocity * (intitalProjectileTravelTime)));
@@ -77,8 +80,13 @@ namespace Enemy
         [Task]
         bool IsReloading()
         {
-            print("IS: " + isReloading);
             return isReloading;
+        }
+
+        [Task]
+        bool ReadyToFire()
+        {
+            return readyToFire;
         }
 
         private void OnPlayerSendRigidbody(ParamsObject paramsObj)
@@ -100,14 +108,22 @@ namespace Enemy
 
         private void OnReloadStart(ParamsObject paramsObj)
         {
-            print("RELOAD START");
             isReloading = true;
         }
 
         private void OnReloadEnd(ParamsObject paramsObj)
         {
-            print("RELOAD END");
             isReloading = false;
+        }
+
+        private void OnUnlockFire(ParamsObject paramsObj)
+        {
+            readyToFire = true;
+        }
+
+        private void OnLockFire(ParamsObject paramsObj)
+        {
+            readyToFire = false;
         }
     }
 }
