@@ -27,16 +27,6 @@ namespace Pathfinding
             InitializeGrid();
         }
 
-        void Start()
-        {
-
-        }
-
-        void Update()
-        {
-
-        }
-
         void InitializeGrid()
         {
             _nodeDiameter = _gridScale;

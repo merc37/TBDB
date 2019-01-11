@@ -4960,11 +4960,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4356130030836296, guid: 2bb65744e5e76e64e8009fe0b2cc1f5e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 5.06
+      value: -6.51
       objectReference: {fileID: 0}
     - target: {fileID: 4356130030836296, guid: 2bb65744e5e76e64e8009fe0b2cc1f5e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.55
+      value: -5.61
       objectReference: {fileID: 0}
     - target: {fileID: 4356130030836296, guid: 2bb65744e5e76e64e8009fe0b2cc1f5e, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7088,7 +7088,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 899538212, guid: 82b2450d4d13fd74ea1342ff89bca418, type: 3}
       propertyPath: recalculatePathDistance
-      value: 1
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 899538212, guid: 82b2450d4d13fd74ea1342ff89bca418, type: 3}
+      propertyPath: movementBlockMask.m_Bits
+      value: 256
       objectReference: {fileID: 0}
     - target: {fileID: 7223075094503032704, guid: 82b2450d4d13fd74ea1342ff89bca418,
         type: 3}
@@ -7114,6 +7118,10 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Volume
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 899538214, guid: 82b2450d4d13fd74ea1342ff89bca418, type: 3}
+      propertyPath: sightBlockMask.m_Bits
+      value: 272
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 82b2450d4d13fd74ea1342ff89bca418, type: 3}

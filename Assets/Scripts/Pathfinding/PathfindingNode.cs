@@ -54,11 +54,9 @@ namespace Pathfinding
             if(showPathCost && !float.IsPositiveInfinity(FCost))
             {
                 Vector3 GUIposition = (Vector3)(WorldPosition + new Vector2(-nodeRadius, nodeRadius)) - Vector3.forward;
-                //Handles.Label(GUIposition, "G:" + GCost.ToString("F1"));
-                //Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + HCost.ToString("F1"));
-                //Handles.Label(GUIposition + Vector3.up * -0.27f, "F:" + FCost.ToString("F1"));
-                Handles.Label(GUIposition + Vector3.up * -0.1f, "X:" + WorldPosition.x);
-                Handles.Label(GUIposition + Vector3.up * -0.3f, "Y:" + WorldPosition.y);
+                Handles.Label(GUIposition, "G:" + GCost.ToString("F1"));
+                Handles.Label(GUIposition + Vector3.up * -0.1f, "H:" + HCost.ToString("F1"));
+                Handles.Label(GUIposition + Vector3.up * -0.27f, "F:" + FCost.ToString("F1"));
             }
         }
     }

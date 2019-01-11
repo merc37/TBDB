@@ -20,6 +20,8 @@ namespace Enemy
         private float maxPathSearchDistance = Mathf.Infinity;
         [SerializeField]
         private float pointAccuracy = 0.1f;
+        [SerializeField]
+        private LayerMask movementBlockMask;
 
         private List<PathfindingNode> path;
 
@@ -39,7 +41,6 @@ namespace Enemy
         {
             rigidbody = GetComponent<Rigidbody2D>();
             collider = GetComponent<Collider2D>();
-
             eventManager = GetComponent<GameObjectEventManager>();
             onMapSendTransformUnityAction = new UnityAction<ParamsObject>(OnMapSendTransform);
             eventManager.StartListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
@@ -223,9 +224,9 @@ namespace Enemy
         {
             if(gizmoPath != null)
             {
+                Gizmos.color = Color.white;
                 foreach(var node in gizmoPath)
                 {
-                    Gizmos.color = Color.white;
                     Gizmos.DrawLine(node.WorldPosition, node.Parent.WorldPosition);
                     node.DrawGizmos(0.25f, true);
                 }

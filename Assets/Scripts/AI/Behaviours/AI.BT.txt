@@ -1,0 +1,64 @@
+//The general structure of an AI behaviour tree
+//All tasks can be found in tasks folder, most tasks are self evident in their purpose
+//TODO: add comments for complicated tasks
+//Helper trees can be found in behaviours folder, they have their own separate explainers
+//Unless they do something you don't want them to, try to use them
+//For example, use the tree("PlayerInSight"), instead of just the task PlayerInSight, as it sets the player last know position as well as checking if the player is in sight
+//Theres no reason not to really
+//The assumption is made you do common sense things
+//Some tasks prevent improper use, some don't
+//For example, it is assumed you will make sure the enemy is within attack range before attacking, but will attack even if not if you tell it to
+//If you try to make them roll while the roll is on cooldown, it won't work, but its better to just put the check in the tree anyway
+//Unless you absolutely need to have something run separately from the tree, treat the tree like an Update() (it is anyway)
+//If you access the task often enough, it should be fine
+//Don't worry about calling a task multiple times in a single run through, there are internal optimizations
+//For example, PlayerInSight records if the player was seen and does not raycast every time
+//Since movement is common the general pattern is:
+//SetMovementTargetTo<Target>
+//not ReachedMovementTarget
+//MoveTowardsMovementTarget
+//However it is recommended that you use the trees in MovementBehaviours instead
+//Finally common behaviours are found in Behaviours.txt files, while actual enemy trees are BT.txt files
+
+//But Gabe, why isn't there a GunBehaviour that checks attack range for me?
+//Because, you rube, those tasks are in separate scripts, and I didn't want to interlock the Behaviours
+//Otherwise, youd have 3 sets of task scripts for a single behaviour file
+//So its up to you to check attack range, etc.
+//Also, yes I know I'm spelling Behaviour that way, deal with it
+//Its the correct spelling and its how Panda spells it, so I'm just trying to be consistent with the library we are using
+
+tree("Root")
+	parallel
+		repeat mute tree("Live")
+		repeat mute tree("DIE")
+
+
+tree("Live")
+	repeat
+		mute
+			fallback
+				//Put behaviors here, with higher priority actions higher up
+
+tree("DIE")
+	repeat
+		mute
+			sequence
+				//Put death conditions and actions here
+				//In most cases just
+				//IsHealthZero
+				//DestroySelf
+
+//Behaviour tree explanation
+//Runs from root every update (except for repeats, see below)
+//Nodes, e.g. sequence, set transition for children
+//All leaves are tasks that can return Succeed or Fail (true or false)
+//Combine them to get thinking process for enemy
+//Basic nodes:
+//sequence - fails on first child that fails
+//fallback - succeeds on first child that succeeds
+//repeat - repeats child until it returns fail, can repeat certain number of times with repeat 3
+//repeat can be used to circumvent starting from top of tree because after processing a successful repeat, the tree will just go back to that repeat
+//mute - makes child succeed regardless of the return of child
+//parallel - runs children at same time
+//combining repeat and mute means it will keep coming back to that repeat
+//For other nodes and further info: http://www.pandabehaviour.com/?page_id=23

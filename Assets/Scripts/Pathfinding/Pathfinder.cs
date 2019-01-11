@@ -14,16 +14,6 @@ namespace Pathfinding
             _pathfindingGrid = GetComponent<PathfindingGrid>();
         }
 
-        void Start()
-        {
-
-        }
-
-        void Update()
-        {
-
-        }
-
         public List<PathfindingNode> FindPath(Vector2 startPosition, Vector2 targetPosition, float maxDistance = Mathf.Infinity)
         {
             _pathfindingGrid.Reset();

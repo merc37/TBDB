@@ -37,7 +37,7 @@ tree("Live")
 									AimAtPlayer
 									Shoot
 						sequence
-							SetMovementTargetToCover
+							SetMovementTargetToCoverFromPlayerLastKnownPosition
 							tree("PathToMovementTargetRepeatSetRotationToMovementDirection")
 							SetRotationToOppositeMovementDirection
 							StopMovement

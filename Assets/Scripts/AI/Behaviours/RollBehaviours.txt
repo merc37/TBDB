@@ -1,0 +1,10 @@
+//Succeeds: if roll was executed, also waits until roll completed, preventing actions during roll
+//Fails: if currently rolling, no projectile to roll away from, or roll is on cooldown
+tree("ShouldRollAwayFromProjectile")
+	sequence
+		not IsRolling
+		ShouldRoll
+		not IsRollOnCooldown
+		Roll
+		repeat
+			IsRolling

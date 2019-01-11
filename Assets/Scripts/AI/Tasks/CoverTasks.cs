@@ -38,7 +38,7 @@ namespace Enemy
         }
 
         [Task]
-        bool SetMovementTargetToCover()
+        bool SetMovementTargetToCoverFromPlayerLastKnownPosition()
         {
             Vector2 bestCoverPoint;
             List<PathfindingNode> potentialCoverNodes = new List<PathfindingNode>();

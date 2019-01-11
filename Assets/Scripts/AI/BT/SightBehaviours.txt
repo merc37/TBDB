@@ -1,5 +1,0 @@
-tree("PlayerInSight")
-	sequence
-		PlayerInSight
-		SetPlayerLastKnownPosition
-		SetPlayerLastKnownHeading
