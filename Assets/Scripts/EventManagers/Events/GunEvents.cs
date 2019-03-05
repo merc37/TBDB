@@ -8,6 +8,7 @@
         public static readonly string OnUpdateGunDamage = "OnUpdateGunDamage";
         public static readonly string OnUpdateGunTransform = "OnUpdateGunTransform";
         public static readonly string OnUpdateGunFireType = "OnUpdateGunFireType";
+        public static readonly string OnUpdateGunProjectile = "OnUpdateGunProjectile";
 
         public static readonly string OnReload = "OnReload";
         public static readonly string OnReloadStart = "OnReloadStart";

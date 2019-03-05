@@ -3,7 +3,7 @@
 tree("ShouldRollAwayFromProjectile")
 	sequence
 		not IsRolling
-		ShouldRoll
+		ShouldRollAwayFromProjectile
 		not IsRollOnCooldown
 		Roll
 		repeat

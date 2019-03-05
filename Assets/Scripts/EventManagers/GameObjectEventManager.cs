@@ -81,7 +81,7 @@ namespace EventManagers
 
         public static void TriggerRadiusEvent(string eventName, Vector2 origin, float radius, LayerMask layerMask, ParamsObject paramsObj = null, Collider2D ignoreCollider = null)
         {
-            Collider2D[] hits = Physics2D.OverlapCircleAll(origin, radius, layerMask.value);
+            Collider2D[] hits = Physics2D.OverlapCircleAll(origin, radius, layerMask);
             GameObjectEventManager eventManager;
             foreach(Collider2D hit in hits)
             {

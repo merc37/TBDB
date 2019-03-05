@@ -26,9 +26,10 @@ namespace Enemy
         private List<PathfindingNode> path;
 
         private Vector2 movementDirection;
-        private Vector2 movementTarget;
+        private Vector2 movementTarget = NullVector, lastMovementTargetPathedTo = -NullVector;
 
         private bool reachedEndOfPath;
+        private bool rolling;
 
         private GameObjectEventManager eventManager;
         private Pathfinder pathfinder;
@@ -45,11 +46,21 @@ namespace Enemy
             onMapSendTransformUnityAction = new UnityAction<ParamsObject>(OnMapSendTransform);
             eventManager.StartListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
             eventManager.StartListening(EnemyEvents.OnSetMovementTarget, new UnityAction<ParamsObject>(OnSetMovementTarget));
+            eventManager.StartListening(EnemyEvents.OnRollStart, new UnityAction<ParamsObject>(OnRollStart));
+            eventManager.StartListening(EnemyEvents.OnRollEnd, new UnityAction<ParamsObject>(OnRollEnd));
+        }
+
+        void Start()
+        {
+            eventManager.TriggerEvent(EnemyEvents.OnSendMovementSpeed, new ParamsObject(maxRunSpeed));
         }
 
         void FixedUpdate()
         {
-            rigidbody.velocity = Vector2.ClampMagnitude(movementDirection.normalized * maxRunSpeed, maxRunSpeed);
+            if(!rolling)
+            {
+                rigidbody.velocity = Vector2.ClampMagnitude(movementDirection.normalized * maxRunSpeed, maxRunSpeed);
+            }
         }
 
         [Task]
@@ -62,7 +73,7 @@ namespace Enemy
         [Task]
         bool ForceRecalculatePathToMovementTarget()
         {
-            path = pathfinder.FindPath(rigidbody.position, movementTarget, maxPathSearchDistance);
+            path = pathfinder.FindPath(rigidbody.position, movementTarget, collider, maxPathSearchDistance);
             return path != null;
         }
 
@@ -71,26 +82,14 @@ namespace Enemy
         bool PathToMovementTarget()
         {
             //If path is empty or the target is too far from the end of it, set it
-            if(path == null || path.Count <= 0)
+            if(path == null || path.Count <= 0 || movementTarget == NullVector || lastMovementTargetPathedTo != movementTarget)
             {
-                path = pathfinder.FindPath(rigidbody.position, movementTarget, maxPathSearchDistance);
+                path = pathfinder.FindPath(rigidbody.position, movementTarget, collider, maxPathSearchDistance);
+                lastMovementTargetPathedTo = movementTarget;
                 gizmoPath = path.ConvertAll(node => new PathfindingNode(node.WorldPosition, node.GridPosition, node.IsWalkable));
                 for(int i = 0; i < gizmoPath.Count; i++)
                 {
                     gizmoPath[i].Parent = path[i].Parent;
-                }
-            }
-            if(path != null && path.Count > 0)
-            {
-                PathfindingNode lastNode = path[path.Count - 1];
-                if(Vector2.Distance(lastNode.WorldPosition, movementTarget) > recalculatePathDistance)
-                {
-                    path = pathfinder.FindPath(rigidbody.position, movementTarget, maxPathSearchDistance);
-                    gizmoPath = path.ConvertAll(node => new PathfindingNode(node.WorldPosition, node.GridPosition, node.IsWalkable));
-                    for(int i = 0; i < gizmoPath.Count; i++)
-                    {
-                        gizmoPath[i].Parent = path[i].Parent;
-                    }
                 }
             }
 
@@ -220,6 +219,16 @@ namespace Enemy
             movementTarget = paramsObj.Vector2;
         }
 
+        private void OnRollStart(ParamsObject paramsObj)
+        {
+            rolling = true;
+        }
+
+        private void OnRollEnd(ParamsObject paramsObj)
+        {
+            rolling = false;
+        }
+
         void OnDrawGizmos()
         {
             if(gizmoPath != null)
@@ -231,6 +240,8 @@ namespace Enemy
                     node.DrawGizmos(0.25f, true);
                 }
             }
+            Gizmos.color = Color.cyan;
+            Gizmos.DrawCube(movementTarget, new Vector3(.4f, .4f, .4f));
         }
     }
 }

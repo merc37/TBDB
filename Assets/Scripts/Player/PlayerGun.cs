@@ -33,6 +33,7 @@ namespace Player
             if(!shootLocked)
             {
                 base.OnShoot(paramsObj);
+                //GetComponentInParent<Animator>().SetTrigger("Shoot");
                 if(!automatic)
                 {
                     shootLocked = true;
@@ -45,7 +46,7 @@ namespace Player
             _lastFired = base.FireProjectile();
             ParamsObject paramsObj = new ParamsObject(7);
             paramsObj.Vector2 = playerRigidbody.position;
-            GameObjectEventManager.TriggerRadiusEvent(PlayerRadiusEvents.OnPlayerMakeNoise, transform.position, 10, LayerMask.NameToLayer("Enemies"), paramsObj);
+            GameObjectEventManager.TriggerRadiusEvent(PlayerRadiusEvents.OnPlayerMakeNoise, transform.position, 10, LayerMask.GetMask("Enemies"), paramsObj);
             return LastFired;
         }
 

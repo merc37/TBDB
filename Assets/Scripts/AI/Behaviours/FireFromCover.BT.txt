@@ -1,0 +1,57 @@
+tree("Root")
+	parallel
+		repeat mute tree("Live")
+		repeat mute tree("DIE")
+
+tree("Live")
+		parallel
+			repeat
+				mute
+					sequence
+							Fail
+							//tree("FireOnSight")
+			repeat
+				mute
+					sequence
+						sequence
+							mute
+								sequence
+									tree("SetMovementTargetToPlayerLastKnownPosition")
+									repeat
+										sequence
+											mute
+												tree("PathToMovementTargetSetRotationToMovementDirection")
+											sequence
+												tree("PlayerInSight")
+												GunLineOfSightToPlayer
+												PlayerInAttackRange
+												Fail
+							repeat 3
+								sequence
+									tree("PlayerInSight")
+									GunLineOfSightToPlayer
+									PlayerInAttackRange
+									StopMovement
+									fallback
+										repeat
+											not ReadyToFire
+										Succeed
+									AimAtPlayer
+									Shoot
+						sequence
+							SetMovementTargetToCoverFromPlayerLastKnownPosition
+							tree("PathToMovementTargetRepeatSetRotationToMovementDirection")
+							SetRotationToOppositeMovementDirection
+							StopMovement
+							fallback
+								Wait(3.0)
+								Succeed
+						
+							
+tree("DIE")
+	sequence
+		HasZeroHealth
+		DestroySelf
+
+
+				

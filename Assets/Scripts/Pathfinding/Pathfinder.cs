@@ -14,7 +14,7 @@ namespace Pathfinding
             _pathfindingGrid = GetComponent<PathfindingGrid>();
         }
 
-        public List<PathfindingNode> FindPath(Vector2 startPosition, Vector2 targetPosition, float maxDistance = Mathf.Infinity)
+        public List<PathfindingNode> FindPath(Vector2 startPosition, Vector2 targetPosition, Collider2D collider, float maxDistance = Mathf.Infinity)
         {
             _pathfindingGrid.Reset();
 
@@ -80,7 +80,7 @@ namespace Pathfinding
                     }
 
                     // Basic Theta Star update vertex
-                    if(currentNode.Parent != null && _pathfindingGrid.LineOfSight(currentNode, currentNode.Parent))
+                    if(currentNode.Parent != null && _pathfindingGrid.LineOfSight(currentNode, currentNode.Parent, collider))
                     {
                         float newMoveCost = currentNode.Parent.GCost +
                                             Vector2.Distance(currentNode.Parent.WorldPosition, neighbor.WorldPosition);

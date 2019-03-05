@@ -29,7 +29,7 @@ namespace Pathfinding
             if(_pathTarget != _target.position)
             {
                 _pathTarget = _target.position;
-                _path = _pathfinder.FindPath(transform.position, _pathTarget);
+                _path = _pathfinder.FindPath(transform.position, _pathTarget, GetComponent<Collider2D>());
             }
         }
 

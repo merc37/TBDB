@@ -1,6 +1,7 @@
-//Succeeds: if player was heard and player last known location to noise location
+//Succeeds: if player was heard
 //Fails: if no noise heard, or noise could not be heard
-tree("ListenForPlayer")
-	IsNoiseHeard
-	not IsNoiseBlockedByWalls
-	SetPlayerLastKnownPositionToNoiseLocation
+tree("PlayerWasHeard")
+	sequence
+		IsNoiseHeard
+		not IsNoiseBlockedByWalls
+		

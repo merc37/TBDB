@@ -20,6 +20,14 @@ namespace Pathfinding
         private Vector2Int _gridSize;
         private float _nodeDiameter, _nodeRadius;
 
+        public float GridScale
+        {
+            get
+            {
+                return _gridScale;
+            }
+        }
+
         void Awake()
         {
             _layeredTilemap = transform.GetComponent<LayeredTilemap>();
@@ -111,10 +119,30 @@ namespace Pathfinding
         {
             var relativePosition = worldPosition - _gridLocation;
 
-            if(relativePosition.x < 0 || relativePosition.x > _gridWorldSize.x ||
-                relativePosition.y < 0 || relativePosition.y > _gridWorldSize.y)
+            //if(relativePosition.x < 0 || relativePosition.x > _gridWorldSize.x ||
+            //    relativePosition.y < 0 || relativePosition.y > _gridWorldSize.y)
+            //{
+            //    return null;
+            //}
+
+            if(relativePosition.x < 0)
             {
-                throw new ArgumentOutOfRangeException("Requested world position is not within the grid.");
+                relativePosition.x = 0;
+            }
+
+            if(relativePosition.x > _gridWorldSize.x)
+            {
+                relativePosition.x = _gridWorldSize.x;
+            }
+
+            if(relativePosition.y < 0)
+            {
+                relativePosition.y = 0;
+            }
+
+            if(relativePosition.y > _gridWorldSize.y)
+            {
+                relativePosition.y = _gridWorldSize.y;
             }
 
             float percentX = Mathf.Clamp01(relativePosition.x / _gridWorldSize.x);
@@ -123,6 +151,20 @@ namespace Pathfinding
             int y = Mathf.RoundToInt(percentY * (_gridSize.y - 1));
 
             return NodeAtGridPosition(x, y);
+        }
+
+        public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB, Collider2D collider)
+        {
+            Vector2 direction = (nodeB.WorldPosition - nodeA.WorldPosition).normalized;
+            float distance = Vector2.Distance(nodeA.WorldPosition, nodeB.WorldPosition);
+            if(collider.IsBoxCollider())
+            {
+                return !Physics2D.BoxCast(nodeA.WorldPosition, ((BoxCollider2D)collider).size, direction.AngleFromZero(), direction, distance, _unwalkableMask);
+            }
+            else
+            {
+                return !Physics2D.CircleCast(nodeA.WorldPosition, ((CircleCollider2D)collider).radius, direction, distance, _unwalkableMask);
+            }
         }
 
         // TODO Add support for LineOfSight to take line width into account

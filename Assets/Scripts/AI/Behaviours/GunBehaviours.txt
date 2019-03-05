@@ -5,7 +5,6 @@ tree("AimAtPlayerAndShoot")
 		ReadyToFire
 		not IsReloading
 		not IsAmmoZero
-		AimAtPlayer
 		Shoot
 
 //Succeeds: if shot was able to fire
@@ -22,7 +21,6 @@ tree("Shoot")
 tree("AimAtPlayerAndShootWhenReady")
 	sequence
 		ReadyToFire
-		AimAtPlayer
 		Shoot
 
 tree("WaitReadyToFire")

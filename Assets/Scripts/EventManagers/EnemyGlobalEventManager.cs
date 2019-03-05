@@ -10,6 +10,7 @@ namespace EventManagers
 
         private UnityAction<ParamsObject> onPlayerSendRigidbodyUnityAction;
         private UnityAction<ParamsObject> onMapSendTransformUnityAction;
+        private UnityAction<ParamsObject> onPlayerSendEnemyAimTarget;
 
         void Awake()
         {

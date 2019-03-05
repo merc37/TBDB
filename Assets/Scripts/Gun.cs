@@ -79,6 +79,7 @@ public class Gun : MonoBehaviour
         eventManager.TriggerEvent(GunEvents.OnUpdateGunDamage, new ParamsObject(damage));
         eventManager.TriggerEvent(GunEvents.OnUpdateGunTransform, new ParamsObject(transform));
         eventManager.TriggerEvent(GunEvents.OnUpdateGunFireType, new ParamsObject(automatic));
+        eventManager.TriggerEvent(GunEvents.OnUpdateGunProjectile, new ParamsObject(projectileToBeFired));
         eventManager.TriggerEvent(GunEvents.OnUnlockFire);
     }
 
