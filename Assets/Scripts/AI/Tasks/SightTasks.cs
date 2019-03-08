@@ -36,6 +36,13 @@ namespace Enemy
             eventManager.StartListening(EnemyEvents.OnPlayerSendRigidbody, onPlayerSendRigidbodyUnityAction);
         }
 
+        void Start()
+        {
+            eventManager.TriggerEvent(EnemyEvents.OnSendSightAngle, new ParamsObject(sightAngle));
+            eventManager.TriggerEvent(EnemyEvents.OnSendSightDistance, new ParamsObject(sightDistance));
+            eventManager.TriggerEvent(EnemyEvents.OnSendSightBlockMask, new ParamsObject(sightBlockMask));
+        }
+
         [Task]
         bool PlayerInSight()
         {

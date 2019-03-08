@@ -14,8 +14,11 @@ namespace Enemy
         private LayerMask hearingBlockMask;
 
         private bool noiseHeard = false;
+        private bool frameNoiseHeard = false;
 
         private Vector2 noiseLocation;
+
+        private int previousFrameCount;
 
         private GameObjectEventManager eventManager;
         private new Rigidbody2D rigidbody;
@@ -31,11 +34,21 @@ namespace Enemy
         [Task]
         private bool IsNoiseHeard()
         {
+            if(previousFrameCount == Time.frameCount)
+            {
+                return frameNoiseHeard;
+            }
+
             if(noiseHeard)
             {
                 noiseHeard = false;
+                frameNoiseHeard = true;
+                previousFrameCount = Time.frameCount;
                 return true;
             }
+
+            frameNoiseHeard = false;
+            previousFrameCount = Time.frameCount;
             return false;
         }
 
@@ -45,9 +58,9 @@ namespace Enemy
             RaycastHit2D[] walls = Physics2D.LinecastAll(rigidbody.position, noiseLocation, hearingBlockMask);
             if(walls.Length <= hearingObstructionThreshold)
             {
-                return true;
+                return false;
             }
-            return false;
+            return true;
         }
 
         [Task]

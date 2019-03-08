@@ -1,0 +1,103 @@
+//Succeeds: if movement target reached
+//Fails: if not reached yet
+//Has to be called repeatedly to get movement
+tree("MoveToMovementTargetSetRotationToMovementDirection")
+	fallback
+		sequence
+			ReachedMovementTarget
+			Succeed
+		sequence
+			MoveTowardsMovementTarget
+			SetRotationToMovementDirection
+			Fail
+
+//Succeeds: if movement target reached
+//Fails: does not fail, as it 
+//Runs until movement target is reached
+tree("MoveToMovementTargetRepeatSetRotationToMovementDirection")
+	fallback
+		repeat
+			sequence
+				not ReachedMovementTarget
+				MoveTowardsMovementTarget
+				SetRotationToMovementDirection
+		Succeed
+
+//Succeeds: if movement target reached
+//Fails: if not reached yet
+//Has to be called repeatedly to get movement
+tree("PathToMovementTargetSetRotationToMovementDirection")
+	fallback
+		sequence
+			ReachedMovementTarget
+			Succeed
+		sequence
+			mute
+				PathToMovementTarget
+			SetRotationToMovementDirection
+			Fail
+
+//Succeeds: if movement target reached
+//Fails: does not fail, as it 
+//Runs until movement target is reached
+tree("PathToMovementTargetRepeatSetRotationToMovementDirection")
+	fallback
+		repeat
+			sequence
+				not ReachedMovementTarget
+				mute
+					PathToMovementTarget
+				SetRotationToMovementDirection
+		Succeed
+
+//Succeeds: if movement target reached
+//Fails: if not reached yet
+//Has to be called repeatedly to get movement
+tree("MoveToMovementTargetSetRotationToMovementTarget")
+	fallback
+		sequence
+			ReachedMovementTarget
+			Succeed
+		sequence
+			MoveTowardsMovementTarget
+			SetRotationToMovementTarget
+			Fail
+
+//Succeeds: if movement target reached
+//Fails: does not fail, as it 
+//Runs until movement target is reached
+tree("MoveToMovementTargetRepeatSetRotationToMovementTarget")
+	fallback
+		repeat
+			sequence
+				not ReachedMovementTarget
+				MoveTowardsMovementTarget
+				SetRotationToMovementTarget
+		Succeed
+
+//Succeeds: if movement target reached
+//Fails: if not reached yet
+//Has to be called repeatedly to get movement
+tree("PathToMovementTargetSetRotationToMovementTarget")
+	fallback
+		sequence
+			ReachedMovementTarget
+			Succeed
+		sequence
+			mute
+				PathToMovementTarget
+			SetRotationToMovementTarget
+			Fail
+
+//Succeeds: if movement target reached
+//Fails: does not fail, as it 
+//Runs until movement target is reached
+tree("PathToMovementTargetRepeatSetRotationToMovementTarget")
+	fallback
+		repeat
+			sequence
+				not ReachedMovementTarget
+				mute
+					PathToMovementTarget
+				SetRotationToMovementTarget
+		Succeed

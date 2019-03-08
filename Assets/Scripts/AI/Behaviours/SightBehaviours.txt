@@ -1,0 +1,8 @@
+//Succeeds: if player is in sight
+//Fails: if player is not in sight
+//Ensures player last known position and heading are set
+tree("PlayerInSight")
+	sequence
+		PlayerInSight
+		SetPlayerLastKnownPosition
+		SetPlayerLastKnownHeading

@@ -29,7 +29,7 @@ namespace Enemy
         }
 
         [Task]
-        bool SetStrafeCenter()
+        bool SetStrafeCenterAtCurrentPosition()
         {
             strafeCenter = rigidbody.position;
             return true;

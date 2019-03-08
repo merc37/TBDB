@@ -1,0 +1,145 @@
+tree("Root")
+	parallel
+		repeat mute tree("Live")
+		repeat mute tree("DIE")
+
+tree("Live")
+		parallel
+			repeat
+				mute
+					sequence
+						Fail
+						tree("PlayerWasHeard")
+						SetPlayerLastKnownPositionToNoiseLocation
+			repeat
+				mute
+					fallback
+						sequence
+							tree("ShouldRollAwayFromProjectile")
+						sequence
+							Fail
+							tree("PlayerInSight")
+							IsPlayerFacing
+							//not IsPlayerRunningAway
+							tree("PlayerWasHeard")
+							repeat
+								sequence
+									SetCoverTargetFromPlayerLastKnownPosition
+									IsCoverTargetClose
+									SetMovementTargetToCoverTarget
+									mute
+										repeat
+											sequence
+												mute
+													sequence
+														tree("PlayerInSight")
+														SetCoverTargetFromPlayerLastKnownPosition
+														IsCoverTargetClose
+														SetMovementTargetToCoverTarget
+												not ReachedMovementTarget
+												SetRotationToPlayerLastKnownPosition
+												PathToMovementTarget
+									StopMovement
+									mute
+										sequence
+											IsLowOnAmmo
+											Reload
+											repeat
+												IsReloading
+									Wait(0.3)
+									SetMovementTargetToPlayerLastKnownPosition
+									mute
+										repeat
+											sequence
+												sequence
+													not
+														sequence
+															tree("PlayerInSight")
+															GunLineOfSightToPlayer
+													not
+														sequence
+															ReachedMovementTarget
+															//SetBeenToPlayerLastKnownPosition
+															//mute
+																//tree("SetRotationToPlayerLastKnownHeading")
+												SetRotationToPlayerLastKnownPosition
+												PathToMovementTarget
+									StopMovement
+									repeat 3
+										sequence
+											tree("PlayerInSight")
+											SetPlayerAimTarget
+											GunLineOfSightToPlayerAimTarget
+											SetRotationToPlayerAimTarget
+											mute
+												repeat
+													not ReadyToFire
+											Shoot
+
+						sequence
+							tree("PlayerInSight")
+							SetMovementTargetToPlayerPosition
+							not ReachedMovementTarget
+							MoveTowardsMovementTarget
+							SetRotationToMovementTarget
+							mute
+								sequence
+									ReadyToFire
+									Shoot
+						sequence
+							tree("SetMovementTargetToPlayerLastKnownPosition")
+							sequence
+								not BeenToPlayerLastKnownPosition
+								mute
+									sequence
+										tree("PathToMovementTargetSetRotationToMovementDirection")
+										SetBeenToPlayerLastKnownPosition
+										tree("SetRotationToPlayerLastKnownHeading")
+										Wait(0.3)
+										repeat
+											sequence
+												mute
+													sequence
+														not IsSearching
+														sequence
+															SetSearchCenterInPlayerLastKnownHeadingDirection
+															SetMovementTargetToSearchPointAroundSearchCenter
+												sequence
+													//Stop searching early if
+													not 
+														sequence
+															tree("PlayerInSight")
+															not BeenToPlayerLastKnownPosition
+													CheckSearchTimer
+													mute
+														sequence
+															tree("PathToMovementTargetSetRotationToMovementDirection")
+															SetSearchCenterInMovementDirection
+															SetMovementTargetToSearchPointAroundSearchCenter
+												
+						sequence
+							StopMovement
+
+tree("Temp")
+	sequence
+		tree("PlayerInSight")
+		SetMovementTargetToPlayerPosition
+		mute
+			sequence
+				not ReachedMovementTarget
+				MoveTowardsMovementTarget
+		SetPlayerAimTarget
+		fallback
+			sequence
+				//PlayerAimTargetLineOfSight
+				SetRotationToPlayerAimTarget
+			SetRotationToMovementTarget
+		Shoot
+				
+tree("DIE")
+	sequence
+		HasZeroHealth
+		DestroySelf
+
+
+				

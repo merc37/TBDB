@@ -8,7 +8,6 @@ namespace Player
 
     public class PlayerRoll : MonoBehaviour
     {
-
         [SerializeField]
         private float rollCooldownTime = 1;
         [SerializeField]
@@ -60,6 +59,7 @@ namespace Player
                     shouldRoll = false;
                     eventManager.TriggerEvent(PlayerEvents.OnRollStart);
                     rolling = true;
+                    //GetComponent<Animator>().SetTrigger("Roll");
                 }
                 else
                 {

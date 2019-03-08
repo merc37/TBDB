@@ -9,7 +9,7 @@ namespace UI
     public class HealthBar : MonoBehaviour
     {
         [SerializeField]
-        private Image barFill;
+        private Image barFill = null;
 
         private short playerMaxHealth = 1;
         private short playerCurrentHealth = 1;

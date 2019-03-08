@@ -1,9 +1,0 @@
-//Succeeds: if trigger was pulled (no guarantee shot was actually fired, depends on gun fire rate)
-//Fails: if player no longer in sight, not in attack range or low on ammo
-tree("FireOnSight")
-	sequence
-		tree("PlayerInSight")
-		PlayerInAttackRange
-		not LowOnAmmo
-		AimAtPlayer
-		Shoot

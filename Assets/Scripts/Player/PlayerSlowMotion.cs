@@ -29,7 +29,7 @@ namespace Player
                 }
 
                 _slowMotionTime = value;
-                eventManager.TriggerEvent(PlayerEvents.OnUpdateCurrentSlowMotionTime, new ParamsObject(CurrentSlowMotionTime));
+                eventManager.TriggerEvent(PlayerEvents.OnUpdateCurrentSlowMotionTime, new ParamsObject(value));
             }
         }
 

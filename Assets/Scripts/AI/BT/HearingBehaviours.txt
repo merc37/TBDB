@@ -1,4 +1,0 @@
-tree("ListenForPlayer")
-	IsNoiseHeard
-	not IsNoiseBlockedByWalls
-	SetPlayerLastKnownPositionToNoiseLocation

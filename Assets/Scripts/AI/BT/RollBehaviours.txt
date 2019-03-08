@@ -1,8 +1,0 @@
-tree("RollAwayFromProjectile")
-	sequence
-		not IsRolling
-		ShouldRoll
-		not IsRollOnCooldown
-		Roll
-		repeat
-			IsRolling

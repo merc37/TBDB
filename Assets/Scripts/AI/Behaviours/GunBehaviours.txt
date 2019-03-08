@@ -1,0 +1,35 @@
+//Succeeds: if shot was able to fire
+//Fails: if no ammo, not ready to fire or reloading
+tree("AimAtPlayerAndShoot")
+	sequence
+		ReadyToFire
+		not IsReloading
+		not IsAmmoZero
+		Shoot
+
+//Succeeds: if shot was able to fire
+//Fails: if no ammo, not ready to fire or reloading
+tree("Shoot")
+	sequence
+		ReadyToFire
+		not IsReloading
+		not IsAmmoZero
+		Shoot
+
+//Succeeds: if shot was able to fire
+//Fails: if not ready to fire
+tree("AimAtPlayerAndShootWhenReady")
+	sequence
+		ReadyToFire
+		Shoot
+
+tree("WaitReadyToFire")
+	sequence
+		repeat
+			not ReadyToFire
+
+tree("WaitForReload")
+	sequence
+		Reload
+		repeat
+			IsReloading

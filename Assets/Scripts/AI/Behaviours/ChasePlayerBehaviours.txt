@@ -1,0 +1,13 @@
+//Succeeds: if movement target set to player last known position
+//Fails: if player last known position not known
+tree("SetMovementTargetToPlayerLastKnownPosition")
+	sequence
+		IsPlayerLastPositionKnown
+		SetMovementTargetToPlayerLastKnownPosition
+
+//Succeeds: if rotation was set to player last known heading
+//Fails: if player last known heading not known
+tree("SetRotationToPlayerLastKnownHeading")
+	sequence
+		IsPlayerLastHeadingKnown
+		SetRotationToPlayerLastKnownHeading

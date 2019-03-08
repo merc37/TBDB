@@ -1,0 +1,7 @@
+//Succeeds: if player was heard
+//Fails: if no noise heard, or noise could not be heard
+tree("PlayerWasHeard")
+	sequence
+		IsNoiseHeard
+		not IsNoiseBlockedByWalls
+		

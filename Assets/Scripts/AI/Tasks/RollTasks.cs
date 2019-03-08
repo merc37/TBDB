@@ -18,7 +18,7 @@ namespace Enemy
         private float rollCooldownTimer;
         private float movementSpeed;
 
-        private bool shouldRoll;
+        private bool shouldRollAwayFromProjectile;
         private bool rolling;
         private bool rollOnCooldown;
         private bool roll;
@@ -79,7 +79,7 @@ namespace Enemy
                 rollStartPos = rigidbody.position;
                 rigidbody.velocity = rollDirection.normalized * movementSpeed * 3;
                 rollVelocity = rigidbody.velocity;
-                shouldRoll = false;
+                shouldRollAwayFromProjectile = false;
                 roll = false;
                 eventManager.TriggerEvent(EnemyEvents.OnRollStart);
                 rolling = true;
@@ -123,9 +123,9 @@ namespace Enemy
         }
 
         [Task]
-        bool ShouldRoll()
+        bool ShouldRollAwayFromProjectile()
         {
-            return shouldRoll;
+            return shouldRollAwayFromProjectile;
         }
 
         [Task]
@@ -143,7 +143,7 @@ namespace Enemy
 
         private void OnRoll(ParamsObject paramsObj)
         {
-            shouldRoll = true;
+            shouldRollAwayFromProjectile = true;
             rollDirection = Vector3.Cross(paramsObj.Vector2, Vector3.forward);
         }
 

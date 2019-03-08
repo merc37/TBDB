@@ -14,6 +14,7 @@ namespace EventManagers
         public float Float { get; set; }
         public short Short { get; set; }
         public string String { get; set; }
+        public LayerMask LayerMask { get; set; }
         public dynamic Dynamic { get; set; }
 
         public ParamsObject(Transform transform)
@@ -59,6 +60,11 @@ namespace EventManagers
         public ParamsObject(string @string)
         {
             String = @string;
+        }
+
+        public ParamsObject(LayerMask layerMask)
+        {
+            LayerMask = layerMask;
         }
 
         public ParamsObject(dynamic dyn)

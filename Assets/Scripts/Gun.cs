@@ -17,6 +17,8 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private int maxAmmo;
     [SerializeField]
+    private int ammoConsumption = 1;
+    [SerializeField]
     private short damage;
     [SerializeField]
     private float reloadTime;
@@ -25,12 +27,14 @@ public class Gun : MonoBehaviour
 
     protected GameObjectEventManager eventManager;
     private AudioSource audioSource;
-    private float fireTime;
-    private float lastFireTime;
-    private float deltaFireTime;
+
     private bool reloading;
-    private float lastReloadTime;
-    private float deltaReloadCheckTime;
+    private bool shotFiredCooldown;
+
+    private float fireTime;
+    private float fireTimer;
+
+    private float reloadTimer;
 
     private int currAmmo;
     public int MaxAmmo { get { return maxAmmo; } }
@@ -48,7 +52,7 @@ public class Gun : MonoBehaviour
                 currAmmo = maxAmmo;
             }
 
-            eventManager.TriggerEvent(GunEvents.OnUpdateCurrentAmmo, new ParamsObject(CurrentAmmo));
+            eventManager.TriggerEvent(GunEvents.OnUpdateCurrentAmmo, new ParamsObject(value));
 
             currAmmo = value;
         }
@@ -60,9 +64,9 @@ public class Gun : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
         CurrentAmmo = MaxAmmo;
         fireTime = 1 / fireRate;
-        lastFireTime = 0;
         reloading = false;
-        lastReloadTime = 0;
+        fireTimer = fireTime;
+        reloadTimer = reloadTime;
         eventManager.StartListening(GunEvents.OnReload, new UnityAction<ParamsObject>(OnReload));
         eventManager.StartListening(GunEvents.OnShoot, new UnityAction<ParamsObject>(OnShoot));
     }
@@ -74,17 +78,33 @@ public class Gun : MonoBehaviour
         eventManager.TriggerEvent(GunEvents.OnUpdateGunProjectileSpeed, new ParamsObject(projectileSpeed));
         eventManager.TriggerEvent(GunEvents.OnUpdateGunDamage, new ParamsObject(damage));
         eventManager.TriggerEvent(GunEvents.OnUpdateGunTransform, new ParamsObject(transform));
+        eventManager.TriggerEvent(GunEvents.OnUpdateGunFireType, new ParamsObject(automatic));
+        eventManager.TriggerEvent(GunEvents.OnUpdateGunProjectile, new ParamsObject(projectileToBeFired));
+        eventManager.TriggerEvent(GunEvents.OnUnlockFire);
     }
 
     void Update()
     {
         if(reloading)
         {
-            deltaReloadCheckTime = Time.time - lastReloadTime;
-            if(deltaReloadCheckTime >= reloadTime)
+            reloadTimer -= Time.deltaTime;
+            if(reloadTimer <= 0)
             {
                 reloading = false;
+                reloadTimer = reloadTime;
                 CurrentAmmo = MaxAmmo;
+                eventManager.TriggerEvent(GunEvents.OnReloadEnd);
+            }
+        }
+
+        if(shotFiredCooldown)
+        {
+            fireTimer -= Time.deltaTime;
+            if(fireTimer <= 0)
+            {
+                shotFiredCooldown = false;
+                fireTimer = fireTime;
+                eventManager.TriggerEvent(GunEvents.OnUnlockFire);
             }
         }
     }
@@ -94,20 +114,17 @@ public class Gun : MonoBehaviour
         if(CurrentAmmo != MaxAmmo && !reloading)
         {
             reloading = true;
-            lastReloadTime = Time.time;
+            eventManager.TriggerEvent(GunEvents.OnReloadStart);
         }
     }
 
     protected virtual void OnShoot(ParamsObject paramsObj)
     {
-        if(CurrentAmmo > 0 && !reloading)
+        if(CurrentAmmo > 0 && !reloading && !shotFiredCooldown)
         {
-            deltaFireTime = Time.time - lastFireTime;
-            if(deltaFireTime >= fireTime)
-            {
-                lastFireTime = Time.time;
-                FireProjectile();
-            }
+            FireProjectile();
+            shotFiredCooldown = true;
+            eventManager.TriggerEvent(GunEvents.OnLockFire);
         }
     }
 
@@ -121,7 +138,7 @@ public class Gun : MonoBehaviour
         newProjectile.velocity = velocity;
         newProjectile.GetComponent<DamageSource>().Damage = damage;
         newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
-        CurrentAmmo--;
+        CurrentAmmo -= ammoConsumption;
         return newProjectile;
     }
 
