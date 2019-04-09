@@ -1,6 +1,7 @@
 ﻿using EventManagers;
 using UnityEngine;
 using Events;
+using UnityEngine.EventSystems;
 
 namespace Player
 {
@@ -16,7 +17,7 @@ namespace Player
 
         void Update()
         {
-            if(Input.GetButton("Fire"))
+            if(PlayerInput.GetButton("Fire"))
             {
                 if(eventManager != null)
                 {
@@ -24,7 +25,7 @@ namespace Player
                 }
             }
 
-            if(Input.GetButtonUp("Fire"))
+            if(PlayerInput.GetButtonUp("Fire"))
             {
                 if(eventManager != null)
                 {
@@ -32,7 +33,7 @@ namespace Player
                 }
             }
 
-            if(Input.GetButtonDown("Reload"))
+            if(PlayerInput.GetButtonDown("Reload"))
             {
                 if(eventManager != null)
                 {

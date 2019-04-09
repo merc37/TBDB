@@ -26,12 +26,14 @@ namespace EventManagers
     public class GameObjectEventManager : MonoBehaviour
     {
         private Dictionary<string, ParamsEvent> eventDictionary;
+        private Dictionary<string, ParamsObject> lastEventValues;
 
         void Awake()
         {
             if(eventDictionary == null)
             {
                 eventDictionary = new Dictionary<string, ParamsEvent>();
+                lastEventValues = new Dictionary<string, ParamsObject>();
             }
         }
 
@@ -40,6 +42,7 @@ namespace EventManagers
             if(eventDictionary == null)
             {
                 eventDictionary = new Dictionary<string, ParamsEvent>();
+                lastEventValues = new Dictionary<string, ParamsObject>();
             }
 
             ParamsEvent thisEvent = null;
@@ -53,6 +56,15 @@ namespace EventManagers
                 thisEvent = new ParamsEvent();
                 thisEvent.AddListener(listener);
                 eventDictionary.Add(eventName, thisEvent);
+            }
+
+            ParamsObject paramsObj = null;
+            if(lastEventValues != null && lastEventValues.TryGetValue(eventName, out paramsObj))
+            {
+                if(paramsObj != null)
+                {
+                    listener.Invoke(paramsObj);
+                }
             }
         }
 
@@ -70,12 +82,14 @@ namespace EventManagers
             if(eventDictionary == null)
             {
                 eventDictionary = new Dictionary<string, ParamsEvent>();
+                lastEventValues = new Dictionary<string, ParamsObject>();
             }
 
             ParamsEvent thisEvent = null;
             if(eventDictionary.TryGetValue(eventName, out thisEvent))
             {
                 thisEvent.Invoke(paramsObj);
+                lastEventValues[eventName] = paramsObj;
             }
         }
 

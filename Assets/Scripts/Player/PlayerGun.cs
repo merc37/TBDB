@@ -7,7 +7,6 @@ namespace Player
 {
     public class PlayerGun : Gun
     {
-
         private bool shootLocked = false;
 
         protected Rigidbody2D playerRigidbody;
@@ -30,11 +29,12 @@ namespace Player
 
         protected override void OnShoot(ParamsObject paramsObj)
         {
-            if(!shootLocked)
+            bool shootOverride = paramsObj != null ? paramsObj.Bool : false;
+            if(!shootLocked || shootOverride)
             {
                 base.OnShoot(paramsObj);
                 //GetComponentInParent<Animator>().SetTrigger("Shoot");
-                if(!automatic)
+                if(!automatic || shootOverride)
                 {
                     shootLocked = true;
                 }

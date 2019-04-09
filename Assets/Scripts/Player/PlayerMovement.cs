@@ -21,15 +21,15 @@ namespace Player
         private Vector2 directionVector = Vector2.zero;
 
         private bool walking;
-        private bool rolling;
+        private bool movementEnabled;
 
         void Awake()
         {
             eventManager = GetComponent<GameObjectEventManager>();
             rigidbody = GetComponent<Rigidbody2D>();
-            rolling = false;
-            eventManager.StartListening(PlayerEvents.OnRollStart, new UnityAction<ParamsObject>(OnRollStart));
-            eventManager.StartListening(PlayerEvents.OnRollEnd, new UnityAction<ParamsObject>(OnRollEnd));
+            movementEnabled = true;
+            eventManager.StartListening(PlayerEvents.OnDisableMovement, new UnityAction<ParamsObject>(OnDisableMovement));
+            eventManager.StartListening(PlayerEvents.OnEnableMovement, new UnityAction<ParamsObject>(OnEnableMovement));
         }
 
         void Start()
@@ -39,24 +39,24 @@ namespace Player
 
         void FixedUpdate()
         {
-            if(!rolling)
+            if(movementEnabled)
             {
-                currentMaxSpeed = Input.GetButton("Walk") ? maxWalkSpeed : maxRunSpeed;
+                currentMaxSpeed = PlayerInput.GetButton("Walk") ? maxWalkSpeed : maxRunSpeed;
 
-                directionVector.Set(Input.GetAxisRaw("HorizontalMovement"), Input.GetAxisRaw("VerticalMovement"));
+                directionVector.Set(PlayerInput.GetAxisRaw("HorizontalMovement"), PlayerInput.GetAxisRaw("VerticalMovement"));
 
                 rigidbody.velocity = Vector2.ClampMagnitude(directionVector.normalized * currentMaxSpeed, currentMaxSpeed);
             }
         }
 
-        private void OnRollStart(ParamsObject paramsObj)
+        private void OnDisableMovement(ParamsObject paramsObj)
         {
-            rolling = true;
+            movementEnabled = false;
         }
 
-        private void OnRollEnd(ParamsObject paramsObj)
+        private void OnEnableMovement(ParamsObject paramsObj)
         {
-            rolling = false;
+            movementEnabled = true;
         }
     }
 }

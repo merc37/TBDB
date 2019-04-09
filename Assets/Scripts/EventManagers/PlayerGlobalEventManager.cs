@@ -6,7 +6,6 @@ namespace EventManagers
 {
     public class PlayerGlobalEventManager : MonoBehaviour
     {
-
         private GameObjectEventManager eventManager;
 
         void Awake()
@@ -18,6 +17,11 @@ namespace EventManagers
             eventManager.StartListening(HealthEvents.OnUpdateCurrentHealth, new UnityAction<ParamsObject>(OnUpdateCurrentHealth));
             eventManager.StartListening(GunEvents.OnUpdateCurrentAmmo, new UnityAction<ParamsObject>(OnUpdateCurrentAmmo));
             eventManager.StartListening(GunEvents.OnUpdateMaxAmmo, new UnityAction<ParamsObject>(OnUpdateMaxAmmo));
+            eventManager.StartListening(PlayerEvents.OnUpdateAbility1, new UnityAction<ParamsObject>(OnUpdateAbility1));
+            eventManager.StartListening(PlayerEvents.OnUpdateAbility2, new UnityAction<ParamsObject>(OnUpdateAbility2));
+            eventManager.StartListening(PlayerEvents.OnUpdateAbility3, new UnityAction<ParamsObject>(OnUpdateAbility3));
+            eventManager.StartListening(PlayerEvents.OnInventoryToggle, new UnityAction<ParamsObject>(OnInventoryPress));
+            GlobalEventManager.StartListening(InventoryGlobalEvents.OnInventorySetAbility, new UnityAction<ParamsObject>(OnInventorySetAbility));
         }
 
         void Start()
@@ -56,10 +60,29 @@ namespace EventManagers
             GlobalEventManager.TriggerEvent(PlayerGlobalEvents.OnPlayerUpdateMaxAmmo, paramsObj);
         }
 
-        private void SendUpPlayerTransform(ParamsObject paramsObj)
+        private void OnUpdateAbility1(ParamsObject paramsObj)
         {
-            ParamsObject newParamsObj = new ParamsObject(transform);
+            GlobalEventManager.TriggerEvent(PlayerGlobalEvents.OnPlayerUpdateAbility1, paramsObj);
+        }
 
+        private void OnUpdateAbility2(ParamsObject paramsObj)
+        {
+            GlobalEventManager.TriggerEvent(PlayerGlobalEvents.OnPlayerUpdateAbility2, paramsObj);
+        }
+
+        private void OnUpdateAbility3(ParamsObject paramsObj)
+        {
+            GlobalEventManager.TriggerEvent(PlayerGlobalEvents.OnPlayerUpdateAbility3, paramsObj);
+        }
+
+        private void OnInventoryPress(ParamsObject paramsObj)
+        {
+            GlobalEventManager.TriggerEvent(PlayerGlobalEvents.OnPlayerInventoryToggle, paramsObj);
+        }
+
+        private void OnInventorySetAbility(ParamsObject paramsObj)
+        {
+            eventManager.TriggerEvent(PlayerEvents.OnSetAbility, paramsObj);
         }
     }
 }

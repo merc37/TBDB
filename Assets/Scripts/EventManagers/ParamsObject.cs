@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Player;
+using UnityEngine;
 using UnityEngine.Events;
 
 namespace EventManagers
@@ -13,9 +14,11 @@ namespace EventManagers
         public int Int { get; set; }
         public float Float { get; set; }
         public short Short { get; set; }
+        public bool Bool { get; set; }
         public string String { get; set; }
         public LayerMask LayerMask { get; set; }
         public dynamic Dynamic { get; set; }
+        public PlayerAbility PlayerAbility { get; set; }
 
         public ParamsObject(Transform transform)
         {
@@ -57,6 +60,11 @@ namespace EventManagers
             Short = @short;
         }
 
+        public ParamsObject(bool @bool)
+        {
+            Bool = @bool;
+        }
+
         public ParamsObject(string @string)
         {
             String = @string;
@@ -70,6 +78,11 @@ namespace EventManagers
         public ParamsObject(dynamic dyn)
         {
             Dynamic = dyn;
+        }
+
+        public ParamsObject(PlayerAbility playerAbility)
+        {
+            PlayerAbility = playerAbility;
         }
     }
 

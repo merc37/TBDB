@@ -5,7 +5,6 @@ using Events;
 
 public class Gun : MonoBehaviour
 {
-
     [SerializeField]
     private Rigidbody2D projectileToBeFired;
     [SerializeField]
@@ -120,7 +119,8 @@ public class Gun : MonoBehaviour
 
     protected virtual void OnShoot(ParamsObject paramsObj)
     {
-        if(CurrentAmmo > 0 && !reloading && !shotFiredCooldown)
+        bool shootOverride = paramsObj != null ? paramsObj.Bool : false;
+        if((CurrentAmmo > 0 && !reloading && !shotFiredCooldown) || shootOverride)
         {
             FireProjectile();
             shotFiredCooldown = true;

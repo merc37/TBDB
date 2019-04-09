@@ -8,6 +8,7 @@ namespace EventManagers
     {
 
         private Dictionary<string, ParamsEvent> eventDictionary;
+        private Dictionary<string, ParamsObject> lastEventValues;
 
         private static GlobalEventManager eventManager;
 
@@ -38,6 +39,7 @@ namespace EventManagers
             if(eventDictionary == null)
             {
                 eventDictionary = new Dictionary<string, ParamsEvent>();
+                lastEventValues = new Dictionary<string, ParamsObject>();
             }
         }
 
@@ -53,6 +55,15 @@ namespace EventManagers
                 thisEvent = new ParamsEvent();
                 thisEvent.AddListener(listener);
                 instance.eventDictionary.Add(eventName, thisEvent);
+            }
+
+            ParamsObject paramsObj = null;
+            if(instance.lastEventValues != null && instance.lastEventValues.TryGetValue(eventName, out paramsObj))
+            {
+                if(paramsObj != null)
+                {
+                    listener.Invoke(paramsObj);
+                }
             }
         }
 
@@ -72,6 +83,11 @@ namespace EventManagers
             if(instance.eventDictionary.TryGetValue(eventName, out thisEvent))
             {
                 thisEvent.Invoke(paramsObj);
+            }
+
+            if(instance.lastEventValues != null)
+            {
+                instance.lastEventValues[eventName] = paramsObj;
             }
         }
     }
