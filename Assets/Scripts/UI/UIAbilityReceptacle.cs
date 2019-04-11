@@ -10,13 +10,11 @@ public class UIAbilityReceptacle : MonoBehaviour
 
     public PlayerAbility Ability
     {
-        get
-        {
+        get {
             return _ability;
         }
 
-        set
-        {
+        set {
             _ability = value;
             image.sprite = value.AbilityIcon();
         }

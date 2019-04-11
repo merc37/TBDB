@@ -21,9 +21,9 @@ namespace Player
         void Start()
         {
             playerAbilities = GetComponentsInChildren<PlayerAbility>();
-            eventManager.TriggerEvent(PlayerEvents.OnUpdateAbility1, new ParamsObject(playerAbilities[0]));
-            eventManager.TriggerEvent(PlayerEvents.OnUpdateAbility2, new ParamsObject(playerAbilities[1]));
-            eventManager.TriggerEvent(PlayerEvents.OnUpdateAbility3, new ParamsObject(playerAbilities[2]));
+            eventManager.TriggerEvent(PlayerEvents.OnUpdateAbility1, new ParamsObject(playerAbilities[0].transform));
+            eventManager.TriggerEvent(PlayerEvents.OnUpdateAbility2, new ParamsObject(playerAbilities[1].transform));
+            eventManager.TriggerEvent(PlayerEvents.OnUpdateAbility3, new ParamsObject(playerAbilities[2].transform));
         }
 
         void Update()
@@ -46,11 +46,12 @@ namespace Player
 
         private void OnSetAbility(ParamsObject paramsObj)
         {
-            GameObject child = transform.GetChild(paramsObj.Int).gameObject;
-
-            //Type playerAbilityType = paramsObj.PlayerAbility.GetType();
-            //Destroy(child.GetComponent<PlayerAbility>());
-            //child.AddComponent(playerAbilityType);
+            Transform abilityTransform = paramsObj.Transform;
+            abilityTransform.SetParent(transform);
+            abilityTransform.SetSiblingIndex(paramsObj.Int);
+            if(transform.childCount > 3) {
+                Destroy(transform.GetChild(3));
+            }
             playerAbilities = GetComponentsInChildren<PlayerAbility>();
             string evt = PlayerEvents.OnUpdateAbility1.Replace("1", "" + (paramsObj.Int + 1));
             eventManager.TriggerEvent(evt, paramsObj);

@@ -2,6 +2,7 @@
 using EventManagers;
 using Events;
 using UnityEngine.Events;
+using Player;
 
 public class UIAbilityInventory : MonoBehaviour
 {
@@ -37,17 +38,17 @@ public class UIAbilityInventory : MonoBehaviour
 
     private void OnPlayerUpdateAbility1(ParamsObject paramsObj)
     {
-        uiAbilityReceptacles[0].Ability = paramsObj.PlayerAbility;
+        uiAbilityReceptacles[0].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
     }
 
     private void OnPlayerUpdateAbility2(ParamsObject paramsObj)
     {
-        uiAbilityReceptacles[1].Ability = paramsObj.PlayerAbility;
+        uiAbilityReceptacles[1].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
     }
 
     private void OnPlayerUpdateAbility3(ParamsObject paramsObj)
     {
-        uiAbilityReceptacles[2].Ability = paramsObj.PlayerAbility;
+        uiAbilityReceptacles[2].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
     }
 
     private void OnPlayerInventoryToggle(ParamsObject paramsObj)

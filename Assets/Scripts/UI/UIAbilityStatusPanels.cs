@@ -2,6 +2,7 @@
 using EventManagers;
 using Events;
 using UnityEngine.Events;
+using Player;
 
 namespace UI
 {
@@ -19,17 +20,17 @@ namespace UI
 
         private void OnPlayerUpdateAbility1(ParamsObject paramsObj)
         {
-            uiAbilityStatusPanels[0].Ability = paramsObj.PlayerAbility;
+            uiAbilityStatusPanels[0].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
         }
 
         private void OnPlayerUpdateAbility2(ParamsObject paramsObj)
         {
-            uiAbilityStatusPanels[1].Ability = paramsObj.PlayerAbility;
+            uiAbilityStatusPanels[1].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
         }
 
         private void OnPlayerUpdateAbility3(ParamsObject paramsObj)
         {
-            uiAbilityStatusPanels[2].Ability = paramsObj.PlayerAbility;
+            uiAbilityStatusPanels[2].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
         }
     }
 }

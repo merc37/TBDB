@@ -7,6 +7,7 @@ namespace EventManagers
     public class ParamsObject
     {
         public Transform Transform { get; set; }
+        public GameObject GameObject { get; set; }
         public Rigidbody2D Rigidbody { get; set; }
         public Collider2D Collider { get; set; }
         public Vector2 Vector2 { get; set; }
@@ -18,11 +19,14 @@ namespace EventManagers
         public string String { get; set; }
         public LayerMask LayerMask { get; set; }
         public dynamic Dynamic { get; set; }
-        public PlayerAbility PlayerAbility { get; set; }
 
         public ParamsObject(Transform transform)
         {
             Transform = transform;
+        }
+
+        public ParamsObject(GameObject gameObject) {
+            GameObject = gameObject;
         }
 
         public ParamsObject(Rigidbody2D rigidbody)
@@ -78,11 +82,6 @@ namespace EventManagers
         public ParamsObject(dynamic dyn)
         {
             Dynamic = dyn;
-        }
-
-        public ParamsObject(PlayerAbility playerAbility)
-        {
-            PlayerAbility = playerAbility;
         }
     }
 

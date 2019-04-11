@@ -37,14 +37,14 @@ public class UIAbilityDropZone : MonoBehaviour, IDropHandler
             return;
         }
 
-        ParamsObject dragParamsObj = new ParamsObject(dragTransform.GetComponent<UIAbilityReceptacle>().Ability)
+        ParamsObject dragParamsObj = new ParamsObject(dragTransform.GetComponent<UIAbilityReceptacle>().Ability.transform)
         {
             Int = dropTransformParent.GetSiblingIndex()
         };
 
         if(dropTransform != null)
         {
-            ParamsObject dropParamsObj = new ParamsObject(dropTransform.GetComponent<UIAbilityReceptacle>().Ability)
+            ParamsObject dropParamsObj = new ParamsObject(dropTransform.GetComponent<UIAbilityReceptacle>().Ability.transform)
             {
                 Int = dragParentIndex
             };
