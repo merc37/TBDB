@@ -38,3 +38,6 @@ sysinfo.txt
 Assets/Plugins/Editor/JetBrains\.meta
 
 Assets/Plugins/Editor/JetBrains
+\.vs/TBDB/v16/Server/sqlite3/db\.lock
+
+\.vs/TBDB/v16/Server/sqlite3/storage\.ide

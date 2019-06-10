@@ -1,7 +1,4 @@
 ﻿using UnityEngine;
-using EventManagers;
-using Events;
-using UnityEngine.Events;
 using Player;
 
 namespace UI
@@ -9,28 +6,35 @@ namespace UI
     public class UIAbilityStatusPanels : MonoBehaviour
     {
         private UIAbilityStatusPanel[] uiAbilityStatusPanels;
+        private UIAbilityHighlightPanel[] uiAbilityHighlightPanels;
+        private UIAbilitySwapPanel uiAbilitySwapPanel;
+
 
         void Awake()
         {
             uiAbilityStatusPanels = GetComponentsInChildren<UIAbilityStatusPanel>();
-            GlobalEventManager.StartListening(PlayerGlobalEvents.OnPlayerUpdateAbility1, new UnityAction<ParamsObject>(OnPlayerUpdateAbility1));
-            GlobalEventManager.StartListening(PlayerGlobalEvents.OnPlayerUpdateAbility2, new UnityAction<ParamsObject>(OnPlayerUpdateAbility2));
-            GlobalEventManager.StartListening(PlayerGlobalEvents.OnPlayerUpdateAbility3, new UnityAction<ParamsObject>(OnPlayerUpdateAbility3));
+            uiAbilityHighlightPanels = GetComponentsInChildren<UIAbilityHighlightPanel>();
+            uiAbilitySwapPanel = GetComponentInChildren<UIAbilitySwapPanel>();
         }
 
-        private void OnPlayerUpdateAbility1(ParamsObject paramsObj)
-        {
-            uiAbilityStatusPanels[0].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
+        public void SetPlayerAbility(int index, PlayerAbility value) {
+            uiAbilityStatusPanels[index].Ability = value;
         }
 
-        private void OnPlayerUpdateAbility2(ParamsObject paramsObj)
-        {
-            uiAbilityStatusPanels[1].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
+        public void OnSwapModeActivate() {
+            uiAbilitySwapPanel.OnSwapModeActivate();
         }
 
-        private void OnPlayerUpdateAbility3(ParamsObject paramsObj)
-        {
-            uiAbilityStatusPanels[2].Ability = paramsObj.Transform.GetComponent<PlayerAbility>();
+        public void OnSwapModeDeactivate() {
+            uiAbilitySwapPanel.OnSwapModeDeactivate();
+        }
+
+        public void OnHighlightActivate(int index) {
+            uiAbilityHighlightPanels[index].OnHighlightActivate();
+        }
+
+        public void OnHighlightDeactivate(int index) {
+            uiAbilityHighlightPanels[index].OnHighlightDeactivate();
         }
     }
 }
