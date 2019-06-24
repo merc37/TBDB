@@ -11,13 +11,9 @@ namespace Player
 
         protected Rigidbody2D playerRigidbody;
 
-        private Rigidbody2D _lastFired;
         public Rigidbody2D LastFired
         {
-            get
-            {
-                return _lastFired;
-            }
+            get; private set;
         }
 
         protected override void Awake()
@@ -43,8 +39,8 @@ namespace Player
 
         protected override Rigidbody2D FireProjectile()
         {
-            _lastFired = base.FireProjectile();
-            ParamsObject paramsObj = new ParamsObject(7);
+            LastFired = base.FireProjectile();
+            ParamsObject paramsObj = new ParamsObject(7);//<-Sound level
             paramsObj.Vector2 = playerRigidbody.position;
             GameObjectEventManager.TriggerRadiusEvent(PlayerRadiusEvents.OnPlayerMakeNoise, transform.position, 10, LayerMask.GetMask("Enemies"), paramsObj);
             return LastFired;

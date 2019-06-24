@@ -53,6 +53,14 @@ namespace Enemy
         bool SetMovementTargetToPlayerPosition()
         {
             eventManager.TriggerEvent(EnemyEvents.OnSetMovementTarget, new ParamsObject(playerRigidbody.position));
+            //if (Input.GetMouseButtonDown(2)) {
+
+            //    //RaycastHit2D hit = Physics2D.Raycast(ray.origin, ray.direction, Mathf.Infinity, LayerMask.NameToLayer("Default"));
+            //    Vector2 mousePos = Input.mousePosition;
+            //    Vector2 pos = Camera.main.ScreenToWorldPoint(new Vector3(mousePos.x, mousePos.y, Camera.main.nearClipPlane));
+            //    eventManager.TriggerEvent(EnemyEvents.OnSetMovementTarget, new ParamsObject(pos));
+            //    return true;
+            //}
             return true;
         }
 
@@ -60,7 +68,7 @@ namespace Enemy
         bool SetRotationToPlayer()
         {
             Vector2 direction = playerRigidbody.position - rigidbody.position;
-            rigidbody.rotation = direction.AngleFromZero();
+            rigidbody.rotation = direction.ToAngle();
             return true;
         }
 
@@ -68,7 +76,7 @@ namespace Enemy
         bool SetRotationToPlayerLastKnownPosition()
         {
             Vector2 direction = playerLastKnownPosition - rigidbody.position;
-            rigidbody.rotation = direction.AngleFromZero();
+            rigidbody.rotation = direction.ToAngle();
             return true;
         }
 
@@ -130,7 +138,7 @@ namespace Enemy
         [Task]
         bool SetRotationToPlayerLastKnownHeading()
         {
-            rigidbody.rotation = playerLastKnownHeading.AngleFromZero();
+            rigidbody.rotation = playerLastKnownHeading.ToAngle();
             return true;
         }
 

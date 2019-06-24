@@ -80,7 +80,7 @@ tree("Live")
 							tree("PlayerInSight")
 							SetMovementTargetToPlayerPosition
 							not ReachedMovementTarget
-							MoveTowardsMovementTarget
+							PathToMovementTarget
 							SetRotationToMovementTarget
 							mute
 								sequence

@@ -13,7 +13,7 @@ namespace Collisions
         {
             if(collisionTags.Contains(coll.gameObject.tag))
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
         }
 
@@ -21,7 +21,7 @@ namespace Collisions
         {
             if(collisionTags.Contains(coll.gameObject.tag))
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
         }
     }

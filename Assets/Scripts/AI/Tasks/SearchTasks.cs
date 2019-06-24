@@ -14,6 +14,10 @@ namespace Enemy
         private float searchTime = 7;
         [SerializeField]
         private float searchRadius = 8.5f;
+        [SerializeField]
+        private float maxSearchCenterDistance = 10f;
+        [SerializeField]
+        private LayerMask unwalkableMask;
 
         private PathfindingGrid grid;
 
@@ -46,14 +50,14 @@ namespace Enemy
 
         void Update()
         {
-            if(isSearching)
-            {
-                if((Time.frameCount - lastFrameTimerWasChecked) > 1)
-                {
-                    searchTimer = searchTime;
-                    isSearching = false;
-                }
-            }
+            //if(isSearching)
+            //{
+            //    if((Time.frameCount - lastFrameTimerWasChecked) > 1)
+            //    {
+            //        searchTimer = searchTime;
+            //        isSearching = false;
+            //    }
+            //}
         }
 
         [Task]
@@ -126,7 +130,12 @@ namespace Enemy
         [Task]
         bool SetSearchCenterInPlayerLastKnownHeadingDirection()
         {
-            searchCenter = rigidbody.position + (playerLastKnownHeading.normalized * searchRadius);
+            RaycastHit2D hit = Physics2D.Raycast(rigidbody.position, playerLastKnownHeading.normalized, maxSearchCenterDistance, unwalkableMask);
+            if(hit.collider != null) {
+                searchCenter = hit.point;
+                return true;
+            }
+            searchCenter = rigidbody.position + (playerLastKnownHeading.normalized * maxSearchCenterDistance);
             return true;
         }
 
@@ -149,6 +158,12 @@ namespace Enemy
                 isSearching = false;
                 return false;
             }
+            return true;
+        }
+
+        [Task]
+        bool SetSearching(bool searching) {
+            isSearching = searching;
             return true;
         }
 

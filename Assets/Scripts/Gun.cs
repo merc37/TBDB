@@ -128,26 +128,17 @@ public class Gun : MonoBehaviour
         }
     }
 
-    Rigidbody2D newProjectile = null;//TODO: delete, just for gizmo to be drawn
     protected virtual Rigidbody2D FireProjectile()
     {
+        Rigidbody2D newProjectile, shooter = transform.root.GetComponent<Rigidbody2D>();
         audioSource.PlayOneShot(shotSound);
-        newProjectile = Instantiate(projectileToBeFired, transform.GetChild(0).position, transform.rotation);
-        Vector2 velocity = newProjectile.transform.up.normalized * projectileSpeed;
-        velocity += transform.root.GetComponent<Rigidbody2D>().velocity;
+        newProjectile = Instantiate(projectileToBeFired, transform.GetChild(0).position, Quaternion.Euler(0, 0, shooter.rotation));
+        Vector2 velocity = shooter.rotation.ToVector2().normalized * projectileSpeed;
+        velocity += shooter.velocity;
         newProjectile.velocity = velocity;
         newProjectile.GetComponent<DamageSource>().Damage = damage;
         newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
         CurrentAmmo -= ammoConsumption;
         return newProjectile;
-    }
-
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        if(newProjectile != null)
-        {
-            Gizmos.DrawSphere(newProjectile.position, .3f);
-        }
     }
 }

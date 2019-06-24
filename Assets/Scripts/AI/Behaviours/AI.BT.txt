@@ -45,7 +45,7 @@ tree("DIE")
 			sequence
 				//Put death conditions and actions here
 				//In most cases just
-				//IsHealthZero
+				//HasZeroHealth
 				//DestroySelf
 
 //Behaviour tree explanation

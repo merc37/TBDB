@@ -78,6 +78,12 @@ namespace Pathfinding
                     _pathfindingGrid[x, y] = new PathfindingNode(worldPosition, gridPosition, isWalkable);
                 }
             }
+
+            for (int y = 0; y < _gridSize.y; y++) {
+                for (int x = 0; x < _gridSize.x; x++) {
+                    //_pathfindingGrid[x, y].NCost = NonWalkableNeighborsCost(_pathfindingGrid[x, y]);
+                }
+            }
         }
 
         public List<PathfindingNode> GetNeighbors(PathfindingNode node)
@@ -103,6 +109,11 @@ namespace Pathfinding
             }
 
             return neighbors;
+        }
+
+        public float NonWalkableNeighborsCost(PathfindingNode node) {
+            List<PathfindingNode> nonWalkableNeighbors = GetNeighbors(node).Where(neighbor => !neighbor.IsWalkable).ToList();
+            return nonWalkableNeighbors.Count;
         }
 
         public PathfindingNode NodeAtGridPosition(int gridPositionX, int gridPositionY)
@@ -153,22 +164,21 @@ namespace Pathfinding
             return NodeAtGridPosition(x, y);
         }
 
-        public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB, Collider2D collider)
+        public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB, BoxCollider2D collider)
         {
             Vector2 direction = (nodeB.WorldPosition - nodeA.WorldPosition).normalized;
             float distance = Vector2.Distance(nodeA.WorldPosition, nodeB.WorldPosition);
-            if(collider.IsBoxCollider())
-            {
-                return !Physics2D.BoxCast(nodeA.WorldPosition, ((BoxCollider2D)collider).size, direction.AngleFromZero(), direction, distance, _unwalkableMask);
-            }
-            else
-            {
-                return !Physics2D.CircleCast(nodeA.WorldPosition, ((CircleCollider2D)collider).radius, direction, distance, _unwalkableMask);
-            }
+            return !Physics2D.BoxCast(nodeA.WorldPosition, collider.size, direction.ToAngle(), direction, distance, _unwalkableMask);
+        }
+
+        public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB, CircleCollider2D collider) {
+            Vector2 direction = (nodeB.WorldPosition - nodeA.WorldPosition).normalized;
+            float distance = Vector2.Distance(nodeA.WorldPosition, nodeB.WorldPosition);
+            return !Physics2D.CircleCast(nodeA.WorldPosition, collider.radius, direction, distance, _unwalkableMask);
         }
 
         // TODO Add support for LineOfSight to take line width into account
-        public bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB)
+        private bool LineOfSight(PathfindingNode nodeA, PathfindingNode nodeB)
         {
             // Simple limit to the number of cells that can checked in one call
             // Prevents runaway computation

@@ -27,7 +27,7 @@ namespace Enemy
 
         private float gunProjectileSpeed;
 
-        private Vector2 playerAimTarget;
+        private Vector2 aimTarget;
 
         private Rigidbody2D gunProjectile;
         private Transform gunTransform;
@@ -70,25 +70,38 @@ namespace Enemy
         }
 
         [Task]
-        bool SetPlayerAimTarget()
+        bool SetAimTargetToPlayer()
         {
             float intitalProjectileTravelTime = Vector2.Distance(rigidbody.position, playerRigidbody.position) / gunProjectileSpeed;
             Vector2 intialPlayerPositionGuess = (playerRigidbody.position + (playerRigidbody.velocity * (intitalProjectileTravelTime)));
             float projectileTravelTime = Vector2.Distance(rigidbody.position, intialPlayerPositionGuess) / gunProjectileSpeed;
-            playerAimTarget = playerRigidbody.position + (playerRigidbody.velocity * (projectileTravelTime));
+            aimTarget = playerRigidbody.position + (playerRigidbody.velocity * (projectileTravelTime));
             return true;
         }
 
         [Task]
-        bool SetRotationToPlayerAimTarget()
+        bool SetRotationToAimTarget()
         {
-            Vector2 direction = playerAimTarget - rigidbody.position;
-            rigidbody.rotation = direction.AngleFromZero();
+            Vector2 direction = aimTarget - rigidbody.position;
+            rigidbody.rotation = direction.ToAngle();
             return true;
         }
 
         [Task]
-        bool GunLineOfSightToPlayerAimTarget()
+        bool SetRotationToAimTargetLimited(float degrees) {
+            Vector2 direction = aimTarget - rigidbody.position;
+            float angle = direction.ToAngle();
+            float degreeDistance = Mathf.Abs(rigidbody.rotation - angle);
+            if(degreeDistance > degrees) {
+                rigidbody.rotation += Mathf.Sign(rigidbody.rotation - angle) * degrees;
+                return true;
+            }
+            rigidbody.rotation = angle;
+            return true;
+        }
+
+        [Task]
+        bool GunLineOfSightToAimTarget()
         {
             if(Time.frameCount == gunLineOfSightToPlayerAimTargetPreviousFrameCount)
             {
@@ -99,11 +112,11 @@ namespace Enemy
 
             Collider2D projectileCollider = gunProjectile.gameObject.GetComponent<Collider2D>();
             Vector2 origin = gunTransform.GetChild(0).position;
-            Vector2 direction = playerAimTarget - origin;
-            float distance = Vector2.Distance(playerAimTarget, origin);
+            Vector2 direction = aimTarget - origin;
+            float distance = Vector2.Distance(aimTarget, origin);
             if(projectileCollider.IsBoxCollider())
             {
-                gunLineOfSightToPlayerAimTarget = !Physics2D.BoxCast(origin, ((BoxCollider2D)projectileCollider).size, direction.AngleFromZero(), direction, distance, gunProjectileBlockMask);
+                gunLineOfSightToPlayerAimTarget = !Physics2D.BoxCast(origin, ((BoxCollider2D)projectileCollider).size, direction.ToAngle(), direction, distance, gunProjectileBlockMask);
                 return gunLineOfSightToPlayerAimTarget;
             }
             else
@@ -129,7 +142,7 @@ namespace Enemy
             float distance = Vector2.Distance(playerRigidbody.position, origin);
             if(projectileCollider.IsBoxCollider())
             {
-                gunLineOfSightToPlayer = !Physics2D.BoxCast(origin, ((BoxCollider2D)projectileCollider).size, direction.AngleFromZero(), direction, distance, gunProjectileBlockMask);
+                gunLineOfSightToPlayer = !Physics2D.BoxCast(origin, ((BoxCollider2D)projectileCollider).size, direction.ToAngle(), direction, distance, gunProjectileBlockMask);
                 return gunLineOfSightToPlayer;
             }
             else
@@ -213,7 +226,7 @@ namespace Enemy
         void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawSphere(playerAimTarget, .3f);
+            Gizmos.DrawSphere(aimTarget, .3f);
         }
     }
 }

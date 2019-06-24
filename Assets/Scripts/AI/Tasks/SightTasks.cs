@@ -21,6 +21,9 @@ namespace Enemy
 
         private int previousFrameCount;
 
+        private float rotationProgress;
+        private bool isRotating;
+
         private GameObjectEventManager eventManager;
         private Rigidbody2D playerRigidbody;
         private new Rigidbody2D rigidbody;
@@ -59,8 +62,7 @@ namespace Enemy
                 float distance = Vector2.Distance(rigidbody.position, playerRigidbody.position);
                 if(distance <= sightDistance)
                 {
-                    RaycastHit2D raycastHit = Physics2D.Linecast(rigidbody.position, playerRigidbody.position, sightBlockMask);
-                    if(!raycastHit)
+                    if(!PlayerBlockedByWall())
                     {
                         playerInSight = true;
                         return playerInSight;
@@ -72,9 +74,55 @@ namespace Enemy
         }
 
         [Task]
+        bool PlayerBlockedByWall() {
+            return Physics2D.Linecast(rigidbody.position, playerRigidbody.position, sightBlockMask);
+        }
+
+        [Task]
         bool SetRotationRandom()
         {
             rigidbody.rotation = Random.Range(0, 360);
+            return true;
+        }
+
+        [Task]
+        bool IsRotating() {
+            return isRotating;
+        }
+
+        [Task]
+        bool SetIsRotating(bool rotating) {
+            isRotating = rotating;
+            return true;
+        }
+
+        [Task]
+        bool CheckRotationProgress(float degrees) {
+            return rotationProgress >= degrees;
+        }
+
+        [Task]
+        bool ResetRotationProgress() {
+            rotationProgress = 0;
+            return true;
+        }
+
+        [Task]
+        bool SetRotationAround(float speed) {
+            rigidbody.rotation += speed * Time.deltaTime;
+            rotationProgress += speed * Time.deltaTime;
+            return true;
+        }
+
+        [Task]
+        bool SetRotationClockwise(float degrees) {
+            rigidbody.rotation += degrees;
+            return true;
+        }
+
+        [Task]
+        bool SetRotationCounterClockwise(float degrees) {
+            rigidbody.rotation -= degrees;
             return true;
         }
 

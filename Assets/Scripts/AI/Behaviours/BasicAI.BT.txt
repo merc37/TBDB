@@ -1,0 +1,77 @@
+tree("Root")
+	parallel
+		repeat mute tree("Live")
+		repeat mute tree("DIE")
+
+
+tree("Live")
+	repeat
+		mute
+			parallel
+				mute
+					sequence
+						IsNoiseHeard
+						not IsNoiseBlockedByWalls
+						mute
+							sequence
+								not PlayerBlockedByWall
+								Wait(0.3)
+						SetPlayerLastKnownPositionToNoiseLocation
+				mute
+					sequence
+						IsAmmoZero
+						Reload
+				mute
+					fallback
+						sequence
+							tree("PlayerInSight")
+							fallback
+								sequence
+									PlayerInMediumAttackRange
+									StopMovement
+									mute
+										sequence
+											SetAimTargetToPlayer
+											SetRotationToAimTarget
+											ReadyToFire
+											not IsReloading
+											Shoot
+								sequence
+									SetMovementTargetToPlayerPosition
+									not ReachedMovementTarget
+									PathToMovementTarget
+									mute
+										sequence
+											SetAimTargetToPlayer
+											SetRotationToAimTarget
+											ReadyToFire
+											not IsReloading
+											Shoot
+						sequence
+							IsPlayerLastPositionKnown
+							fallback
+								sequence
+									not BeenToPlayerLastKnownPosition
+									tree("SetMovementTargetToPlayerLastKnownPosition")
+									tree("PathToMovementTargetSetRotationToMovementDirection")
+									StopMovement
+									SetBeenToPlayerLastKnownPosition
+									IsPlayerLastHeadingKnown
+									SetRotationToPlayerLastKnownHeading
+								sequence
+									BeenToPlayerLastKnownPosition
+									SetSearchCenterInPlayerLastKnownHeadingDirection
+									SetMovementTargetToSearchPointAroundSearchCenter
+									SetSearching(true)
+									UnSetPlayerLastKnownPosition
+						sequence
+							IsSearching
+							tree("PathToMovementTargetSetRotationToMovementDirection")
+							StopMovement
+							SetSearching(false)
+tree("DIE")
+	repeat
+		mute
+			sequence
+				HasZeroHealth
+				DestroySelf

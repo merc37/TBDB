@@ -18,7 +18,7 @@ namespace Player
         void FixedUpdate()
         {
             distToMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) - collider.bounds.center;
-            rigidbody.rotation = distToMousePosition.AngleFromZero();
+            rigidbody.rotation = distToMousePosition.ToAngle();
         }
     }
 }

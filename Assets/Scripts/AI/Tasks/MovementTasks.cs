@@ -34,14 +34,14 @@ namespace Enemy
         private GameObjectEventManager eventManager;
         private Pathfinder pathfinder;
         private new Rigidbody2D rigidbody;
-        private new Collider2D collider;
+        private new CircleCollider2D collider;
 
         private UnityAction<ParamsObject> onMapSendTransformUnityAction;
 
         void Awake()
         {
             rigidbody = GetComponent<Rigidbody2D>();
-            collider = GetComponent<Collider2D>();
+            collider = GetComponent<CircleCollider2D>();
             eventManager = GetComponent<GameObjectEventManager>();
             onMapSendTransformUnityAction = new UnityAction<ParamsObject>(OnMapSendTransform);
             eventManager.StartListening(EnemyEvents.OnMapSendTransform, onMapSendTransformUnityAction);
@@ -134,21 +134,21 @@ namespace Enemy
         bool SetRotationToMovementTarget()
         {
             Vector2 direction = movementTarget - rigidbody.position;
-            rigidbody.rotation = direction.AngleFromZero();
+            rigidbody.rotation = direction.ToAngle();
             return true;
         }
 
         [Task]
         bool SetRotationToMovementDirection()
         {
-            rigidbody.rotation = movementDirection.AngleFromZero();
+            rigidbody.rotation = movementDirection.ToAngle();
             return true;
         }
 
         [Task]
         bool SetRotationToOppositeMovementDirection()
         {
-            rigidbody.rotation = (-movementDirection).AngleFromZero();
+            rigidbody.rotation = (-movementDirection).ToAngle();
             return true;
         }
 

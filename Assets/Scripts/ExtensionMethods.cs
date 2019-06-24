@@ -2,9 +2,13 @@
 
 public static class ExtensionMethods
 {
-    public static float AngleFromZero(this Vector2 vector2)
+    public static float ToAngle(this Vector2 vector2)
     {
         return (Mathf.Atan2(vector2.y, vector2.x) * Mathf.Rad2Deg) - 90;
+    }
+
+    public static Vector2 ToVector2(this float angle) {
+        return new Vector2(Mathf.Cos((angle + 90) * Mathf.Deg2Rad), Mathf.Sin((angle + 90) * Mathf.Deg2Rad));
     }
 
     public static Vector2 Rotate(this Vector2 v, float degrees)
