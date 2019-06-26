@@ -1680,12 +1680,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 603957252}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7c08d1dbe52ff604b9bb6eb1695c1bae, type: 3}
+  m_Script: {fileID: 11500000, guid: 332eedec5dc2c1c459a47d59bd37286f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChunkSize: {x: 10, y: 10}
-  UseRandomSeed: 1
-  Seed: 16.67689
+  Settings: {fileID: 11400000, guid: 1902d6cae5c224346968b5c2f6c56ec4, type: 2}
 --- !u!1 &679154967
 GameObject:
   m_ObjectHideFlags: 0
@@ -2297,6 +2295,10 @@ PrefabInstance:
     - target: {fileID: 177638, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_Name
       value: '[Graphy]'
+      objectReference: {fileID: 0}
+    - target: {fileID: 177638, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 22451668, guid: 0abab5bb77339e4428787a870eb31bd3, type: 3}
       propertyPath: m_LocalPosition.x

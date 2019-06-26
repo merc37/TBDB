@@ -9,23 +9,29 @@ using Random = System.Random;
 
 namespace Level
 {
-	public abstract class LevelGenerator : MonoBehaviour
+	public class LevelGenerator : MonoBehaviour
 	{
-		public Vector2Int ChunkSize;
-		public bool UseRandomSeed;
-		[EnableIf("SeedEnabled")]
-		public string Seed;
-		public bool SeedEnabled() { return !UseRandomSeed; }
+		public LevelGeneratorPreset Settings;
 
-		public byte[,] Chunk { get; private set; }
+		private byte[,] chunk;
+		private byte[,] chunkTemp;
+		private Random random;
 
-		protected Random random;
-		protected byte[,] chunkTemp;
-		
+		[Button]
+		public void Generate()
+		{
+			if (Settings == null) return;
+
+			Settings.Generate();
+		}
+
 		#region Monobehavior
 		void Awake()
 		{
-			InitializeChunk();
+			if (Settings != null)
+				Settings.lGen = this;
+
+			//InitializeChunk();
 		}
 
 		void Start()
@@ -40,14 +46,14 @@ namespace Level
 
 		void OnDrawGizmos()
 		{
-			if (Chunk != null)
+			if (chunk != null && Settings != null)
 			{
-				for (int x = 0; x < ChunkSize.x; x++)
+				for (int x = 0; x < Settings.ChunkSize.x; x++)
 				{
-					for (int y = 0; y < ChunkSize.y; y++)
+					for (int y = 0; y < Settings.ChunkSize.y; y++)
 					{
-						Gizmos.color = Chunk[x, y] == 0b1 ? Color.black : Color.white;
-						Vector3 pos = new Vector3(-ChunkSize.x / 2 + x + 0.5f, -ChunkSize.y / 2 + y + 0.5f, 0);
+						Gizmos.color = chunk[x, y] == 0b1 ? Color.black : Color.white;
+						Vector3 pos = new Vector3(-Settings.ChunkSize.x / 2 + x + 0.5f, -Settings.ChunkSize.y / 2 + y + 0.5f, 0);
 						Gizmos.DrawCube(pos, Vector3.one);
 					}
 				}
@@ -56,36 +62,38 @@ namespace Level
 		#endregion
 
 		#region Helper methods
-		protected void InitializeChunk()
+		public void InitializeChunk()
 		{
-			Chunk = new byte[ChunkSize.x, ChunkSize.y];
-			chunkTemp = new byte[ChunkSize.x, ChunkSize.y];
+			if (Settings == null) return;
+
+			chunk = new byte[Settings.ChunkSize.x, Settings.ChunkSize.y];
+			chunkTemp = new byte[Settings.ChunkSize.x, Settings.ChunkSize.y];
 		}
 
-		protected void RefreshSeed()
+		public void RefreshSeed()
 		{
-			if (UseRandomSeed)
-				Seed = Time.time.ToString();
+			if (Settings.UseRandomSeed)
+				Settings.Seed = Time.time.ToString();
 
-			random = new Random(Seed.GetHashCode());
+			random = new Random(Settings.Seed.GetHashCode());
 		}
 
-		protected bool IsInsideChunk(int x, int y)
+		public bool IsInsideChunk(int x, int y)
 		{
-			return x >= 0 && x < ChunkSize.x && y >= 0 && y < ChunkSize.y;
+			return x >= 0 && x < Settings.ChunkSize.x && y >= 0 && y < Settings.ChunkSize.y;
 		}
 
-		protected bool IsEdge(int x, int y)
+		public bool IsEdge(int x, int y)
 		{
-			return x == 0 || x == ChunkSize.x - 1 || y == 0 || y == ChunkSize.y - 1;
+			return x == 0 || x == Settings.ChunkSize.x - 1 || y == 0 || y == Settings.ChunkSize.y - 1;
 		}
 
-		protected bool IsWall(byte[,] chunk, int x, int y)
+		public bool IsWall(byte[,] chunk, int x, int y)
 		{
 			return (chunk[x, y] & LevelFlags.Wall.ToByte()) == LevelFlags.Wall.ToByte();
 		}
 
-		protected int GetNeighboringWallCount(byte[,] chunk, int chunkX, int chunkY)
+		public int GetNeighboringWallCount(byte[,] chunk, int chunkX, int chunkY)
 		{
 			int wallCount = 0;
 			if (chunk != null)
@@ -107,25 +115,25 @@ namespace Level
 					}
 				}
 			}
-			Debug.Log(wallCount);
+
 			return wallCount;
 		}
 		#endregion
-
+		
 		/// <param name="fillPercent">Value between 0 and 100.</param>
-		protected void FillRandom(int fillPercent)
+		public void FillRandom(int fillPercent)
 		{
-			for (int x = 0; x < ChunkSize.x; x++)
+			for (int x = 0; x < Settings.ChunkSize.x; x++)
 			{
-				for (int y = 0; y < ChunkSize.y; y++)
+				for (int y = 0; y < Settings.ChunkSize.y; y++)
 				{
 					if (IsEdge(x, y))
 					{
-						Chunk[x, y] = LevelFlags.Wall.ToByte();
+						chunk[x, y] = LevelFlags.Wall.ToByte();
 					}
 					else
 					{
-						Chunk[x, y] = (byte)(random.Next(0, 100) < fillPercent ? LevelFlags.Wall.ToByte() : LevelFlags.Empty.ToByte());
+						chunk[x, y] = (byte)(random.Next(0, 100) < fillPercent ? LevelFlags.Wall.ToByte() : LevelFlags.Empty.ToByte());
 					}
 				}
 			}
@@ -133,23 +141,23 @@ namespace Level
 
 		public delegate bool IntThreshold(int x);
 
-		protected void SmoothMap(IntThreshold wallCondition, IntThreshold emptyCondition)
+		public void SmoothMap(IntThreshold wallCondition, IntThreshold emptyCondition)
 		{
-			Array.Copy(Chunk, 0, chunkTemp, 0, Chunk.Length);
+			Array.Copy(chunk, 0, chunkTemp, 0, chunk.Length);
 
-			for (int x = 0; x < ChunkSize.x; x++)
+			for (int x = 0; x < Settings.ChunkSize.x; x++)
 			{
-				for (int y = 0; y < ChunkSize.y; y++)
+				for (int y = 0; y < Settings.ChunkSize.y; y++)
 				{
 					int neighboringWallCount = GetNeighboringWallCount(chunkTemp, x, y);
 
 					if (wallCondition(neighboringWallCount) || IsEdge(x, y))
 					{
-						Chunk[x, y] = LevelFlags.Wall.ToByte();
+						chunk[x, y] = LevelFlags.Wall.ToByte();
 					}
 					else if (emptyCondition(neighboringWallCount))
 					{
-						Chunk[x, y] = LevelFlags.Empty.ToByte();
+						chunk[x, y] = LevelFlags.Empty.ToByte();
 					}
 				}
 			}
