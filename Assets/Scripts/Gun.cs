@@ -125,6 +125,10 @@ public class Gun : MonoBehaviour
             FireProjectile();
             shotFiredCooldown = true;
             eventManager.TriggerEvent(GunEvents.OnLockFire);
+            return;
+        }
+        if(CurrentAmmo <= 0) {
+            eventManager.TriggerEvent(GunEvents.OnReload);
         }
     }
 

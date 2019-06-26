@@ -16,7 +16,11 @@ public class UIAbilityStatusPanel : MonoBehaviour
 
         set {
             _ability = value;
-            image.sprite = value.AbilityIcon();
+            if(value != null) {
+                image.sprite = value.AbilityIcon();
+                return;
+            }
+            image.sprite = null;
         }
     }
 
