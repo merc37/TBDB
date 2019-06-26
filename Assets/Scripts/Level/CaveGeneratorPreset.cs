@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Level;
 using NaughtyAttributes;
@@ -12,8 +13,8 @@ namespace Level
 		[Header("Cave generator parameters")]
 		[Slider(0, 100)]
 		public int FillPercent;
-		[Slider(0, 10)]
-		public int SmoothingIterations;
+		[ReorderableList]
+		public List<Vector2Int> SmoothingRounds;
 
 		public override void Generate()
 		{
@@ -23,9 +24,12 @@ namespace Level
 			lGen.RefreshSeed();
 			lGen.FillRandom(FillPercent);
 
-			for (int i = 0; i < SmoothingIterations; i++)
+			foreach (var round in SmoothingRounds)
 			{
-				lGen.SmoothMap(WallCondition, EmptyCondition);
+				for (int i = 0; i < round.x; i++)
+				{
+					lGen.SmoothMap(w => w >= round.y, w => w < 4);
+				} 
 			}
 		}
 
@@ -38,5 +42,5 @@ namespace Level
 		{
 			return wallCount < 4;
 		}
-	} 
+	}
 }
