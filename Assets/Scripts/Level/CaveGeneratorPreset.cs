@@ -22,25 +22,16 @@ namespace Level
 
 			lGen.InitializeChunk();
 			lGen.RefreshSeed();
-			lGen.FillRandom(FillPercent);
+			lGen.FillRandom(LevelFlags.Wall, FillPercent);
+			lGen.FillEdge(LevelFlags.Wall);
 
 			foreach (var round in SmoothingRounds)
 			{
 				for (int i = 0; i < round.x; i++)
 				{
-					lGen.SmoothMap(w => w >= round.y, w => w < 4);
-				} 
+					lGen.Smooth(round.y);
+				}
 			}
-		}
-
-		private bool WallCondition(int wallCount)
-		{
-			return wallCount >= 4;
-		}
-
-		private bool EmptyCondition(int wallCount)
-		{
-			return wallCount < 4;
 		}
 	}
 }

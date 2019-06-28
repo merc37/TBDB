@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography.X509Certificates;
 using NaughtyAttributes;
 using TMPro.EditorUtilities;
 using UnityEngine;
@@ -25,7 +26,7 @@ namespace Level
 			Settings.Generate();
 		}
 
-		#region Monobehavior
+		#region Monobehaviour
 		void Awake()
 		{
 			if (Settings != null)
@@ -78,6 +79,31 @@ namespace Level
 			random = new Random(Settings.Seed.GetHashCode());
 		}
 
+		public int GetNeighborCount(byte[,] chunk, int chunkX, int chunkY, int searchRadius, LevelFlags flag)
+		{
+			int count = 0;
+			for (int x = chunkX - searchRadius; x <= chunkX + searchRadius; x++)
+			{
+				for (int y = chunkY - searchRadius; y <= chunkY + searchRadius; y++)
+				{
+					if ((x == chunkX && y == chunkY) ||
+					    !IsInsideChunk(x, y))
+					{
+						continue;
+					}
+
+					if (HasFlag(chunk, x, y, flag))
+					{
+						count++;
+					}
+				}
+			}
+
+			return count;
+		}
+		#endregion
+
+		#region Checks
 		public bool IsInsideChunk(int x, int y)
 		{
 			return x >= 0 && x < Settings.ChunkSize.x && y >= 0 && y < Settings.ChunkSize.y;
@@ -88,60 +114,22 @@ namespace Level
 			return x == 0 || x == Settings.ChunkSize.x - 1 || y == 0 || y == Settings.ChunkSize.y - 1;
 		}
 
+		public bool HasFlag(byte[,] chunk, int x, int y, LevelFlags flag)
+		{
+			return (chunk[x, y] & flag.ToByte()) == flag.ToByte();
+		}
+
 		public bool IsWall(byte[,] chunk, int x, int y)
 		{
-			return (chunk[x, y] & LevelFlags.Wall.ToByte()) == LevelFlags.Wall.ToByte();
-		}
-
-		public int GetNeighboringWallCount(byte[,] chunk, int chunkX, int chunkY)
-		{
-			int wallCount = 0;
-			if (chunk != null)
-			{
-				for (int x = chunkX - 1; x <= chunkX + 1; x++)
-				{
-					for (int y = chunkY - 1; y <= chunkY + 1; y++)
-					{
-						if ((x == chunkX && y == chunkY) ||
-						    !IsInsideChunk(x, y))
-						{
-							continue;
-						}
-
-						if (/*IsEdge(x, y) ||*/IsWall(chunk, x, y))
-						{
-							wallCount++;
-						}
-					}
-				}
-			}
-
-			return wallCount;
+			return HasFlag(chunk, x, y, LevelFlags.Wall);
 		}
 		#endregion
-		
-		/// <param name="fillPercent">Value between 0 and 100.</param>
-		public void FillRandom(int fillPercent)
-		{
-			for (int x = 0; x < Settings.ChunkSize.x; x++)
-			{
-				for (int y = 0; y < Settings.ChunkSize.y; y++)
-				{
-					if (IsEdge(x, y))
-					{
-						chunk[x, y] = LevelFlags.Wall.ToByte();
-					}
-					else
-					{
-						chunk[x, y] = (byte)(random.Next(0, 100) < fillPercent ? LevelFlags.Wall.ToByte() : LevelFlags.Empty.ToByte());
-					}
-				}
-			}
-		}
 
-		public delegate bool IntThreshold(int x);
+		#region Generic methods
+		public delegate int CoordinateCountFunction(byte[,] chunk, int x, int y);
+		public delegate bool CountCondition(int x);
 
-		public void SmoothMap(IntThreshold wallCondition, IntThreshold emptyCondition)
+		public void ApplyRules(CoordinateCountFunction coordinateCountFunction, bool ignoreEdges, params (CountCondition rule, LevelFlags value)[] rules)
 		{
 			Array.Copy(chunk, 0, chunkTemp, 0, chunk.Length);
 
@@ -149,18 +137,83 @@ namespace Level
 			{
 				for (int y = 0; y < Settings.ChunkSize.y; y++)
 				{
-					int neighboringWallCount = GetNeighboringWallCount(chunkTemp, x, y);
-
-					if (wallCondition(neighboringWallCount) || IsEdge(x, y))
+					if (ignoreEdges && IsEdge(x, y))
 					{
-						chunk[x, y] = LevelFlags.Wall.ToByte();
+						continue;
 					}
-					else if (emptyCondition(neighboringWallCount))
+
+					int count = coordinateCountFunction(chunkTemp, x, y);
+
+					foreach (var rulePair in rules)
 					{
-						chunk[x, y] = LevelFlags.Empty.ToByte();
+						if (rulePair.rule(count))
+						{
+							chunk[x, y] = rulePair.value.ToByte();
+						}
 					}
 				}
 			}
+		}
+
+		public delegate bool CoordinateCondition(int x, int y);
+
+		public void ApplyRules(params (CoordinateCondition rule, LevelFlags value)[] rules)
+		{
+			for (int x = 0; x < Settings.ChunkSize.x; x++)
+			{
+				for (int y = 0; y < Settings.ChunkSize.y; y++)
+				{
+					foreach (var rulePair in rules)
+					{
+						if (rulePair.rule(x, y))
+						{
+							chunk[x, y] = rulePair.value.ToByte();
+						}
+					}
+				}
+			}
+		}
+		#endregion
+
+		#region Fill functions
+		private void GenericFill(CoordinateCondition rule, LevelFlags value)
+		{
+			for (int x = 0; x < Settings.ChunkSize.x; x++)
+			{
+				for (int y = 0; y < Settings.ChunkSize.y; y++)
+				{
+					if (rule(x, y))
+					{
+						chunk[x, y] = value.ToByte();
+					}
+				}
+			}
+		}
+
+		public void Fill(LevelFlags fill)
+		{
+			GenericFill((x, y) => true, fill);
+		}
+
+		public void FillEdge(LevelFlags fill)
+		{
+			GenericFill(IsEdge, fill);
+		}
+
+		/// <param name="fillPercent">Value between 0 and 100.</param>
+		public void FillRandom(LevelFlags fill, int fillPercent)
+		{
+			GenericFill((x, y) => (random.Next(0, 100) < fillPercent), fill);
+		}
+		#endregion
+
+		public void Smooth(int neighborThreshold)
+		{
+			ApplyRules(
+				(chunk, x, y) => GetNeighborCount(chunk, x, y, 1, LevelFlags.Wall),
+				true,
+				(neighborCount => neighborCount < neighborThreshold, LevelFlags.Empty),
+				(neighborCount => neighborCount >= neighborThreshold, LevelFlags.Wall));
 		}
 	}
 }
