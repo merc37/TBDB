@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using NaughtyAttributes;
-using TMPro.EditorUtilities;
 using UnityEngine;
 using UnityEngine.Events;
 using Random = System.Random;
@@ -79,6 +79,18 @@ namespace Level
 			random = new Random(Settings.Seed.GetHashCode());
 		}
 
+		public void SetFlag(byte[,] chunk, int x, int y, LevelFlags flag)
+		{
+			if (flag == LevelFlags.Empty)
+			{
+				chunk[x, y] = flag.ToByte();
+			}
+			else
+			{
+				chunk[x, y] |= flag.ToByte();
+			}
+		}
+
 		public int GetNeighborCount(byte[,] chunk, int chunkX, int chunkY, int searchRadius, LevelFlags flag)
 		{
 			int count = 0;
@@ -101,6 +113,25 @@ namespace Level
 
 			return count;
 		}
+
+		/// <summary>
+		/// Checks around a coordinate in expanding concentric rings for a tile with the given flag.
+		/// </summary>
+		public Vector2Int GetNearestNeighbor(byte[,] chunk, int chunkX, int chunkY, int maxSearchRadius, LevelFlags search)
+		{
+			for (int i = 1; i <= maxSearchRadius; i++)
+			{
+				var neighbors = SearchConcentric(chunk, chunkX, chunkY, i, search);
+
+				if (neighbors != null && neighbors.Count > 0)
+				{
+					// TODO fix to select without bias if two or more equidistant neighbors are found
+					return neighbors[0];
+				}
+			}
+
+			return Constants.NullVectorInt;
+		}
 		#endregion
 
 		#region Checks
@@ -116,6 +147,10 @@ namespace Level
 
 		public bool HasFlag(byte[,] chunk, int x, int y, LevelFlags flag)
 		{
+			if (flag == LevelFlags.Empty)
+			{
+				return (chunk[x, y] | flag.ToByte()) == flag.ToByte();
+			}
 			return (chunk[x, y] & flag.ToByte()) == flag.ToByte();
 		}
 
@@ -173,6 +208,60 @@ namespace Level
 				}
 			}
 		}
+
+		public List<Vector2Int> SearchConcentric(byte[,] chunk, int chunkX, int chunkY, int radius, LevelFlags search)
+		{
+			List<Vector2Int> results = new List<Vector2Int>();
+			int x, y;
+			for (x = chunkX - radius; x <= chunkX + radius; x++)
+			{
+				if (x == chunkX - radius || x == chunkX + radius)
+				{
+					for (y = chunkY - radius; y <= chunkY + radius; y++)
+					{
+						if (IsInsideChunk(x, y) && HasFlag(chunk, x, y, search))
+						{
+							results.Add(new Vector2Int(x, y));
+						}
+					}
+				}
+				else
+				{
+					y = chunkY - radius;
+					if (IsInsideChunk(x, y) && HasFlag(chunk, x, y, search))
+					{
+						results.Add(new Vector2Int(x, y));
+					}
+
+					y = chunkY + radius;
+					if (IsInsideChunk(x, y) && HasFlag(chunk, x, y, search))
+					{
+						results.Add(new Vector2Int(x, y));
+					}
+				}
+			}
+
+			return results;
+		}
+
+		private static readonly List<Vector2Int> _directions = new List<Vector2Int> { Vector2Int.up, Vector2Int.right, Vector2Int.down, Vector2Int.left };
+		public List<Vector2Int> SearchCardinal(byte[,] chunk, int chunkX, int chunkY, int radius, LevelFlags search)
+		{
+			List<Vector2Int> results = new List<Vector2Int>();
+			
+			var pos = new Vector2Int(chunkX, chunkY);
+			foreach (var dir in _directions)
+			{
+				var current = pos + (dir * radius);
+				if (IsInsideChunk(current.x, current.y) &&
+				    HasFlag(chunk, current.x, current.y, search))
+				{
+					results.Add(current);
+				}
+			}
+
+			return results;
+		}
 		#endregion
 
 		#region Fill functions
@@ -214,6 +303,50 @@ namespace Level
 				true,
 				(neighborCount => neighborCount < neighborThreshold, LevelFlags.Empty),
 				(neighborCount => neighborCount >= neighborThreshold, LevelFlags.Wall));
+		}
+
+		public void ClearBetween(int x1, int y1, int x2, int y2)
+		{
+			throw new NotImplementedException();
+
+			for (int x = x1; x <= x2; x++)
+			{
+				int y;
+
+				if (x == x2 && y == y2)
+				{
+
+				}
+			}
+		}
+
+		public void Flood(int startX, int startY, LevelFlags search, LevelFlags flood)
+		{
+			Queue<Vector2Int> openSet = new Queue<Vector2Int>();
+			HashSet<Vector2Int> closedSet = new HashSet<Vector2Int>();
+
+			openSet.Enqueue(new Vector2Int(startX, startY));
+			while (openSet.Count > 0)
+			{
+				var current = openSet.Dequeue();
+
+				if (HasFlag(chunk, current.x, current.y, search) &&
+				    !closedSet.Contains(current))
+				{
+					SetFlag(chunk, current.x, current.y, flood);
+					//var neighbors = SearchConcentric(chunk, current.x, current.y, 1, search);
+					var neighbors = SearchCardinal(chunk, current.x, current.y, 1, search);
+					neighbors.ForEach(n => openSet.Enqueue(n));
+				}
+
+				closedSet.Add(current);
+			}
+		}
+
+		public void ConnectRooms(int startX, int startY)
+		{
+			// TODO automatically select an empty starting point
+			Flood(startX, startY, LevelFlags.Empty, LevelFlags.Flood);
 		}
 	}
 }

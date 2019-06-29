@@ -9,14 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db3ceff7cdaa0b148a0712ff0b3a3c42, type: 3}
-  m_Name: Cave02
+  m_Script: {fileID: 11500000, guid: b9576391de810cb45ac131b252f02c7d, type: 3}
+  m_Name: Maze01
   m_EditorClassIdentifier: 
   ChunkSize: {x: 50, y: 50}
-  UseRandomSeed: 0
-  Seed: 381.6219
-  FillPercent: 9
-  SmoothingRounds:
-  - {x: 1, y: 1}
-  - {x: 1, y: 4}
-  - {x: 1, y: 6}
+  UseRandomSeed: 1
+  Seed: 209.7225
+  FillPercent: 25
+  Generations: 15

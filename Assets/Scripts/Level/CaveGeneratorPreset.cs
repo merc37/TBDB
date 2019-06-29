@@ -33,5 +33,12 @@ namespace Level
 				}
 			}
 		}
+
+		[Button]
+		public void Test()
+		{
+			lGen.Flood(45, 5, LevelFlags.Empty, LevelFlags.Wall);
+
+		}
 	}
 }
