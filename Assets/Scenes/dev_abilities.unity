@@ -1402,18 +1402,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f7c7af3f851aa1943b47f59a5591c6a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &829187750 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7339613168048677945, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
-    type: 3}
-  m_PrefabInstance: {fileID: 7339613167819939719}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 375c1b8f9846c0c458b2cda53157bc75, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &939767333
 GameObject:
   m_ObjectHideFlags: 0
@@ -5784,7 +5772,7 @@ PrefabInstance:
         type: 3}
       propertyPath: playerAbilityInventory
       value: 
-      objectReference: {fileID: 829187750}
+      objectReference: {fileID: 0}
     - target: {fileID: 6531302320717482595, guid: 47a7e51c7763ad44e9b11d4584a319a4,
         type: 3}
       propertyPath: uiAbilityIconPrefab
@@ -6075,6 +6063,31 @@ PrefabInstance:
     - target: {fileID: 7339613168214122989, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352806377143777701, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.09200001
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352806377143777701, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.7740002
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352806377143777754, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_SortingLayerID
+      value: -1735583235
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352806377143777754, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_SortingLayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3352806377143777754, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_SortingOrder
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

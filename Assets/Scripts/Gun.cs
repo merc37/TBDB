@@ -42,11 +42,11 @@ public class Gun : MonoBehaviour
         get { return currAmmo; }
         set
         {
-            if(value < 0)
+            if (value < 0)
             {
                 currAmmo = 0;
             }
-            if(value > maxAmmo)
+            if (value > maxAmmo)
             {
                 currAmmo = maxAmmo;
             }
@@ -84,10 +84,10 @@ public class Gun : MonoBehaviour
 
     void Update()
     {
-        if(reloading)
+        if (reloading)
         {
             reloadTimer -= Time.deltaTime;
-            if(reloadTimer <= 0)
+            if (reloadTimer <= 0)
             {
                 reloading = false;
                 reloadTimer = reloadTime;
@@ -96,10 +96,10 @@ public class Gun : MonoBehaviour
             }
         }
 
-        if(shotFiredCooldown)
+        if (shotFiredCooldown)
         {
             fireTimer -= Time.deltaTime;
-            if(fireTimer <= 0)
+            if (fireTimer <= 0)
             {
                 shotFiredCooldown = false;
                 fireTimer = fireTime;
@@ -110,7 +110,7 @@ public class Gun : MonoBehaviour
 
     private void OnReload(ParamsObject paramsObj)
     {
-        if(CurrentAmmo != MaxAmmo && !reloading)
+        if (CurrentAmmo != MaxAmmo && !reloading)
         {
             reloading = true;
             eventManager.TriggerEvent(GunEvents.OnReloadStart);
@@ -120,14 +120,15 @@ public class Gun : MonoBehaviour
     protected virtual void OnShoot(ParamsObject paramsObj)
     {
         bool shootOverride = paramsObj != null ? paramsObj.Bool : false;
-        if((CurrentAmmo > 0 && !reloading && !shotFiredCooldown) || shootOverride)
+        if ((CurrentAmmo > 0 && !reloading && !shotFiredCooldown) || shootOverride)
         {
             FireProjectile();
             shotFiredCooldown = true;
             eventManager.TriggerEvent(GunEvents.OnLockFire);
             return;
         }
-        if(CurrentAmmo <= 0) {
+        if (CurrentAmmo <= 0)
+        {
             eventManager.TriggerEvent(GunEvents.OnReload);
         }
     }
