@@ -6000,6 +6000,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 7339613168214122970, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_Layer
+      value: 11
+      objectReference: {fileID: 0}
     - target: {fileID: 7339613168048677945, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
         type: 3}
       propertyPath: uiStatusPanels
@@ -6089,6 +6094,33 @@ PrefabInstance:
         type: 3}
       propertyPath: m_SortingOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5778558966244892850, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: uiStatusPanels
+      value: 
+      objectReference: {fileID: 682092257}
+    - target: {fileID: 5778558966244892850, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: uiAbilityInventory
+      value: 
+      objectReference: {fileID: 6531302320717482595}
+    - target: {fileID: 5778558966244892850, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: abilityDummyPrefab
+      value: 
+      objectReference: {fileID: 8037160731418016552, guid: 84984b8b18060774686ca3da8b88e804,
+        type: 3}
+    - target: {fileID: 5778558966244892850, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: abilityPickupPrefab
+      value: 
+      objectReference: {fileID: -9096220148761478237, guid: 79c836443d8298d4db329e21d1a15cdc,
+        type: 3}
+    - target: {fileID: 637185110575248185, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: projectileSpeed
+      value: 20
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7446686c83e2dd24d8acc3a223e6cbcb, type: 3}

@@ -7,7 +7,7 @@ namespace Player
         [SerializeField]
         private float slowMotionPercentage = 50;
         [SerializeField]
-        private float slowMotionTime = 10;
+        private float slowMotionTime = 5;
 
         private Timer slowMotionTimer;
 
@@ -33,9 +33,9 @@ namespace Player
         protected override void Update()
         {
             base.Update();
-            if(IsAbilityActive())
+            if (IsAbilityActive())
             {
-                if(slowMotionTimer.Tick())
+                if (slowMotionTimer.Tick())
                 {
                     Time.timeScale = originalTimeScale;
                     AbilityEnd();

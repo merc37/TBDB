@@ -8,7 +8,7 @@ public class Gun : MonoBehaviour
     [SerializeField]
     private Rigidbody2D projectileToBeFired;
     [SerializeField]
-    private float projectileSpeed;
+    private float projectileSpeed = 10;
     [SerializeField]
     protected bool automatic;
     [SerializeField]

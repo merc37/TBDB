@@ -5,7 +5,8 @@ using Events;
 
 namespace Player
 {
-    public class PlayerAbilityInventory : MonoBehaviour {
+    public class PlayerAbilityInventory : MonoBehaviour
+    {
 
         [SerializeField]
         private UIAbilityStatusPanels uiStatusPanels;
@@ -25,9 +26,15 @@ namespace Player
         void Awake()
         {
             eventManager = GetComponentInParent<GameObjectEventManager>();
-            for (int i = 0; i < 3; i++) {
+        }
+
+        void Start()
+        {
+            for (int i = 0; i < 3; i++)
+            {
                 PlayerAbility ability = transform.GetChild(i).GetComponent<PlayerAbility>();
-                if (ability != null) {
+                if (ability != null)
+                {
                     uiStatusPanels.SetPlayerAbility(i, ability);
                 }
             }
@@ -35,38 +42,56 @@ namespace Player
 
         void Update()
         {
-            if(Input.GetButtonDown("Inventory")) {
+            if (Input.GetButtonDown("Inventory"))
+            {
                 uiAbilityInventory.gameObject.SetActive(!uiAbilityInventory.gameObject.activeSelf);
             }
 
+            PlayerAbility playerAbility;
             if (PlayerInput.GetButtonDown("Ability1"))
             {
-                GetPlayerAbility(0).AbilityStart();
+                playerAbility = GetPlayerAbility(0);
+                if (playerAbility != null)
+                {
+                    playerAbility.AbilityStart();
+                }
             }
 
-            if(PlayerInput.GetButtonDown("Ability2"))
+            if (PlayerInput.GetButtonDown("Ability2"))
             {
-                GetPlayerAbility(1).AbilityStart();
+                playerAbility = GetPlayerAbility(1);
+                if (playerAbility != null)
+                {
+                    playerAbility.AbilityStart();
+                }
             }
 
-            if(PlayerInput.GetButtonDown("Ability3"))
+            if (PlayerInput.GetButtonDown("Ability3"))
             {
-                GetPlayerAbility(2).AbilityStart();
+                playerAbility = GetPlayerAbility(2);
+                if (playerAbility != null)
+                {
+                    playerAbility.AbilityStart();
+                }
             }
         }
 
-        public PlayerAbility GetPlayerAbility(int index) {
+        public PlayerAbility GetPlayerAbility(int index)
+        {
             Transform abilityChild = transform.GetChild(index);
-            if(abilityChild != null) {
+            if (abilityChild != null)
+            {
                 return abilityChild.GetComponent<PlayerAbility>();
             }
             return null;
         }
 
-        public void SwapPlayerAbility(int indexOne, int indexTwo) {
+        public void SwapPlayerAbility(int indexOne, int indexTwo)
+        {
             Transform indexOneTransform = transform.GetChild(indexOne);
             Transform indexTwoTransform = transform.GetChild(indexTwo);
-            if (Mathf.Abs(indexOne - indexTwo) > 1) {
+            if (Mathf.Abs(indexOne - indexTwo) > 1)
+            {
                 transform.GetChild(indexTwo).SetSiblingIndex(indexOne);
             }
             indexOneTransform.SetSiblingIndex(indexTwo);
@@ -78,9 +103,12 @@ namespace Player
             eventManager.TriggerEvent($"OnUpdateAbility{indexTwoTransform.GetSiblingIndex()}", new ParamsObject(indexTwoTransform.GetComponent<PlayerAbility>()));
         }
 
-        public bool AddPlayerAbility(PlayerAbility value) {
-            for (int i = 0; i < 3; i++) {
-                if(GetPlayerAbility(i) == null) {
+        public bool AddPlayerAbility(PlayerAbility value)
+        {
+            for (int i = 0; i < 3; i++)
+            {
+                if (GetPlayerAbility(i) == null)
+                {
                     SetPlayerAbility(i, value);
                     return true;
                 }
@@ -89,9 +117,11 @@ namespace Player
             return true;
         }
 
-        public bool SetPlayerAbility(int index, PlayerAbility value) {
+        public bool SetPlayerAbility(int index, PlayerAbility value)
+        {
             PlayerAbility droppedPlayerAbility = GetPlayerAbility(index);
-            if (GetPlayerAbility(index) != null) {
+            if (GetPlayerAbility(index) != null)
+            {
                 Instantiate(abilityPickupPrefab, transform.root.position, Quaternion.identity).Ability = droppedPlayerAbility;
             }
 
@@ -105,9 +135,11 @@ namespace Player
             return true;
         }
 
-        public bool DropPlayerAbility(int index) {
+        public bool DropPlayerAbility(int index)
+        {
             PlayerAbility droppedPlayerAbility = GetPlayerAbility(index);
-            if(droppedPlayerAbility == null) {
+            if (droppedPlayerAbility == null)
+            {
                 return false;
             }
             Instantiate(abilityPickupPrefab, transform.root.position, Quaternion.identity).Ability = droppedPlayerAbility;
