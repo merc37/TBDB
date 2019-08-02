@@ -30,9 +30,9 @@ namespace Player
 
         public bool AbilityStart()
         {
-            if(abilityReady)
+            if (abilityReady)
             {
-                if(StartAbility())
+                if (StartAbility())
                 {
                     abilityActive = true;
                     abilityReady = false;
@@ -52,9 +52,9 @@ namespace Player
 
         protected virtual void Update()
         {
-            if(IsAbilityOnCooldown())
+            if (IsAbilityOnCooldown())
             {
-                if(cooldownTimer.Tick())
+                if (cooldownTimer.Tick())
                 {
                     cooldownActive = false;
                     abilityReady = true;

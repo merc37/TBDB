@@ -11,7 +11,7 @@ namespace Collisions
 
         void OnCollisionEnter2D(Collision2D coll)
         {
-            if(collisionTags.Contains(coll.gameObject.tag))
+            if (collisionTags.Contains(coll.gameObject.tag))
             {
                 Destroy(gameObject);
             }
@@ -19,7 +19,7 @@ namespace Collisions
 
         void OnTriggerEnter2D(Collider2D coll)
         {
-            if(collisionTags.Contains(coll.gameObject.tag))
+            if (collisionTags.Contains(coll.gameObject.tag))
             {
                 Destroy(gameObject);
             }

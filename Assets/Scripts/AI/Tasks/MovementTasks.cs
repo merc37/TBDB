@@ -10,8 +10,6 @@ namespace Enemy
 {
     public class MovementTasks : MonoBehaviour
     {
-        private static readonly Vector2 NullVector = Constants.NullVector;
-
         [SerializeField]
         private float maxRunSpeed = 15;
         [SerializeField]
@@ -26,7 +24,7 @@ namespace Enemy
         private List<PathfindingNode> path;
 
         private Vector2 movementDirection;
-        private Vector2 movementTarget = NullVector, lastMovementTargetPathedTo = -NullVector;
+        private Vector2 movementTarget = Constants.NullVector, lastMovementTargetPathedTo = -Constants.NullVector;
 
         private bool reachedEndOfPath;
         private bool rolling;
@@ -82,7 +80,7 @@ namespace Enemy
         bool PathToMovementTarget()
         {
             //If path is empty or the target is too far from the end of it, set it
-            if(path == null || path.Count <= 0 || movementTarget == NullVector || lastMovementTargetPathedTo != movementTarget)
+            if(path == null || path.Count <= 0 || movementTarget == Constants.NullVector || lastMovementTargetPathedTo != movementTarget)
             {
                 path = pathfinder.FindPath(rigidbody.position, movementTarget, collider, maxPathSearchDistance);
                 lastMovementTargetPathedTo = movementTarget;
@@ -176,14 +174,14 @@ namespace Enemy
         [Task]
         bool SetMovementTargetToNull()
         {
-            movementTarget = NullVector;
+            movementTarget = Constants.NullVector;
             return true;
         }
 
         [Task]
         bool IsMovementTargetNull()
         {
-            return movementTarget == NullVector;
+            return movementTarget == Constants.NullVector;
         }
 
         private bool ReachedNode(PathfindingNode node)

@@ -5,35 +5,35 @@ namespace Player
 {
     public class PlayerInput : MonoBehaviour
     {
-        private static bool paused;
+        public static bool Paused;
 
         void Awake()
         {
-            paused = false;
+            Paused = false;
         }
 
         public static bool GetButton(string buttonName)
         {
-            return !paused && Input.GetButton(buttonName);
+            return !Paused && Input.GetButton(buttonName);
         }
 
         public static bool GetButtonDown(string buttonName)
         {
-            return !paused && Input.GetButtonDown(buttonName);
+            return !Paused && Input.GetButtonDown(buttonName);
         }
 
         public static bool GetButtonUp(string buttonName)
         {
-            return !paused && Input.GetButtonUp(buttonName);
+            return !Paused && Input.GetButtonUp(buttonName);
         }
 
         public static bool AnyKeyDown() {
-            return Input.anyKeyDown;
+            return !Paused && Input.anyKeyDown;
         }
 
         public static float GetAxisRaw(string buttonName)
         {
-            if(paused)
+            if(Paused)
             {
                 return 0;
             }
