@@ -44,6 +44,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cooldownTime: 1
-  abilityIcon: {fileID: 21300000, guid: 87f9b16fe7699674d9a28fd88a54dba1, type: 3}
+  abilityIcon: {fileID: 21300000, guid: 8321c01a9542c4846828cfb0627a74e5, type: 3}
   sprayTime: 3
   sprayIntervalTime: 0.02

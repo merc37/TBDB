@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1678891013623039426}
   - component: {fileID: 4391779794564397972}
   m_Layer: 0
-  m_Name: PlayerRedirectAbility
+  m_Name: RedirectAbility
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cooldownTime: 1
-  abilityIcon: {fileID: 0}
+  abilityIcon: {fileID: 21300000, guid: 7f33e8936b851c942969c9551f4d56c8, type: 3}
