@@ -14,8 +14,8 @@ PlayerSettings:
   accelerometerFrequency: 60
   companyName: DefaultCompany
   productName: TBDB
-  defaultCursor: {fileID: 2800000, guid: 127d4a36a1de4914f9582dd89b8d76b2, type: 3}
-  cursorHotspot: {x: 16, y: 16}
+  defaultCursor: {fileID: 0}
+  cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.75735295, g: 0.2004758, b: 0.2004758, a: 1}
   m_ShowUnitySplashScreen: 1
   m_ShowUnitySplashLogo: 1

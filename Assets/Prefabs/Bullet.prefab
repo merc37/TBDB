@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 114419849573346716}
   - component: {fileID: 114341871909065166}
   - component: {fileID: 114912561402102376}
-  - component: {fileID: 6335866993819869700}
+  - component: {fileID: 5215374667690154445}
   m_Layer: 10
   m_Name: Bullet
   m_TagString: Projectile
@@ -55,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: c6cd686ea284d1b49a7d5abe32a79c94, type: 2}
+  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -63,6 +63,7 @@ SpriteRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -174,7 +175,8 @@ MonoBehaviour:
   - Projectile
   - Block
   - Player
---- !u!114 &6335866993819869700
+  - Enemy
+--- !u!114 &5215374667690154445
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -243,6 +245,7 @@ TrailRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -255,7 +258,7 @@ TrailRenderer:
   m_SortingLayerID: -1735583235
   m_SortingLayer: 2
   m_SortingOrder: 0
-  m_Time: 0.7
+  m_Time: 0.1
   m_Parameters:
     serializedVersion: 3
     widthMultiplier: 1
@@ -310,5 +313,5 @@ TrailRenderer:
     shadowBias: 0.5
     generateLightingData: 0
   m_MinVertexDistance: 0.1
-  m_Autodestruct: 0
+  m_Autodestruct: 1
   m_Emitting: 1

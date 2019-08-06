@@ -58,7 +58,7 @@ namespace Enemy
         [Task]
         bool Shoot()
         {
-            eventManager.TriggerEvent(GunEvents.OnShoot);
+            eventManager.TriggerEvent(GunEvents.OnShoot, new ParamsObject(aimTarget));
             return true;
         }
 
@@ -88,11 +88,13 @@ namespace Enemy
         }
 
         [Task]
-        bool SetRotationToAimTargetLimited(float degrees) {
+        bool SetRotationToAimTargetLimited(float degrees)
+        {
             Vector2 direction = aimTarget - rigidbody.position;
             float angle = direction.ToAngle();
             float degreeDistance = Mathf.Abs(rigidbody.rotation - angle);
-            if(degreeDistance > degrees) {
+            if (degreeDistance > degrees)
+            {
                 rigidbody.rotation += Mathf.Sign(rigidbody.rotation - angle) * degrees;
                 return true;
             }
@@ -103,7 +105,7 @@ namespace Enemy
         [Task]
         bool GunLineOfSightToAimTarget()
         {
-            if(Time.frameCount == gunLineOfSightToPlayerAimTargetPreviousFrameCount)
+            if (Time.frameCount == gunLineOfSightToPlayerAimTargetPreviousFrameCount)
             {
                 return gunLineOfSightToPlayerAimTarget;
             }
@@ -114,7 +116,7 @@ namespace Enemy
             Vector2 origin = gunTransform.GetChild(0).position;
             Vector2 direction = aimTarget - origin;
             float distance = Vector2.Distance(aimTarget, origin);
-            if(projectileCollider.IsBoxCollider())
+            if (projectileCollider.IsBoxCollider())
             {
                 gunLineOfSightToPlayerAimTarget = !Physics2D.BoxCast(origin, ((BoxCollider2D)projectileCollider).size, direction.ToAngle(), direction, distance, gunProjectileBlockMask);
                 return gunLineOfSightToPlayerAimTarget;
@@ -129,7 +131,7 @@ namespace Enemy
         [Task]
         bool GunLineOfSightToPlayer()
         {
-            if(Time.frameCount == gunLineOfSightToPlayerPreviousFrameCount)
+            if (Time.frameCount == gunLineOfSightToPlayerPreviousFrameCount)
             {
                 return gunLineOfSightToPlayer;
             }
@@ -140,7 +142,7 @@ namespace Enemy
             Vector2 origin = gunTransform.GetChild(0).position;
             Vector2 direction = playerRigidbody.position - origin;
             float distance = Vector2.Distance(playerRigidbody.position, origin);
-            if(projectileCollider.IsBoxCollider())
+            if (projectileCollider.IsBoxCollider())
             {
                 gunLineOfSightToPlayer = !Physics2D.BoxCast(origin, ((BoxCollider2D)projectileCollider).size, direction.ToAngle(), direction, distance, gunProjectileBlockMask);
                 return gunLineOfSightToPlayer;

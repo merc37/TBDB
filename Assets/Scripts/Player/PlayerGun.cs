@@ -26,20 +26,20 @@ namespace Player
         protected override void OnShoot(ParamsObject paramsObj)
         {
             bool shootOverride = paramsObj != null ? paramsObj.Bool : false;
-            if(!shootLocked || shootOverride)
+            if (!shootLocked || shootOverride)
             {
                 base.OnShoot(paramsObj);
                 //GetComponentInParent<Animator>().SetTrigger("Shoot");
-                if(!automatic || shootOverride)
+                if (!automatic || shootOverride)
                 {
                     shootLocked = true;
                 }
             }
         }
 
-        protected override Rigidbody2D FireProjectile()
+        protected override Rigidbody2D FireProjectile(Vector2 target)
         {
-            LastFired = base.FireProjectile();
+            LastFired = base.FireProjectile(target);
             ParamsObject paramsObj = new ParamsObject(7);//<-Sound level
             paramsObj.Vector2 = playerRigidbody.position;
             GameObjectEventManager.TriggerRadiusEvent(PlayerRadiusEvents.OnPlayerMakeNoise, transform.position, 10, LayerMask.GetMask("Enemies"), paramsObj);

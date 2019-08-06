@@ -94,8 +94,8 @@ LightmapSettings:
     m_PVRFilteringAtrousPositionSigmaDirect: 0.5
     m_PVRFilteringAtrousPositionSigmaIndirect: 2
     m_PVRFilteringAtrousPositionSigmaAO: 1
-    m_ShowResolutionOverlay: 1
     m_ExportTrainingData: 0
+    m_TrainingDataDestination: TrainingData
   m_LightingDataAsset: {fileID: 0}
   m_UseShadowmask: 1
 --- !u!196 &4
@@ -167,21 +167,6 @@ PrefabInstance:
       propertyPath: m_LocalScale.y
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 114479497380099206, guid: d0f821b630166453ebcc31ecad9e2088,
-        type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114479497380099206, guid: d0f821b630166453ebcc31ecad9e2088,
-        type: 3}
-      propertyPath: map
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 114479497380099206, guid: d0f821b630166453ebcc31ecad9e2088,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 20912500232094488, guid: d0f821b630166453ebcc31ecad9e2088,
         type: 3}
       propertyPath: orthographic size
@@ -207,6 +192,21 @@ PrefabInstance:
       propertyPath: m_BackGroundColor.b
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 114479497380099206, guid: d0f821b630166453ebcc31ecad9e2088,
+        type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114479497380099206, guid: d0f821b630166453ebcc31ecad9e2088,
+        type: 3}
+      propertyPath: map
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 114479497380099206, guid: d0f821b630166453ebcc31ecad9e2088,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0f821b630166453ebcc31ecad9e2088, type: 3}
 --- !u!1001 &478353742
@@ -220,11 +220,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 7339613168048677945, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
-        type: 3}
-      propertyPath: m_Enabled
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7339613168214122989, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
         type: 3}
@@ -284,27 +279,12 @@ PrefabInstance:
     - target: {fileID: 7339613168214122976, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
         type: 3}
       propertyPath: maxRunSpeed
-      value: 7
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 7339613168214122968, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
         type: 3}
       propertyPath: m_Enabled
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7339613169536069831, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 7339613169538585543, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.3
-      objectReference: {fileID: 0}
-    - target: {fileID: 7339613169536069829, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
-        type: 3}
-      propertyPath: projectileSpeed
-      value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5778558966244892850, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
         type: 3}
@@ -328,6 +308,26 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8037160731418016552, guid: 84984b8b18060774686ca3da8b88e804,
         type: 3}
+    - target: {fileID: 7339613168048677945, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7339613169536069831, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7339613169538585543, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7339613169536069829, guid: 7446686c83e2dd24d8acc3a223e6cbcb,
+        type: 3}
+      propertyPath: projectileSpeed
+      value: 20
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7446686c83e2dd24d8acc3a223e6cbcb, type: 3}
 --- !u!114 &478353743 stripped
@@ -500,6 +500,7 @@ TilemapRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -4728,6 +4729,7 @@ TilemapRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0

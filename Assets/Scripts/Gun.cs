@@ -122,7 +122,7 @@ public class Gun : MonoBehaviour
         bool shootOverride = paramsObj != null ? paramsObj.Bool : false;
         if ((CurrentAmmo > 0 && !reloading && !shotFiredCooldown) || shootOverride)
         {
-            FireProjectile();
+            FireProjectile(paramsObj.Vector2);
             shotFiredCooldown = true;
             eventManager.TriggerEvent(GunEvents.OnLockFire);
             return;
@@ -133,13 +133,28 @@ public class Gun : MonoBehaviour
         }
     }
 
-    protected virtual Rigidbody2D FireProjectile()
+    protected virtual Rigidbody2D FireProjectile(Vector2 target)
     {
+        Quaternion direction;
+
         Rigidbody2D newProjectile, shooter = transform.root.GetComponent<Rigidbody2D>();
+        direction = Quaternion.Euler(0, 0, shooter.rotation);
+
+        target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        if (transform.parent.name == "Player")
+        {
+            direction = Quaternion.Euler(0, 0, (target - transform.GetChild(0).position.Vector2()).ToAngle());
+        }
+
+
         audioSource.PlayOneShot(shotSound);
-        newProjectile = Instantiate(projectileToBeFired, transform.GetChild(0).position, Quaternion.Euler(0, 0, shooter.rotation));
-        Vector2 velocity = shooter.rotation.ToVector2().normalized * projectileSpeed;
-        velocity += shooter.velocity;
+        newProjectile = Instantiate(projectileToBeFired, transform.GetChild(0).position, direction);
+        Vector2 velocity = newProjectile.rotation.ToVector2().normalized * projectileSpeed;
+        if ((velocity + shooter.velocity).magnitude >= velocity.magnitude)
+        {
+            velocity += shooter.velocity;
+        }
+
         newProjectile.velocity = velocity;
         newProjectile.GetComponent<DamageSource>().Damage = damage;
         newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;

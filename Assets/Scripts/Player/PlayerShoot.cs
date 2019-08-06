@@ -17,25 +17,25 @@ namespace Player
 
         void Update()
         {
-            if(PlayerInput.GetButton("Fire"))
+            if (PlayerInput.GetButton("Fire"))
             {
-                if(eventManager != null)
+                if (eventManager != null)
                 {
-                    eventManager.TriggerEvent(GunEvents.OnShoot);
+                    eventManager.TriggerEvent(GunEvents.OnShoot, new ParamsObject(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
                 }
             }
 
-            if(PlayerInput.GetButtonUp("Fire"))
+            if (PlayerInput.GetButtonUp("Fire"))
             {
-                if(eventManager != null)
+                if (eventManager != null)
                 {
                     eventManager.TriggerEvent(PlayerEvents.OnUnlockShoot);
                 }
             }
 
-            if(PlayerInput.GetButtonDown("Reload"))
+            if (PlayerInput.GetButtonDown("Reload"))
             {
-                if(eventManager != null)
+                if (eventManager != null)
                 {
                     eventManager.TriggerEvent(GunEvents.OnReload);
                 }
