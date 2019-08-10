@@ -7,7 +7,8 @@ public static class ExtensionMethods
         return (Mathf.Atan2(vector2.y, vector2.x) * Mathf.Rad2Deg) - 90;
     }
 
-    public static Vector2 ToVector2(this float angle) {
+    public static Vector2 ToVector2(this float angle)
+    {
         return new Vector2(Mathf.Cos((angle + 90) * Mathf.Deg2Rad), Mathf.Sin((angle + 90) * Mathf.Deg2Rad));
     }
 
@@ -23,12 +24,12 @@ public static class ExtensionMethods
         return v;
     }
 
-    public static Vector2 Vector2(this Vector3 v)
+    public static Vector2 ToVector2(this Vector3 v)
     {
         return v;
     }
 
-    public static Vector3 Vector3(this Vector2 v)
+    public static Vector3 ToVector3(this Vector2 v)
     {
         return v;
     }

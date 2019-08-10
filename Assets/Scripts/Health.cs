@@ -31,11 +31,11 @@ public class Health : MonoBehaviour
         get { return health; }
         set
         {
-            if(value < 0)
+            if (value < 0)
             {
                 health = 0;
             }
-            if(value > maxHealth)
+            if (value > maxHealth)
             {
                 health = maxHealth;
             }

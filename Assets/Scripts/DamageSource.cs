@@ -4,28 +4,34 @@ using System.Linq;
 public class DamageSource : MonoBehaviour
 {
 
-    private string source;
+    private string _source;
     public string Source
     {
         get
         {
-            return source;
+            return _source;
         }
-        set
+        private set
         {
-            if(UnityEditorInternal.InternalEditorUtility.tags.Contains(value))
+            if (UnityEditorInternal.InternalEditorUtility.tags.Contains(value))
             {
-                source = value;
+                _source = value;
             }
             else
             {
-                source = "Untagged";
+                _source = "Untagged";
             }
         }
     }
 
     public short Damage
     {
-        get; set;
+        get; private set;
+    }
+
+    public void Set(string src, short dmg)
+    {
+        Source = src;
+        Damage = dmg;
     }
 }

@@ -25,17 +25,16 @@ namespace Player
         void Start()
         {
             eventManager = GetComponent<GameObjectEventManager>();
-            meleeBox.GetComponent<DamageSource>().Source = transform.tag;
-            meleeBox.GetComponent<DamageSource>().Damage = attackDamage;
+            meleeBox.GetComponent<DamageSource>().Set(transform.tag, attackDamage);
             meleeBox.enabled = false;
         }
 
         void Update()
         {
-            if(attacking)
+            if (attacking)
             {
                 deltaStartAttackTime = Time.time - lastStartAttackTime;
-                if(deltaStartAttackTime >= attackTime)
+                if (deltaStartAttackTime >= attackTime)
                 {
                     attacking = false;
                     cooldown = true;
@@ -44,10 +43,10 @@ namespace Player
                 }
             }
 
-            if(cooldown)
+            if (cooldown)
             {
                 deltaEndAttackTime = Time.time - lastEndAttackTime;
-                if(deltaEndAttackTime >= meleeCooldownTime)
+                if (deltaEndAttackTime >= meleeCooldownTime)
                 {
                     cooldown = false;
                 }

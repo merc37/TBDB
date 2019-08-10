@@ -11,6 +11,8 @@ namespace Player
         [SerializeField]
         private float sprayIntervalTime = .02f;
 
+        private new Rigidbody2D rigidbody;
+
         private Timer sprayTimer;
         private Timer sprayIntervalTimer;
 
@@ -19,6 +21,7 @@ namespace Player
             base.Awake();
             sprayTimer = new Timer(sprayTime);
             sprayIntervalTimer = new Timer(sprayIntervalTime);
+            rigidbody = GetComponentInParent<Rigidbody2D>();
         }
 
         protected override bool StartAbility()
@@ -40,7 +43,9 @@ namespace Player
 
                 if (sprayIntervalTimer.Tick())
                 {
-                    eventManager.TriggerEvent(GunEvents.OnShoot, new ParamsObject(true));
+                    ParamsObject paramsObj = new ParamsObject(true);
+                    paramsObj.Vector2 = (rigidbody.rotation.ToVector2() * 2) + rigidbody.position;
+                    eventManager.TriggerEvent(GunEvents.OnShoot, paramsObj);
                 }
             }
         }

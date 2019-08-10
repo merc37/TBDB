@@ -30,7 +30,7 @@ namespace Player
 
         protected override bool StartAbility()
         {
-            if(rigidbody.velocity.magnitude > velocityThreshold)
+            if (rigidbody.velocity.magnitude > velocityThreshold)
             {
                 eventManager.TriggerEvent(PlayerEvents.OnDisableMovement);
                 rollStartPos = rigidbody.position;
@@ -46,15 +46,15 @@ namespace Player
         protected override void Update()
         {
             base.Update();
-            if(IsAbilityActive())
+            if (IsAbilityActive())
             {
-                if(Vector2.Distance(rollStartPos, rigidbody.position) >= rollDistance)
+                if (Vector2.Distance(rollStartPos, rigidbody.position) >= rollDistance)
                 {
                     rigidbody.velocity = Vector2.zero;
                     eventManager.TriggerEvent(PlayerEvents.OnEnableMovement);
                     AbilityEnd();
                 }
-                if(!rollVelocity.Equals(rigidbody.velocity))
+                if (!rollVelocity.Equals(rigidbody.velocity))
                 {
                     eventManager.TriggerEvent(PlayerEvents.OnEnableMovement);
                     AbilityEnd();
@@ -66,20 +66,6 @@ namespace Player
         {
             movementSpeed = paramsObj.Float;
             eventManager.StopListening(PlayerEvents.OnSendMovementSpeed, onSendMovementSpeedUnityAction);
-        }
-
-        void OnDrawGizmos()
-        {
-            if(rigidbody && !IsAbilityActive())
-            {
-                Gizmos.color = Color.magenta;
-                Gizmos.DrawSphere(rigidbody.position, .5f);
-            }
-            if(rigidbody && IsAbilityActive())
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawSphere(rigidbody.position, .5f);
-            }
         }
     }
 }

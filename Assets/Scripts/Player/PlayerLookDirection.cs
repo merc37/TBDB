@@ -20,14 +20,5 @@ namespace Player
             distToMousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition) - collider.bounds.center;
             rigidbody.rotation = distToMousePosition.ToAngle();
         }
-
-        void OnDrawGizmos()
-        {
-            if (rigidbody != null)
-            {
-                Gizmos.color = Color.green;
-                Gizmos.DrawLine(rigidbody.position, Camera.main.ScreenToWorldPoint(Input.mousePosition));
-            }
-        }
     }
 }

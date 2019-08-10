@@ -1,18 +1,21 @@
 ﻿using EventManagers;
 using UnityEngine;
 using Events;
-using UnityEngine.EventSystems;
 
 namespace Player
 {
     public class PlayerShoot : MonoBehaviour
     {
+        [SerializeField]
+        private float mouseMinDistance = 2;
 
         private GameObjectEventManager eventManager;
+        private new Rigidbody2D rigidbody;
 
-        void Start()
+        void Awake()
         {
             eventManager = GetComponent<GameObjectEventManager>();
+            rigidbody = GetComponent<Rigidbody2D>();
         }
 
         void Update()
@@ -21,7 +24,12 @@ namespace Player
             {
                 if (eventManager != null)
                 {
-                    eventManager.TriggerEvent(GunEvents.OnShoot, new ParamsObject(Camera.main.ScreenToWorldPoint(Input.mousePosition)));
+                    Vector2 target = Camera.main.ScreenToWorldPoint(Input.mousePosition).ToVector2();
+                    if (Vector2.Distance(rigidbody.position, target) < mouseMinDistance)
+                    {
+                        target = (rigidbody.rotation.ToVector2() * mouseMinDistance) + rigidbody.position;
+                    }
+                    eventManager.TriggerEvent(GunEvents.OnShoot, new ParamsObject(target));
                 }
             }
 

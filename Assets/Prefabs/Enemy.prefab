@@ -210,8 +210,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 060d0bb461d6aac4fbfbbaa23d883979, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damageTags:
-  - Player
+  allTags: 0
+  multipleTags: 0
+  collisionTag: Player
+  collisionTags: []
 --- !u!50 &899538211
 Rigidbody2D:
   serializedVersion: 4

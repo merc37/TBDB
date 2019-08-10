@@ -1,13 +1,16 @@
 ﻿using Player;
 using UnityEngine;
 using UnityEngine.UI;
+using NaughtyAttributes;
 
 namespace UI
 {
     public class UIAbilityInventory : MonoBehaviour
     {
+        [Required]
         [SerializeField]
         private Image uiAbilityIconPrefab;
+        [Required]
         [SerializeField]
         private PlayerAbilityInventory playerAbilityInventory;
 
@@ -23,29 +26,36 @@ namespace UI
         private int _abilitySelectedIndex;
         private int AbilitySelectedIndex
         {
-            get {
+            get
+            {
                 return _abilitySelectedIndex;
             }
 
-            set {
-                if (value == Constants.NullInt) {
+            set
+            {
+                if (value == Constants.NullInt)
+                {
                     _abilitySelectedIndex = value;
                     return;
                 }
 
-                if (value < 0) {
+                if (value < 0)
+                {
                     value = 2;
                 }
 
-                if (value > 2) {
+                if (value > 2)
+                {
                     value = 0;
                 }
 
-                if (_abilitySelectedIndex != Constants.NullInt) {
+                if (_abilitySelectedIndex != Constants.NullInt)
+                {
                     Transform iconOne = transform.GetChild(_abilitySelectedIndex).GetChild(0);
                     Transform iconTwoParent = transform.GetChild(value);
                     Transform iconOneParent = iconOne.parent;
-                    if (iconTwoParent.childCount > 0) {
+                    if (iconTwoParent.childCount > 0)
+                    {
                         iconTwoParent.GetChild(0).SetParent(iconOneParent, false);
                     }
                     iconOne.SetParent(iconTwoParent, false);
@@ -65,26 +75,32 @@ namespace UI
         private int _abilityHighlightedIndex;
         private int AbilityHighlightedIndex
         {
-            get {
+            get
+            {
                 return _abilityHighlightedIndex;
             }
 
-            set {
-                if(value == Constants.NullInt) {
+            set
+            {
+                if (value == Constants.NullInt)
+                {
                     transform.GetChild(_abilityHighlightedIndex).GetComponent<Image>().color = Color.white;
                     _abilityHighlightedIndex = value;
                     return;
                 }
 
-                if (value < 0) {
+                if (value < 0)
+                {
                     value = 2;
                 }
 
-                if (value > 2) {
+                if (value > 2)
+                {
                     value = 0;
                 }
 
-                if(_abilityHighlightedIndex != Constants.NullInt) {
+                if (_abilityHighlightedIndex != Constants.NullInt)
+                {
                     transform.GetChild(_abilityHighlightedIndex).GetComponent<Image>().color = Color.white;
                 }
                 transform.GetChild(value).GetComponent<Image>().color = highlightColor;
@@ -96,31 +112,43 @@ namespace UI
         private float axis;
         private bool axisInUse;
 
-        void Awake() {
+        void Awake()
+        {
             AbilitySelectedIndex = Constants.NullInt;
             AbilityHighlightedIndex = Constants.NullInt;
             dropTimer = new Timer(dropTime);
         }
 
-        void Update() {
-            if (Input.GetButtonDown("Interact")) {
+        void Update()
+        {
+            if (Input.GetButtonDown("Interact"))
+            {
                 dropTimer.Reset();
-                if (AbilitySelectedIndex == Constants.NullInt) {
-                    if(AbilityHighlightedIndex != Constants.NullInt) {
-                        if (playerAbilityInventory.GetPlayerAbility(AbilityHighlightedIndex) != null) {
+                if (AbilitySelectedIndex == Constants.NullInt)
+                {
+                    if (AbilityHighlightedIndex != Constants.NullInt)
+                    {
+                        if (playerAbilityInventory.GetPlayerAbility(AbilityHighlightedIndex) != null)
+                        {
                             AbilitySelectedIndex = AbilityHighlightedIndex;
                         }
                     }
-                } else if(AbilitySelectedIndex != Constants.NullInt) {
+                }
+                else if (AbilitySelectedIndex != Constants.NullInt)
+                {
                     transform.GetChild(AbilitySelectedIndex).GetComponent<Image>().color = highlightColor;
                     AbilitySelectedIndex = Constants.NullInt;
                 }
             }
 
-            if (Input.GetButton("Interact")) {
-                if (AbilityHighlightedIndex != Constants.NullInt) {
-                    if(playerAbilityInventory.GetPlayerAbility(AbilityHighlightedIndex) != null) {
-                        if (dropTimer.Tick()) {
+            if (Input.GetButton("Interact"))
+            {
+                if (AbilityHighlightedIndex != Constants.NullInt)
+                {
+                    if (playerAbilityInventory.GetPlayerAbility(AbilityHighlightedIndex) != null)
+                    {
+                        if (dropTimer.Tick())
+                        {
                             playerAbilityInventory.DropPlayerAbility(AbilityHighlightedIndex);
                             transform.GetChild(AbilityHighlightedIndex).GetComponent<Image>().color = highlightColor;
                             Destroy(transform.GetChild(AbilityHighlightedIndex).GetChild(0).gameObject);
@@ -130,28 +158,36 @@ namespace UI
             }
 
             axis = Input.GetAxisRaw("HorizontalMovement");
-            if (axis != 0 && !axisInUse) {
+            if (axis != 0 && !axisInUse)
+            {
                 axisInUse = true;
-                if (AbilitySelectedIndex != Constants.NullInt) {
+                if (AbilitySelectedIndex != Constants.NullInt)
+                {
                     AbilitySelectedIndex += (int)Mathf.Sign(axis);
                 }
 
-                if (AbilitySelectedIndex == Constants.NullInt) {
+                if (AbilitySelectedIndex == Constants.NullInt)
+                {
                     AbilityHighlightedIndex += (int)Mathf.Sign(axis);
                 }
             }
 
-            if(axis == 0) {
+            if (axis == 0)
+            {
                 axisInUse = false;
             }
         }
 
-        void OnEnable() {
+        void OnEnable()
+        {
             PlayerInput.Paused = true;
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++)
+            {
                 PlayerAbility playerAbility = playerAbilityInventory.GetPlayerAbility(i);
-                if (playerAbility != null) {
-                    if(AbilityHighlightedIndex == Constants.NullInt) {
+                if (playerAbility != null)
+                {
+                    if (AbilityHighlightedIndex == Constants.NullInt)
+                    {
                         AbilityHighlightedIndex = i;
                     }
                     Instantiate(uiAbilityIconPrefab, transform.GetChild(i)).sprite = playerAbility.AbilityIcon();
@@ -159,12 +195,15 @@ namespace UI
             }
         }
 
-        void OnDisable() {
+        void OnDisable()
+        {
             AbilitySelectedIndex = Constants.NullInt;
             AbilityHighlightedIndex = Constants.NullInt;
-            for (int i = 0; i < 3; i++) {
+            for (int i = 0; i < 3; i++)
+            {
                 Transform iconSlot = transform.GetChild(i);
-                if(iconSlot.childCount > 0) {
+                if (iconSlot.childCount > 0)
+                {
                     Destroy(iconSlot.GetChild(0).gameObject);
                 }
             }

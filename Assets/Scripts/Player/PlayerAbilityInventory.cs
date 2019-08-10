@@ -1,20 +1,23 @@
 ﻿using EventManagers;
 using UnityEngine;
 using UI;
-using Events;
+using NaughtyAttributes;
 
 namespace Player
 {
     public class PlayerAbilityInventory : MonoBehaviour
     {
-
+        [Required]
         [SerializeField]
         private UIAbilityStatusPanels uiStatusPanels;
+        [Required]
         [SerializeField]
         private UIAbilityInventory uiAbilityInventory;
 
+        [Required]
         [SerializeField]
         private AbilityPickup abilityPickupPrefab;
+        [Required]
         [SerializeField]
         private Transform abilityDummyPrefab;
 

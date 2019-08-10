@@ -30,8 +30,11 @@ public class ShotgunBlast : MonoBehaviour
                 slug = Instantiate(slugPrefab, rigidbody.position, Quaternion.Euler(0, 0, rigidbody.rotation + Random.Range(-blastDegree, blastDegree)));
                 slug.velocity = slug.rotation.ToVector2().normalized * rigidbody.velocity.magnitude;
 
-                slug.GetComponent<DamageSource>().Damage = GetComponent<DamageSource>().Damage;
-                slug.GetComponent<DamageSource>().Source = GetComponent<DamageSource>().Source;
+                DamageSource dmgSrc = GetComponent<DamageSource>(), slugDmgSrc = slug.GetComponent<DamageSource>();
+                if (dmgSrc != null && slugDmgSrc != null)
+                {
+                    slugDmgSrc.Set(dmgSrc.Source, dmgSrc.Damage);
+                }
             }
 
             Destroy(gameObject);

@@ -135,29 +135,27 @@ public class Gun : MonoBehaviour
 
     protected virtual Rigidbody2D FireProjectile(Vector2 target)
     {
-        Quaternion direction;
-
         Rigidbody2D newProjectile, shooter = transform.root.GetComponent<Rigidbody2D>();
-        direction = Quaternion.Euler(0, 0, shooter.rotation);
+        Vector2 spawnPosition = transform.GetChild(0).position.ToVector2();
 
-        target = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        if (transform.parent.name == "Player")
-        {
-            direction = Quaternion.Euler(0, 0, (target - transform.GetChild(0).position.Vector2()).ToAngle());
-        }
+        Quaternion direction = Quaternion.Euler(0, 0, (target - spawnPosition).ToAngle());
 
+        newProjectile = Instantiate(projectileToBeFired, spawnPosition, direction);
 
-        audioSource.PlayOneShot(shotSound);
-        newProjectile = Instantiate(projectileToBeFired, transform.GetChild(0).position, direction);
         Vector2 velocity = newProjectile.rotation.ToVector2().normalized * projectileSpeed;
         if ((velocity + shooter.velocity).magnitude >= velocity.magnitude)
         {
             velocity += shooter.velocity;
         }
-
         newProjectile.velocity = velocity;
-        newProjectile.GetComponent<DamageSource>().Damage = damage;
-        newProjectile.GetComponent<DamageSource>().Source = transform.root.tag;
+
+        audioSource.PlayOneShot(shotSound);
+
+        DamageSource dmgSrc = newProjectile.GetComponent<DamageSource>();
+        if (dmgSrc != null)
+        {
+            dmgSrc.Set(transform.root.tag, damage);
+        }
         CurrentAmmo -= ammoConsumption;
         return newProjectile;
     }
