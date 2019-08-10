@@ -1,44 +1,38 @@
 ﻿using UnityEngine;
-using System.Linq;
 using EventManagers;
 using Events;
 
 namespace Collisions
 {
-    public class DamageOnCollision : MonoBehaviour
+    public class DamageOnCollision : OnCollision
     {
-
         private GameObjectEventManager eventManager;
-
-        [SerializeField]
-        [TagSelector]
-        private string[] damageTags = new string[1];
 
         void Awake()
         {
             eventManager = GetComponentInParent<GameObjectEventManager>();
         }
 
-        void OnCollisionEnter2D(Collision2D coll)
+        protected override bool OnCollisionEnterAction(Collision2D coll)
         {
-            DamageSource damageSource = coll.gameObject.GetComponent<DamageSource>();
-            if(damageSource)
-            {
-                if(damageTags.Contains(damageSource.Source))
-                {
-                    eventManager.TriggerEvent(HealthEvents.OnDecreaseHealth, new ParamsObject(damageSource.Damage));
-                }
-            }
+            eventManager.TriggerEvent(HealthEvents.OnDecreaseHealth, new ParamsObject(coll.gameObject.GetComponent<DamageSource>().Damage));
+            return true;
         }
 
-        //void OnTriggerEnter2D(Collider2D coll) {
-        //    DamageSource damageSource = coll.gameObject.GetComponent<DamageSource>();
-        //    if(damageSource) {
-        //        if(damageTags.Contains(damageSource.Source)) {
-        //            eventManager.TriggerEvent("DecreaseHealth", new ParamsObject(damageSource.Damage));
-        //        }
-        //    }
-        //}
+        protected override bool OnTriggerEnterAction(Collider2D coll)
+        {
+            return false;
+        }
+
+        protected override string GetTag(GameObject go)
+        {
+            DamageSource dmgSrc = go.GetComponent<DamageSource>();
+            if (dmgSrc != null)
+            {
+                return dmgSrc.Source;
+            }
+            return "Error";
+        }
     }
 }
 

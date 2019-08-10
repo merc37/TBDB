@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Linq;
+using UnityEditor;
 
 namespace Collisions
 {
     public class StopOnCollision : MonoBehaviour
     {
         [SerializeField]
-        [TagSelector]
         private string[] collisionTags = new string[1];
 
         private new Rigidbody2D rigidbody;
@@ -18,9 +18,9 @@ namespace Collisions
 
         void OnCollisionEnter2D(Collision2D coll)
         {
-            if(rigidbody != null)
+            if (rigidbody != null)
             {
-                if(collisionTags.Length == 0 || collisionTags.Contains(coll.gameObject.tag))
+                if (collisionTags.Length == 0 || collisionTags.Contains(coll.gameObject.tag))
                 {
                     rigidbody.velocity = Vector2.zero;
                 }
@@ -29,9 +29,9 @@ namespace Collisions
 
         void OnTriggerEnter2D(Collider2D coll)
         {
-            if(rigidbody != null)
+            if (rigidbody != null)
             {
-                if(collisionTags.Length == 0 || collisionTags.Contains(coll.gameObject.tag))
+                if (collisionTags.Length == 0 || collisionTags.Contains(coll.gameObject.tag))
                 {
                     rigidbody.velocity = Vector2.zero;
                 }

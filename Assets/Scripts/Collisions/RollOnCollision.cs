@@ -9,7 +9,6 @@ namespace Collisions
     {
 
         [SerializeField]
-        [TagSelector]
         private string[] damageTags = new string[1];
 
         private GameObjectEventManager eventManager;
@@ -22,9 +21,9 @@ namespace Collisions
         void OnTriggerEnter2D(Collider2D coll)
         {
             DamageSource damageSource = coll.GetComponent<DamageSource>();
-            if(damageSource)
+            if (damageSource)
             {
-                if(damageTags.Contains(damageSource.Source))
+                if (damageTags.Contains(damageSource.Source))
                 {
                     eventManager.TriggerEvent(EnemyEvents.OnRoll, new ParamsObject(coll.attachedRigidbody.velocity));
                 }
