@@ -39,7 +39,7 @@ Tilemap:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1784554993205430829}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Tiles:
   - first: {x: 7, y: -13, z: 0}
     second:
@@ -902,7 +902,7 @@ GameObject:
   - component: {fileID: 7481351893236783712}
   - component: {fileID: 8940824514051656218}
   m_Layer: 31
-  m_Name: Office2
+  m_Name: Office
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

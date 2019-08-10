@@ -39,12 +39,12 @@ Tilemap:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1421432030744668}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Tiles:
   - first: {x: -1, y: 0, z: 0}
     second:
       m_TileIndex: 0
-      m_TileSpriteIndex: 0
+      m_TileSpriteIndex: 2
       m_TileMatrixIndex: 0
       m_TileColorIndex: 0
       m_ObjectToInstantiate: {fileID: 0}
@@ -68,12 +68,12 @@ Tilemap:
   - m_RefCount: 0
     m_Data: {fileID: 0}
   m_TileSpriteArray:
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 8a43ba8db0e3b40f7983cb44251a5588, type: 3}
-  - m_RefCount: 1
-    m_Data: {fileID: 21300000, guid: 0c594ff2b88054e56978b3718373c716, type: 3}
   - m_RefCount: 0
     m_Data: {fileID: 0}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 0c594ff2b88054e56978b3718373c716, type: 3}
+  - m_RefCount: 1
+    m_Data: {fileID: 21300000, guid: 8a43ba8db0e3b40f7983cb44251a5588, type: 3}
   m_TileMatrixArray:
   - m_RefCount: 2
     m_Data:
@@ -176,7 +176,7 @@ GameObject:
   - component: {fileID: 4963345308884604}
   - component: {fileID: 2569400268111177018}
   m_Layer: 31
-  m_Name: Test Palette
+  m_Name: Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
